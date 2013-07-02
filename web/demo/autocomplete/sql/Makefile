@@ -11,3 +11,16 @@ install:
 
 uninstall:
 	exit | sqlplus -L -S ${WEBMQ_ORACLE} @uninstall.sql
+
+download:
+	curl http://downloads.dbpedia.org/3.8/en/persondata_en.ttl.bz2 -O persondata_en.ttl.bz2
+	bzip2 -d persondata_en.ttl.bz2
+
+preprocess:
+	python persondata.py persondata_en.ttl persondata_en.csv
+
+load:
+	sqlldr ${WEBMQ_ORACLE} control=persondata.ctl data=persondata_en.csv
+
+insert:
+	exit | sqlplus -L -S ${WEBMQ_ORACLE} @persondata.sql

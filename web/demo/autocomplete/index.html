@@ -8,7 +8,7 @@
    <title>WebMQ Autocomplete Demo</title>
 
    <link rel="stylesheet" href="../demo.css">
-   <link rel="stylesheet" href="autocomplete.css">
+   <link rel="stylesheet" href="css/autocomplete.css">
 
    <!-- Include Flash WebSocket via Conditional Comment:
            http://msdn.microsoft.com/en-us/library/ms537512%28v=vs.85%29.aspx -->
@@ -25,7 +25,7 @@
    <script type="text/javascript" src="../../js/autobahn.min.js"></script>
    <script type="text/javascript" src="../util.js"></script>
 
-   <script type="text/javascript" src="autocomplete.js"></script>
+   <script type="text/javascript" src="js/autocomplete.js"></script>
 
 </head>
 
@@ -33,14 +33,14 @@
 
    <header>
       <div id="header_inner">
-
          <div id="demo_title">WebMQ Autocomplete Demo</div>
-
          <a href="http://tavendo.de" target="_blank">
             <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
          </a>
-
       </div>
+      <center>
+         <a href="https://github.com/tavendo/WebMQDemo/tree/master/web/demo/autocomplete">Source Code</a>
+      </center>
    </header>
 
    <div id="demo_body" class="oracle_demo">
@@ -58,7 +58,7 @@
             <div id="autocompleteBox">
             
                <div id="moreAbove" class="moreIndicator">
-                  <img src="triangle_up_40_grey.png" width="15" height="15"/>
+                  <img src="img/triangle_up_40_grey.png" width="15" height="15"/>
                </div>
             
                <ul id="suggestionsList" data-bind="foreach: autocompleteSuggestions">
@@ -67,7 +67,7 @@
 
             
                <div id="moreBelow" class="moreIndicator">
-                  <img src="triangle_down_40_grey.png" width="15" height="15" />
+                  <img src="img/triangle_down_40_grey.png" width="15" height="15" />
                </div>
             
             </div>
