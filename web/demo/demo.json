@@ -1,10 +1,29 @@
 {
    "version": 9,
    "demos": {
+
       "Votes": {"sqlInstall": ["vote/sql/votes.sql",
                                "vote/sql/pkg_vote_spec.sql",
                                "vote/sql/pkg_vote_body.sql",
                                "vote/sql/pkg_vote_register.sql"],
-                "sqlUninstall": ["vote/sql/uninstall.sql"]}
+                "sqlUninstall": ["vote/sql/uninstall.sql"]},
+
+      "Code Chat": {"sqlInstall": ["codechat/sql/codechat.sql",
+                                   "codechat/sql/pkg_codechat_spec.sql",
+                                   "codechat/sql/pkg_codechat_body.sql",
+                                   "codechat/sql/pkg_codechat_register.sql"],
+                    "sqlUninstall": ["codechat/sql/uninstall.sql"]},
+
+      "Autocomplete": {"sqlInstall": ["autocomplete/sql/person.sql",
+                                      "autocomplete/sql/pkg_autocomplete_spec.sql",
+                                      "autocomplete/sql/pkg_autocomplete_body.sql",
+                                      "autocomplete/sql/pkg_autocomplete_register.sql"],
+                       "sqlUninstall": ["autocomplete/sql/uninstall.sql"]},
+
+      "Forms": {"sqlInstall": ["form/sql/product.sql",
+                               "form/sql/pkg_product_spec.sql",
+                               "form/sql/pkg_product_body.sql",
+                               "form/sql/pkg_product_register.sql"],
+                "sqlUninstall": ["form/sql/uninstall.sql"]}
     }
 }
