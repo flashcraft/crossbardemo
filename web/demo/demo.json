@@ -1,0 +1,10 @@
+{
+   "version": 9,
+   "demos": {
+      "Votes": {"sqlInstall": ["vote/sql/votes.sql",
+                               "vote/sql/pkg_vote_spec.sql",
+                               "vote/sql/pkg_vote_body.sql",
+                               "vote/sql/pkg_vote_register.sql"],
+                "sqlUninstall": ["vote/sql/uninstall.sql"]}
+    }
+}
