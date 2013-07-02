@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8" />
+
+      <link rel="shortcut icon" href="../../img/favicon.ico">
+
+      <title>WebMQ Chat Demo</title>
+
+      <link rel="stylesheet" href="../demo.css">
+      <link rel="stylesheet" href="css/chat.css">
+      
+
+
+      <!-- Include Flash WebSocket via Conditional Comment:
+           http://msdn.microsoft.com/en-us/library/ms537512%28v=vs.85%29.aspx -->
+      <!--[if lte IE 9]>
+         <script type="text/javascript">
+           WEB_SOCKET_SWF_LOCATION = "../../flashws/WebSocketMain.swf";
+         </script>
+         <script type="text/javascript" src="../../flashws/swfobject.js"></script>
+         <script type="text/javascript" src="../../flashws/web_socket.js"></script>
+      <![endif]-->
+
+      <script type="text/javascript" src="../../js/jquery.min.js"></script>
+      <script type="text/javascript" src="../../js/autobahn.min.js"></script>
+
+      <script type="text/javascript" src="../util.js"></script>
+      
+      <script type="text/javascript" src="js/chat.js"></script>
+
+   </head>
+
+   <body>
+      <header>
+         <div id="header_inner">
+            <div id="demo_title">Chat Demo</div>         
+            <a href="http://tavendo.de" target="_blank">
+               <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
+            </a>
+         </div>
+         <center>
+            <a href="https://github.com/tavendo/WebMQDemo/tree/master/web/demo/chat">Source Code</a>
+         </center>
+      </header>
+
+      <div id="demo_body">
+         <div class="chat_channel_selector">
+            <a href="#1">Channel 1</a>
+         </div>
+         <div class="chat_channel_selector">
+            <a href="#2">Channel 2</a>
+         </div>
+         <div class="chat_channel_selector">
+            <a href="#3">Channel 3</a>
+         </div>
+         <div class="chat_channel_selector">
+            <a href="#4">Channel 4</a>
+         </div>
+         <div class="chat_channel_selector">
+            <a href="#5">Channel 5</a>
+         </div>
+         <button id="helpButton" class="webmq_demo_button button">?</button> 
+      </div>
+      <div style="clear: both"></div>
+
+      <div class="status_line">
+         Status: <span class="statusline"></span>
+      </div>
+
+      <button class="flatButton" id="show_chat_window">Chat</button>
+
+      <div id="chat_window">
+         <button class="flatButton" id="hide_chat_window">X</button>
+         <div id="channel_title">something</div>
+         <div class="content">
+            <div>
+               <span id="my_nick">My Nick </span><input type="text" id="nick" size="15" maxlength="15" />
+               <!--<button id="choose_color"></button>-->
+               <!--<button id="choose_icon"></button>-->
+            </div>
+            <div id="messages_box">
+
+            </div>
+            <div>
+               <textarea id="message_input" rows="2" placeholder="Type your chat message here"></textarea>
+               <!--<button id="send_message" onclick="send_message()">Send</button>-->
+            </div>
+          </div>
+      </div>
+
+      <div class="info_bar" style="display: none;">
+
+         <p class="info_bar_heading">
+            A simple chat demo using Tavendo WebMQ
+         </p>
+         <ul>
+            <li>
+               All interactions on this demo occur in response to messages routed through an instance of Tavendo WebMQ. 
+               Information the instance used is displayed in the status line at the bottom of the demo box. 
+            </li>
+            <li>
+               All users on the same channel are connected.
+            </li>
+            <li>
+               Nicks are picked randomly from a set of presets, but can be changed.
+            </li>            
+         </ul>
+
+      </div>
+
+  
+   </body>
+</html>

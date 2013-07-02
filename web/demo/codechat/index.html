@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <link rel="shortcut icon" href="../../img/favicon.ico">
+   <title>WebMQ CodeChat</title>
+   <link rel="stylesheet" href="css/codechat.css">
+</head>
+<body>
+<!-- 
+   <div id="branding">
+      <div id="tavendoRoot">
+         <img src="tavendoRoot.png" alt="Tavendo Root Company Symbol">
+      </div>
+      <div id="codeChat">
+         <img src="codeChat.png" alt="CodeChat">
+      </div>
+      <div id="poweredBy">
+         powered by <a href="http://tavendo.de">Tavendo WebMQ</a>
+      </div>
+   </div> -->
+
+   <div id="upper" class="half">
+
+      <div id="branding">
+         <div id="tavendoRoot">
+            <img src="img/tavendoRoot.png" alt="Tavendo Root Company Symbol">
+         </div>
+         <div id="codeChat">
+            <img src="img/codeChat.png" alt="CodeChat">
+         </div>
+         <div id="poweredBy">
+            powered by <a href="http://tavendo.de">Tavendo WebMQ</a>
+         </div>
+      </div>
+
+      <div id="upperFader">
+      </div>
+
+      <div id="chatMessageContainer">
+      </div>
+
+      <div id="lowerFader">
+      </div>
+
+      <div id="separator">
+         <div id="separatorLine"></div>
+      </div>
+      <div id="ghostSeparator"></div>
+
+   </div>   
+
+   <div id="lower" class="half">
+
+      <div id="tabswrapper">
+         <ul id="tabtops">
+            <!-- tabs tops for switching tabs are instantiated here -->
+            <li id="addTab">
+               +
+               <ul id="addTabLanguages" class="nonDisplay fullOpacity">
+               <!-- <ul id="addTabLanguages"> -->
+                     <!-- buttons for picking language of new tab are 
+                     instantiated here -->
+               </ul>
+            </li>
+         </ul>
+         <div id="tabscontainer">
+            <!-- tabs themselves are instantiated here -->
+         </div>
+
+         <button id="sendFullEditorContent" class="sendbutton">Send All</button>
+         <button id="sendSelectedEditorContent" class="sendbutton">Send Selected</button>
+      </div>
+
+      <div id="statusLine">
+         <div class="floatLeft">
+            Nick
+            <span id="nick"></span>
+         </div>
+         <div class="floatLeft">
+            Channel
+            <span id="channel"></span>
+         </div>
+
+         <div id="newWindow">
+            <span class="new_window">
+               <a id="new-window" href="" target="_blank">
+                  Open in additional Window
+               </a>
+            </span>
+         </div>
+         
+         <div id="statusIndicator">
+             <span id="statusText"></span>
+             <div id="connected"></div>
+         </div>         
+
+         <div id="fontResizeButtons">
+            <span>Font Size</span>
+            <button id="decrease">
+               -
+            </button>
+            <button id="increase">
+               +
+            </button>
+         </div>
+      </div>
+
+   </div>
+
+   <div id="initialInputOverlay" class="fullscreenOverlay nonDisplay">
+      <div class="fullscreenOverlayTableWrapper">
+         <div class="fullscreenOverlayWrapper">
+            <div class="fullscreenOverlayInputBox">
+
+               <h1>
+                  Set Chat Channel and Nick
+               </h1>
+               
+               <p>
+                  Please enter a 
+               </p>
+               
+               <div class="initialInput">
+                  <span class="initialInputText">
+                     Channel
+                  </span>
+                  <input id="initialInputChannel" type="text">
+                  <span id="initialInputChannelReminder" class="initialInputReminder">
+                     Please enter between 3 and 10 alphanumeric characters, '-' or '_'.
+                  </span>
+               </div>
+               
+               <p>
+                  and a
+               </p>
+               
+               <div class="initialInput">
+                  <span class="initialInputText">
+                     Nick
+                  </span>
+                  <input id="initialInputNick" type="text">
+                  <span id="initialInputNickReminder" class="initialInputReminder">
+                     Please enter between 3 and 10 alphanumeric characters, '-' or '_'.
+                  </span>
+               </div>
+               
+               <div id="initialInputExplanation">
+                  <p>
+                     All CodeChats on the same channel receive each other's messages.
+                  </p>
+                  <p>
+                     The Nick identifies you to the other members on the Channel.
+                  </p>
+               </div>
+
+               <div id="initialInputButtons">
+                  <div class="centerContainer">
+                     <button id="setChannelAndNick" class="nonVisible">Set</button>
+                     <button id="cancelChannelAndNick" class="nonVisible">Cancel</button>
+                  </div>
+                  
+               </div>
+               
+
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <script type="text/javascript" src="../../js/jquery.min.js"></script>
+   <script type="text/javascript" src="../../js/autobahn.min.js"></script>
+   <script type="text/javascript" src="../util.js"></script>
+   
+   <script src="../../ace/ace.js" type="text/javascript" charset="utf-8"></script>
+
+
+   <link href="../../js/syntaxhighlighter/styles/shCore.css" rel="stylesheet" type="text/css" />
+   <link href="../../js/syntaxhighlighter/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
+
+   <script src="../../js/syntaxhighlighter/scripts/shCore.js" type="text/javascript"></script>
+   <script src="../../js/syntaxhighlighter/scripts/shBrushJScript.js" type="text/javascript"></script>
+   <script src="../../js/syntaxhighlighter/scripts/shBrushPlSql.js" type="text/javascript"></script>
+   <script src="../../js/syntaxhighlighter/scripts/shBrushSql.js" type="text/javascript"></script>
+   <script src="../../js/syntaxhighlighter/scripts/shBrushTSql.js" type="text/javascript"></script>
+   <script src="../../js/syntaxhighlighter/scripts/shBrushPlain.js" type="text/javascript"></script>
+   <script src="../../js/syntaxhighlighter/scripts/shBrushPython.js" type="text/javascript"></script>
+
+
+   <script type="text/javascript">
+     SyntaxHighlighter.all()
+   </script>
+
+   <!-- // <script type="text/javascript" src="../demo.js"></script> -->
+
+   <script src="js/codechat.js"></script>
+   
+</body>
+</html>
