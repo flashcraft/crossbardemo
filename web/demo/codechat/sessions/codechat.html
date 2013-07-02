@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <link rel="shortcut icon" href="../../img/favicon.ico">
+   <title>WebMQ CodeChat</title>
+   <link rel="stylesheet" href="codechat.css">
+</head>
+<body>
+
+   <div id="upper" class="half">
+
+      <div id="chatMessageContainer">
+      </div>
+
+      <div id="nickContainer">
+         <input type="text">
+         <button>Set new nick</button>
+      </div>
+
+      <!-- <div class="statusline"></div> -->
+
+      <div id="separator">
+         <div id="separatorLine"></div>
+      </div>
+      <div id="ghostSeparator"></div>
+
+   </div>   
+
+   <div id="lower" class="half">
+
+      <div id="tabswrapper">
+         <ul id="tabtops">
+            <!-- tabs tops for switching tabs are instantiated here -->
+            <li id="addTab">+</li>
+         </ul>
+         <div id="tabscontainer">
+            <!-- tabs themselves are instantiated here -->
+            <div class="selected">
+               <div id="editor" class="editor"></div>
+            </div><!-- the single editor used with edit sessions -->
+         </div>
+
+         <button id="sendFullEditorContent" class="sendbutton">Send All</button>
+         <button id="sendSelectedEditorContent" class="sendbutton">Send Selected</button>
+      </div>
+
+      <div id="statusLine">
+         <div class="floatLeft">
+            Nick
+            <span id="nick"></span>
+         </div>
+         <div class="floatLeft">
+            Channel
+            <span id="channel"></span>
+         </div>
+
+         <div id="newWindow">
+            <span class="new_window">
+               <a id="new-window" href="" target="_blank">
+                  Open in additional Window
+               </a>
+            </span>
+         </div>
+         
+         <div id="statusIndicator">
+             <span id="statusText"></span>
+             <div id="connected"></div>
+         </div>
+      </div>
+
+   </div>
+
+   <div id="initialInputOverlay" class="fullscreenOverlay nonDisplay">
+      <div class="fullscreenOverlayTableWrapper">
+         <div class="fullscreenOverlayWrapper">
+            <div class="fullscreenOverlayInputBox">
+               
+               <p>
+                  Please enter a 
+               </p>
+               
+               <div class="initialInput">
+                  <span class="initialInputText">
+                     Channel
+                  </span>
+                  <input id="initialInputChannel" type="text">
+                  <span id="initialInputChannelReminder" class="initialInputReminder">Minimum length 5 characters</span>
+               </div>
+               
+               <p>
+                  and a
+               </p>
+               
+               <div class="initialInput">
+                  <span class="initialInputText">
+                     Nick
+                  </span>
+                  <input id="initialInputNick" type="text">
+                  <span id="initialInputNickReminder" class="initialInputReminder">Minimum length 4 characters</span>
+               </div>
+               
+               <div id="initialInputExplanation">
+                  <p>
+                     All CodeChats on the same channel receive each other's messages.
+                  </p>
+                  <p>
+                     The Nick identifies you to the other members on the Channel.
+                  </p>
+               </div>
+
+               <button id="setChannelAndNick" class="nonVisible">Set</button>
+               <button id="cancelChannelAndNick" class="nonVisible">Cancel</button>
+
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <script type="text/javascript" src="../../js/jquery.min.js"></script>
+   <script type="text/javascript" src="../../js/autobahn.min.js"></script>
+   <script type="text/javascript" src="../util.js"></script>
+   
+   <script src="../../ace/ace.js" type="text/javascript" charset="utf-8"></script>
+
+
+   <link href="../../js/syntaxhighlighter/styles/shCore.css" rel="stylesheet" type="text/css" />
+   <link href="../../js/syntaxhighlighter/styles/shThemeTavendo.css" rel="stylesheet" type="text/css" />
+
+   <script src="../../js/syntaxhighlighter/scripts/shCore.js" type="text/javascript"></script>
+   <script src="../../js/syntaxhighlighter/scripts/shBrushJScript.js" type="text/javascript"></script>
+   <script src="../../js/syntaxhighlighter/scripts/shBrushPlSql.js" type="text/javascript"></script>
+   <script src="../../js/syntaxhighlighter/scripts/shBrushSql.js" type="text/javascript"></script>
+
+   <script type="text/javascript">
+     SyntaxHighlighter.all()
+   </script>
+
+   <!-- // <script type="text/javascript" src="../demo.js"></script> -->
+
+   <script src="codechat.js"></script>
+   
+</body>
+</html>

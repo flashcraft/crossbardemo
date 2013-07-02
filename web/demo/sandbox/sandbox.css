@@ -1,0 +1,91 @@
+body {
+   font-family: Arial, sans-serif;
+}
+
+#editor {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 50%;
+   bottom: 0;
+}
+
+#log {
+   position: fixed;
+   overflow: scroll;
+   top: 0;
+   right: 0;
+   bottom: 0;
+   width: 50%;
+   background-color: #410;
+   color: #fff;
+   font-family: Consolas, monospace;
+   padding: 0;
+   margin: 0;
+}
+
+.bbox {
+   position: fixed;
+   z-index: 1000;
+   border-radius: 8px;
+   margin-top: 8px;
+   margin-right: 28px;
+   text-align: center;
+   vertical-align: middle;
+   color: #fff;
+   font-size: 16px;
+   font-weight: 600;
+   padding-top: 8px;
+
+   -webkit-user-select: none;
+   -khtml-user-select: none;
+   -moz-user-select: -moz-none;
+   -o-user-select: none;
+   user-select: none;
+   cursor: default;
+}
+
+#runmain {
+   top: 0;
+   right: 50%;
+   width: 100px;
+   height: 30px;
+   background-color: #080;
+}
+
+#runmain:hover {
+   background-color: #0a0;
+}
+
+#runtest {
+   top: 54px;
+   right: 50%;
+   width: 100px;
+   height: 30px;
+   background-color: #080;
+}
+
+#runtest:hover {
+   background-color: #0a0;
+}
+
+#clearlog {
+   top: 0;
+   right: 0;
+   width: 100px;
+   height: 30px;
+   background-color: #06a;
+}
+
+#clearlog:hover {
+   background-color: #09f;
+}
+
+#tavendo {
+   position: fixed;
+   background-image: url(../../img/tavendo_logo_simple.png);
+   width: 154px;
+   height: 24px;
+   bottom: 32px;
+   right: 32px;
+}

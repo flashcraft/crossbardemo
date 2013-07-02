@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8" />
+
+   <link rel="shortcut icon" href="../../img/favicon.ico">
+
+   <title>WebMQ diagram</title>
+
+   <link rel="stylesheet" href="diagram.css">
+
+   <!-- Include Flash WebSocket via Conditional Comment:
+           http://msdn.microsoft.com/en-us/library/ms537512%28v=vs.85%29.aspx -->
+   <!--[if lte IE 9]>
+         <script type="text/javascript">
+           WEB_SOCKET_SWF_LOCATION = "../../flashws/WebSocketMain.swf";
+         </script>
+         <script type="text/javascript" src="../../flashws/swfobject.js"></script>
+         <script type="text/javascript" src="../../flashws/web_socket.js"></script>
+      <![endif]-->
+
+   <script src="../../js/jquery.min.js"></script>
+
+   <script src="../../js/knockout.min.js"></script>
+   <script type="text/javascript" src="../../js/autobahn.min.js"></script>
+   <script type="text/javascript" src="../util.js"></script>
+
+   <script type="text/javascript" src="diagram.js"></script>
+
+</head>
+
+<body>
+
+   <header>
+      <div id="header_inner">
+
+         <div id="demo_title">WebMQ Diagram</div>
+
+         <a href="http://tavendo.de" target="_blank">
+            <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
+         </a>
+
+      </div>
+   </header>
+
+   <div id="demo_body">
+      <div id="diagram_container">
+         <img id="square1" src="square.png">
+         <img id="arrow1_left" src="arrow_left.png">
+         <img id="arrow1_right" src="arrow_right.png">
+         <img id="square2" src="square.png">
+      </div>
+      <button id="keypress">Keypress</button>
+   </div>
+</body>
+</html>

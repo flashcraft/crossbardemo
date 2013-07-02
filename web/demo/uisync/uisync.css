@@ -1,0 +1,51 @@
+﻿
+
+
+.box
+{
+   width: 400px;
+   margin: 0 auto;
+
+}
+
+
+
+
+
+/****** slider specific ****/
+#eq
+{
+   margin: 0 0 0 3em;
+}
+
+#master
+{
+   margin: 25px 15px 0px 3em;
+}
+
+
+#eq span
+{
+   height: 120px;
+   float: left;
+   margin: 15px
+}
+
+.uisync_header
+{
+   padding: 4px;
+   margin-top: 2em;
+}
+
+.uisync_header_content
+{
+   float:left;
+   margin:-2px 5px 0 0;
+}
+
+#master
+{
+   width:260px;
+}
+
+

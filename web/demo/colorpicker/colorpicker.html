@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <meta charset="utf-8" />
+
+   <link rel="shortcut icon" href="../../img/favicon.ico">
+
+   <title>WebMQ UI Sync Demo</title>
+
+   <link rel="stylesheet" href="../demo.css">
+   <link rel="stylesheet" href="colorpicker.css">
+   <link rel="stylesheet" href="../../farbtastic/farbtastic.css">
+
+   <!-- Include Flash WebSocket via Conditional Comment:
+        http://msdn.microsoft.com/en-us/library/ms537512%28v=vs.85%29.aspx -->
+   <!--[if lte IE 9]>
+      <script type="text/javascript">
+        WEB_SOCKET_SWF_LOCATION = "../../flashws/WebSocketMain.swf";
+      </script>
+      <script type="text/javascript" src="../../flashws/swfobject.js"></script>
+      <script type="text/javascript" src="../../flashws/web_socket.js"></script>
+   <![endif]-->
+
+   <script type="text/javascript" src="../../js/jquery.min.js"></script>
+   <script type="text/javascript" src="../../farbtastic/farbtastic.js"></script>
+
+   <script type="text/javascript" src="../../js/autobahn.min.js"></script>
+
+   <script type="text/javascript" src="../util.js"></script>
+   <script type="text/javascript" src="../demo.js"></script>
+
+   <script type="text/javascript" src="colorpicker.js"></script>
+
+
+
+</head>
+<body>
+
+   <header>
+      <div id="header_inner">
+
+         <div id="demo_title">WebMQ UI Sync Demo 2</div>
+         <a href="http://tavendo.de" target="_blank">
+            <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
+
+         </a>
+
+      </div>
+   </header>
+
+   <div id="demo_body">
+      <div class="box colorpicker_box">
+
+         <div class="box_heading">Color Picker Demo</div>
+
+         <div class="box_content">
+
+            <div>
+               Controller Channel:
+               <input id="controller-channel" maxlength="6" size="6" type="text" value="{{channel}}">
+               <button id="controller-channel-switch" class="button">Switch</button>
+               <button id="controller-channel-cancel" class="button">Cancel</button>
+               <div class="new_window"><a id="new-window" href="" target="_blank">Open in additional Window</a></div>
+            </div>
+
+            <div class="colorwrappers_grouped">
+               <div class="colorwrapper">
+                  <div id="colorvalue0" class="colorvalue">#??????</div>
+                  <div id="color0" class="colorbox">
+                     <div id="picker0" class="colorpicker"></div>
+                  </div>
+               </div>
+
+               <div class="colorwrapper">
+                  <div id="colorvalue1" class="colorvalue">#??????</div>
+                  <div id="color1" class="colorbox">
+                     <div id="picker1" class="colorpicker"></div>
+                  </div>
+               </div>
+
+               <div class="colorwrapper">
+                  <div id="colorvalue2" class="colorvalue">#??????</div>
+                  <div id="color2" class="colorbox">
+                     <div id="picker2" class="colorpicker"></div>
+                  </div>
+               </div>
+            </div>
+
+            <div class="cb"></div>
+
+            <div id="colorresults">
+
+               <div class="cbwrapper">
+                  <div id="c0a" class="cba"></div>
+                  <div id="c1a" class="cba"></div>
+               </div>
+
+               <div class="cbwrapper">
+                  <div id="c0b" class="cba"></div>
+                  <div id="c2a" class="cba"></div>
+               </div>
+
+               <div class="cbwrapper">
+                  <div id="c1b" class="cba"></div>
+                  <div id="c2b" class="cba"></div>
+               </div>
+
+               <div class="cb"></div>
+
+               <div id="colortext0" class="colortextwrapper">
+                  <div id="colortext1a">This is a test text.</div>
+                  <div id="colortext2a">This is a test text.</div>
+               </div>
+
+               <div id="colortext1" class="colortextwrapper">
+                  <div id="colortext0b">This is a test text.</div>
+                  <div id="colortext2b">This is a test text.</div>
+               </div>
+
+               <div id="colortext2" class="colortextwrapper">
+                  <div id="colortext0c">This is a test text.</div>
+                  <div id="colortext1c">This is a test text.</div>
+               </div>
+
+            </div>
+
+            <div id="colorpicker_status_line" class="status_line">
+               Status: <span class="statusline"></span>
+            </div>
+
+            <button id="helpButton" class="button">?</button> 
+         </div>
+      </div>
+
+      <div class="info_bar info_bar_colorpicker" style="display: none">
+         <p class="info_bar_heading">
+            This is a demonstration of using Tavendo WebMQ to enable live synching of UI elements for collaboration.
+         </p>
+         <ul>
+            <li>
+               Works across several tabs or browsers by setting a common controller
+               channel in all instances.
+            </li>
+            <li>
+               All interactions on this demo occur in response to messages routed through an instance of Tavendo WebMQ. 
+               Information the instance used is displayed in the status line at the bottom of the demo box. 
+            </li>
+            <li>
+               The demo uses <a href="http://www.acko.net/dev/farbtastic">Farbtastic</a> color picker
+            created by Steven Wittens and licensed under GPL 2. <i>The Farbtastic code was slightly
+            modified allowing to suppress color change events being generated when color is set externally
+            instead of by the user from within the control.</i>
+            </li>
+         </ul>
+      </div>
+   </div>
+
+</body>
+</html>

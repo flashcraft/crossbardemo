@@ -1,0 +1,436 @@
+/********** web fonts locally *******/
+
+@font-face {
+    font-family: 'open_sansregular';
+    src: url('../../fonts/opensans-regular-webfont.eot');
+    src: url('../../fonts/opensans-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../../fonts/opensans-regular-webfont.woff') format('woff'),
+         url('../../fonts/opensans-regular-webfont.ttf') format('truetype'),
+         url('../../fonts/opensans-regular-webfont.svg#open_sansregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+html {
+   /*overflow-y: scroll;*/
+   min-height: 100%;
+   /*height: 100%;*/
+   width: 100%;
+}
+
+
+body {
+
+   /*width: 100%;*/
+   /* extend background image across entire visibile viewport
+      even if content extends beyond & is scrolled */
+   /* does not render the gradient across the content, but the viewport ! */
+   height: 100%;
+   margin: 0;
+   background-repeat: no-repeat;
+   background-attachment: fixed;
+
+   
+   font-family: 'open_sansregular', sans-serif;
+   /*font-family: Arial;*/
+   
+   font-size: 14px;
+   background-color: #fafafa;
+   
+   /*background-image: -webkit-linear-gradient(top right, #7F2F09, #F54D00);
+   background-image:    -moz-linear-gradient(top right, #7F2F09, #F54D00);
+   background-image:     -ms-linear-gradient(top right, #7F2F09, #F54D00);
+   background-image:      -o-linear-gradient(top right, #7F2F09, #F54D00);
+   background-image:         linear-gradient(top right, #7F2F09, #F54D00);
+   filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorstr='#F54D00', endColorstr='#7F2F09');*/
+
+   
+
+}
+
+a
+{
+   color: #555;
+}
+a:hover
+{
+   color: #f60;
+}
+
+a > img
+{
+   border-style: none;
+}
+
+
+section
+{
+   margin: 3em 5em 0 3em;
+
+}
+
+
+header {
+   position: relative;
+   width: 100%;
+   height: 87px;
+}
+
+#header_inner
+{
+   position: relative;
+   width: 960px;
+   height: 87px;
+   margin:auto;
+   padding: 0;
+   color: #666;
+
+}
+
+#demo_title
+{
+   font-size: 31px;
+   color: #f60;
+   position: absolute;
+   left: 330px;
+   bottom: 12px;
+}
+
+#tavendo_logo {
+   position: absolute;
+   right: 20px;
+   bottom: 17px;
+}
+#demo_body
+{
+   width: 850px;
+   height: 100%;
+   margin: 3em auto;
+   position: relative;
+}
+
+.notextselect {
+   -webkit-touch-callout: none;
+   -webkit-user-select: none;
+   -khtml-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+
+   cursor: default;
+}
+
+
+
+
+/**** dual-color boxes ***/
+
+.box
+{
+   width: 366px;
+   margin: 0 19px;
+   border-radius: 3px; /* same as the heading and the content boxes have*/
+   box-shadow: 0 0 10px 2px rgba(0, 0, 0, .5);
+   position: relative;
+   word-break: break-all;
+}
+
+
+.box_left
+{
+   float: left;
+}
+
+.box_right
+{
+   float: right;
+}
+
+.box_centered
+{
+   margin: 0 auto;
+}
+
+
+.box_heading
+{
+   /**** grey *****/
+   background-color: #CCC;
+   background-image: -webkit-linear-gradient(top, #DDD, #ADADAD);
+   background-image:    -moz-linear-gradient(top, #DDD, #ADADAD);
+   background-image:     -ms-linear-gradient(top, #DDD, #ADADAD);
+   background-image:      -o-linear-gradient(top, #DDD, #ADADAD);
+   background-image:         linear-gradient(to bottom, #DDD, #ADADAD);
+   /*filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#dddddd', endColorstr='#adadad');*/
+
+
+   color: #FFF;
+   color: #777;
+   font-size: 16px;
+   font-weight: normal;
+
+   /*border: 1px solid #7C95A4;*/
+   border-style: solid;
+   border-width: 1px;
+   border-color: #A0A0A0 #A0A0A0 #ff6600;
+   border-bottom: solid 2px #ff6600;
+   /*border-bottom: 1px solid #839CAB;*/
+   border-radius: 3px 3px 0 0;
+   -webkit-border-radius: 3px 3px 0 0;
+
+   padding: 8px 18px 8px 12px;
+}
+
+.box_content
+{
+   position: relative;
+
+   color: #333;
+   font-size: 13px;
+   line-height: 18px;
+
+   background-color: #e9f1f4;
+   background-color: #FFE9DA;
+   background-color: #f4f4f4;
+   /*
+   border-style: solid;
+   border-width: 1px 1px 2px;
+   border-color: #E9f1f4 #d8dee2 #d8dee2;
+   */
+   border-style: solid;
+   border-width: 1px;
+   border-color: #E9f1f4 #A0A0A0 #A0A0A0;
+
+   /*border-top: 1px solid #E9f1f4;*/
+   border-radius: 0 0 3px 3px;
+   -webkit-border-radius: 0 0 3px 3px;
+
+   padding: 1.2em;
+}
+
+
+.box_caption
+{
+   margin: 0;
+   margin-bottom: 4px;
+}
+.box_second
+{
+   margin: 0.5em 0 0 0;
+   margin-bottom: 4px;
+}
+
+.button
+{
+
+   background-color: #D9D9D9;
+   background: -webkit-linear-gradient(top, #fff, #e1e1e1);
+   background:    -moz-linear-gradient(top, #fff, #e1e1e1);
+   background:     -ms-linear-gradient(top, #fff, #e1e1e1);
+   background:      -o-linear-gradient(top, #fff, #e1e1e1);
+   background:         linear-gradient(to bottom, #fff, #e1e1e1);
+   /*filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#ffffff', endColorstr='#e1e1e1');*/
+
+   color: #111;
+
+   font-weight: 600;
+   text-align: center;
+   padding:0 13px;
+   margin-left: 1px;
+
+
+   border: none;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   border-bottom: 1px solid #ebebeb;
+
+   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px 0px;
+   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px 0px;
+   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px 0px;
+
+   padding: 3px 6px;
+   margin: 2px;
+}
+
+
+.button:hover
+{
+   background-color: #777;
+   background: -webkit-linear-gradient(top, #e8e8e8, #8d8d8d);
+   background:    -moz-linear-gradient(top, #e8e8e8, #8d8d8d);
+   background:     -ms-linear-gradient(top, #e8e8e8, #8d8d8d);
+   background:      -o-linear-gradient(top, #e8e8e8, #8d8d8d);
+   background:         linear-gradient(to bottom, #e8e8e8, #8d8d8d);
+   /*filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#e8e8e8', endColorstr='#8d8d8d');*/
+
+   color: #fff;
+
+   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px 0px;
+   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px 0px;
+   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px 0px;
+}
+
+
+.button:disabled
+{
+   background-color: #ddd;
+
+   color: #aaa;
+}
+
+.box_content_alt_1
+{
+   height: 210px;
+}
+
+.status_line
+{
+   clear: both;
+   left: 0;
+
+   font-size: 90%;
+   color: #777;
+   margin: 1em 0 0 0;
+}
+
+.statusline_outside
+{
+}
+
+/** info box for the demo ***/
+
+.info_bar
+{
+   clear: both;
+    /*float: right;*/
+   width: 80%;
+
+   background-color: #DFF7FB;
+   background-color: #f4f4f4;
+   color: #888;
+
+   border-radius: 3px;
+
+   font-size: 13px;
+
+   padding: 1em 2em;
+   margin: 2em auto 4em auto;
+
+   line-height: 16px;
+   box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.3);
+}
+
+.info_bar ul
+
+{
+   line-height: 16px;
+   padding-left: 3em;
+}
+
+.info_bar li
+{
+   /*list-style-type: decimal;*/
+   list-style-type: initial;
+   background-image: none;
+   padding-left: 0;
+   margin-bottom: 10px;
+   width: 90%;
+}
+
+.info_bar_heading
+{
+   margin-bottom: 25px;
+}
+
+/*** for position on all demos with a central demo box ****************/
+
+#helpButton
+{
+   position: absolute;
+   left: 103%;
+   margin: 0em 0 0 0;
+}
+
+
+.flatButton
+{
+   background-color: #694545;
+   
+
+   font-weight: 600;
+   text-align: center;
+   
+   padding: 5px 9px;
+   margin: 2px;
+
+
+   border: none;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   
+   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px 0px;
+   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px 0px;
+   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px 0px;
+
+   
+   background-image: -webkit-linear-gradient(top right, #F0F0F0, #CACACA);
+   background-image:    -moz-linear-gradient(top right, #F0F0F0, #CACACA);
+   background-image:     -ms-linear-gradient(top right, #F0F0F0, #CACACA);
+   background-image:      -o-linear-gradient(top right, #F0F0F0, #CACACA);
+   background-image:         linear-gradient(top right, #F0F0F0, #CACACA);
+   /*filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorstr='#f0f0f0', endColorstr='#cacaca');*/
+}
+
+
+flatButton:hover
+{
+   background-color: #777;
+   color: #fff;
+}
+
+
+/** oracle demos error overlay formatting */
+
+.oracle_demo .error_overlay
+{
+   width: 100%;
+   
+   position: absolute;
+   top: 10%;
+ 
+   background-color: rgba(0, 0, 0, 0.8);
+   color: #fff;  
+
+   padding: 2em 0;
+}
+
+.oracle_demo .error_overlay_content_block
+{
+   padding: 0 2em;
+}
+
+.oracle_demo #working_version
+{
+   margin: 2em 1em 1em;
+   padding: 1em;
+   border: 1px solid white;
+}
+.oracle_demo #working_version a
+{
+   color: #f60;
+}
+.oracle_demo #working_version a:hover
+{
+   color: #C04D00;
+}
+/*** generally used layout hacks ***/
+
+.clearboth
+{
+   clear: both;
+}
+.spacer_20
+{
+   height: 20px;
+}

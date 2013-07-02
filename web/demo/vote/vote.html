@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <link rel="shortcut icon" href="../../img/favicon.ico">
+   <title>WebMQ Vote Demo</title>
+   <link rel="stylesheet" href="../demo.css">
+   <link rel="stylesheet" href="vote.css">
+</head>
+<body>
+   <header>
+      <div id="header_inner">
+
+         <div id="demo_title">WebMQ Vote Demo</div>
+         
+         <a href="http://tavendo.de" target="_blank">
+            <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
+
+         </a>
+
+      </div>
+   </header>
+
+   <div id="demo_body">
+
+      <h1>Vote for your favourite flavour of ice cream!</h1>
+      <div id="voteContainer">
+         <div>
+            <span>
+               Banana
+            </span>
+            <input tpye="text" id="votesBanana" disabled>
+            </input>
+            <button id="Banana">
+               Vote
+            </button>
+         </div>
+         <div>
+            <span>
+               Lemon
+            </span>
+            <input tpye="text" id="votesLemon" disabled>
+            </input>
+            <button id="Lemon">
+               Vote
+            </button>
+         </div>
+         <div>
+            <span>
+               Chocolate
+            </span>
+            <input tpye="text" id="votesChocolate" disabled>
+            </input>
+            <button id="Chocolate">
+               Vote
+            </button>
+         </div>
+      </div>
+      <div id="resetVotesContainer">
+         <button id="resetVotes">
+            Reset Votes
+         </button>
+      </div>
+   </div>
+
+   <div id="codeContainer">
+      <div class="codehalf" id="JSCode">
+         <pre class="brush: javascript; toolbar: false; gutter: false; auto-links: false; highlight: [5, 12, 25, 31, 42]">
+// [...] - boilerplate code to connect to WebMQ
+
+function main (session) {
+   // subscribe to future vote event
+   session.subscribe("http://tavendo.de/webmq/demo/vote#onvote", 
+      function(topicUri, event) {
+         document.getElementById("votes" + event.subject).value = 
+            event.votes;
+      });
+
+   // get the current vote count
+   session.call("http://tavendo.de/webmq/demo/vote#get").then(
+      function(res){
+         for(var i = 0; i < res.length; i++) {
+            document.getElementById("votes" + res[i].subject).value = 
+               res[i].votes;
+         }
+   }, ab.log);
+
+   // wire up vote buttons
+   var voteButtons = document.getElementById("voteContainer").
+      getElementsByTagName("button");
+   for(var i = 0; i < voteButtons.length; i++) {
+      voteButtons[i].onclick = function(evt) {
+         session.call("http://tavendo.de/webmq/demo/vote#vote", 
+               evt.target.id).then(ab.log, ab.log);
+      }
+   }
+
+   // subscribe to vote reset event
+   session.subscribe("http://tavendo.de/webmq/demo/vote#onreset", 
+      function() {
+         var voteCounters = document.getElementById("voteContainer").
+            getElementsByTagName("input");
+         for(var i = 0; i < voteCounters.length; i++) {
+            voteCounters[i].value = 0;
+         }
+      });
+
+   // wire up reset button   
+   document.getElementById("resetVotes").onclick = function() {
+      session.call("http://tavendo.de/webmq/demo/vote#reset").
+         then(ab.log, ab.log);
+   };
+}
+         </pre>
+      </div>
+      <div class="codehalf" id="PLSQLCode">
+         <pre class="brush: plsql; toolbar: false; gutter: false; auto-links: false; highlight: [4, 21, 48, 54, 64]">
+CREATE or REPLACE PACKAGE BODY votes_api
+AS
+
+   FUNCTION get RETURN JSON_LIST
+   AS
+      l_res       SYS_REFCURSOR;
+   BEGIN
+      -- open cursor from query
+      --
+      OPEN l_res FOR
+         SELECT subject AS "subject",
+                votes   AS "votes"
+           FROM votes ORDER BY subject;
+
+      -- transform result set into JSON list of object
+      --
+      RETURN json_dyn.executeList(l_res);
+   END get;
+
+
+   FUNCTION vote (p_subject VARCHAR2) RETURN NUMBER
+   IS
+      l_votes     NUMBER;
+      l_res       JSON := JSON();
+   BEGIN
+      -- check args
+      --
+      IF p_subject NOT IN ('Banana', 'Lemon', 
+         'Chocolate') THEN
+         -- raise custom exception, this gets transformed 
+         -- into a proper RPC error return
+         --
+         webmq.raise(BASEURI || 'invalid_argument',
+            'No subject "' || p_subject || '" to vote on.');
+      END IF;
+
+      -- update votes, returing new count
+      --
+      UPDATE votes SET votes = votes + 1
+         WHERE subject = p_subject
+            RETURNING votes INTO l_votes;
+      COMMIT;
+
+      -- create and publish PubSub event
+      --
+      l_res.put('subject', p_subject);
+      l_res.put('votes', l_votes);
+      webmq.publish(BASEURI || 'onvote', l_res);
+
+      RETURN l_votes;
+   END vote;
+
+
+   PROCEDURE reset
+   AS
+   BEGIN
+      -- reset all votes
+      --
+      UPDATE votes SET votes = 0;
+      COMMIT;
+
+      -- publish event with no payload
+      --
+      webmq.publish(BASEURI || 'onreset');
+   END reset;
+
+END;
+         </pre>
+      </div>
+      <div class="clearboth"></div>
+   </div>
+
+   <link href="../../js/syntaxhighlighter/styles/shCore.css" rel="stylesheet" type="text/css" />
+   <link href="../../js/syntaxhighlighter/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
+
+   <script src="../../js/syntaxhighlighter/scripts/shCore.js" type="text/javascript"></script>
+   <script src="../../js/syntaxhighlighter/scripts/shBrushJScript.js" type="text/javascript"></script>
+   <script src="../../js/syntaxhighlighter/scripts/shBrushPlSql.js" type="text/javascript"></script>
+
+   <script type="text/javascript">
+     SyntaxHighlighter.all()
+   </script>
+
+   <script type="text/javascript" src="../../js/jquery.min.js"></script>
+   <script type="text/javascript" src="../../js/autobahn.min.js"></script>
+   <script type="text/javascript" src="../util.js"></script>
+   <script src="vote.js"></script>
+</body>
+</html>

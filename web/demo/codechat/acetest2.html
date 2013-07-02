@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>ACE in Action</title>
+<style type="text/css" media="screen">
+    #editor { 
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+</style>
+</head>
+<body>
+
+<!-- <div id="editor">function foo(items) {
+    var x = "All this is syntax highlighted";
+    return x;
+}</div> -->
+<div id="container">
+</div>
+    
+<!-- <script src="http://rawgithub.com/ajaxorg/ace-builds/master/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script> -->
+
+
+<script src="../../ace/ace.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+    var sessions = {};
+        
+    var editor = ace.edit("container");
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/javascript");
+
+    function addSessions(num) {
+        for(var i = 0; i < num; i++) {
+            var session = ace.createEditSession("function addMessage(event) {\r\n\r\n   \/\/ get the parts of the message event\r\n   var message = event.message;\r\n   var messageNick = event.nick;\r\n   var nickColor = getNickColor(messageNick);\r\n\r\n   var messageTime = formattedMessageTime();\r\n\r\n   var displayMessage = document.createElement(\"div\");\r\n   \r\n   \/\/ construct the message chrome\r\n   displayMessage.classList.add(\"chatMessage\");\r\n   var header = document.createElement(\"div\");\r\n   header.classList.add(\"chatHeader\");\r\n   header.innerHTML = \"<span style=\'color: \" + nickColor + \";\'>\" + messageNick + \"<\/span> <span class=\'messageTime\'>\" + messageTime + \"<\/span>\";\r\n   displayMessage.appendChild(header);\r\n   \r\n   \/\/ construct the message blocks\r\n   for(var i = 0; i < message.length; i++) {\r\n\r\n      \/\/ store the code for later pasting into the editor\r\n      var codeBlock = message[i];\r\n      chatCodeBlocks[++chatCodeBlockIdCounter] = codeBlock;\r\n\r\n      var messageBlock = document.createElement(\"div\");\r\n      messageBlock.classList.add(\"chatCodeBlock\");\r\n      \r\n      \/\/ figure out which brush to use\r\n      var brush = message[i].language;\r\n      \r\n      \/\/ add the code with code higlighter framing\r\n      messageBlock.innerHTML = \"<pre class=\'brush: \" + brush +\"; toolbar: false; gutter: true; auto-links: false; highlight: []\'>\" + message[i].content + \"<\/pre>\";\r\n      \r\n      \/\/ add the copy button\r\n      var copyButton = document.createElement(\"button\");\r\n      copyButton.classList.add(\"copyButton\");\r\n      copyButton.innerHTML = \"Copy\";\r\n      var id = chatCodeBlockIdCounter;\r\n      copyButton.addEventListener(\"click\", function() {\r\n            \/\/ console.log(\"copy button pressed\", id);\r\n\r\n            copyCodeBlockFromChat(id);\r\n      });\r\n      messageBlock.appendChild(copyButton);\r\n\r\n      displayMessage.appendChild(messageBlock);\r\n   }\r\n   messagesBox.appendChild(displayMessage);\r\n\r\n   \/\/ trigger re-run of syntaxHighligher\r\n   SyntaxHighlighter.highlight()\r\n\r\n   \/\/ scroll messages box\r\n   messagesBox.scrollTop = messagesBox.scrollHeight;\r\n};", "ace/mode/javascript");
+            sessions[i] = session;
+        }
+    }
+
+    function destroySessions(num) {
+        for(var i = 0; i < num; i++) {
+            sessions[i].doc = null;
+            delete sessions[i];
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+﻿
+
+/**** dual-color boxes ***/
+
+.box
+{
+   width: 400px;
+   margin: 0 0 1.5em;
+   border-radius: 3px; /* same as the heading and the content boxes have*/
+   box-shadow: 0 0 10px 2px rgba(0, 0, 0, .5);
+   word-break: break-all;
+   position: relative;
+}
+
+
+
+
+
+
+
+/*** generally used layout hacks ***/
+
+.clearboth
+{
+   clear: both;
+}
+.spacer_20
+{
+   height: 20px;
+}
+
+/****** color picker ******/
+
+.colorwrappers_grouped
+{
+   margin: 1em 0 0 2em;
+}
+
+.colorbox {
+   width: 230px;
+   height: 230px;
+   background-color: #fff;
+   border: solid 1px #ccc;
+}
+
+.colorpicker {
+   position: relative;
+   top: 20px;
+   left: 20px;
+}
+
+.colorvalue {
+   position: relative;
+   color: #777;
+   left: 6px;
+}
+
+.colorwrapper {
+   float: left;
+   margin: 6px;
+}
+
+.cb {
+   clear: both;
+}
+
+.cbwrapper {
+   padding: 10px;
+   float: left;
+}
+
+.cba {
+   width: 92px;
+   height: 92px;
+   float: left;
+}
+
+.colortextwrapper {
+   font-size: 18px;
+   width: 160px;
+   margin: 10px;
+   padding: 12px;
+   float: left;
+}
+
+#colorresults {
+   margin-top: 0px;
+   margin-left: 60px;
+   margin-bottom: 0em;
+   height: 200px;
+   width: 620px;
+/*   border-radius: 12px;
+   border: solid 1px #444;*/
+   padding: 18px;
+}
+
+/*#colorpicker_wrapper .webmq_demo_info_bar_pubsub
+{
+   
+   margin-top: 3em;
+}
+
+#colorpicker_wrapper .webmq_demo_box
+{
+   width: 90%;
+   float: none;
+   margin: 0 auto;
+}*/
+
+.colorpicker_box
+{
+   width: 100%;
+   float: none;
+   margin: 0 auto;
+}
+
+/*.info_bar_colorpicker
+{
+   float: none;
+   width: 80%;
+   margin: 3em auto;
+}*/

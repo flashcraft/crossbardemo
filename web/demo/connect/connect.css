@@ -1,0 +1,54 @@
+*
+{
+   -moz-box-sizing: border-box;
+   -webkit-box-sizing: border-box;
+   box-sizing: border-box;
+}
+
+html
+{
+   margin: 0;
+   padding: 0;
+   height: 100%;
+}
+
+body
+{
+   background-color: #fff;
+   color: #f33;
+   font-family: 'Quattrocento Sans', sans-serif;
+/*   background-image: -moz-linear-gradient(to bottom left, #000, #bb4b00);
+   background-image: -webkit-linear-gradient(top right, #000, #bb4b00);
+   background-image: -o-linear-gradient(top right, #000, #bb4b00);*/
+   width: 100%;
+   min-height: 100%;
+   /*min-height: 900px;*/
+   position: relative;
+   margin: 0;
+}
+
+
+
+
+
+#demo_body
+{
+   width: 850px;
+   margin: 3em auto;
+}
+
+
+
+
+#publish_button
+{
+   display: block;
+   width: 8em;
+   margin: auto auto;
+}
+
+#helpButton
+{
+   left: 60%;
+   bottom: -40px;
+}

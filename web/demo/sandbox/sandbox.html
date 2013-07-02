@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <link rel="shortcut icon" href="../../img/favicon.ico">
+      <title>WebMQ Code Sandbox</title>
+      <link rel="stylesheet" href="sandbox.css">
+      <!-- Include Flash WebSocket via Conditional Comment:
+           http://msdn.microsoft.com/en-us/library/ms537512%28v=vs.85%29.aspx -->
+      <!--[if lte IE 9]>
+         <script type="text/javascript">
+           WEB_SOCKET_SWF_LOCATION = "../../flashws/WebSocketMain.swf";
+         </script>
+         <script type="text/javascript" src="../../flashws/swfobject.js"></script>
+         <script type="text/javascript" src="../../flashws/web_socket.js"></script>
+      <![endif]-->
+      <script type="text/javascript" src="../../js/jquery.min.js"></script>
+      <script type="text/javascript" src="../../js/autobahn.min.js"></script>
+      <script type="text/javascript" src="../util.js"></script>
+   </head>
+   <body>
+<div id="editor">// connect to WebMQ
+function main() {
+
+   ab.connect(wsuri,
+
+      // session established!
+      function (sess) {
+         session = sess;
+         log("connected to " + wsuri + " with session ID " + session.sessionid());
+
+         // authenticate as anonymous
+         session.authreq().then(function () {
+            session.auth().then(function (permissions) {
+               log("authenticated with permissions", permissions);
+
+               // run our test stuff ..
+               startup();
+            }, log);
+         }, log);
+      },
+
+      // session closed!
+      function (code, reason) {
+         log(reason);
+      }
+   );
+}
+
+var mytopic = "http://tavendo.de/webmq/demo/sandbox#evt1";
+
+// startup our test stuff ..
+function startup() {
+
+   // subscribe to topic and receive events ..
+   session.subscribe(mytopic, function (topic, evt) {
+
+      // do awesome stuff with event ..
+      log("received event for topic", topic);
+      log(evt);
+   });
+
+   test();
+}
+
+// our test stuff ..
+test = function () {
+   // publish to topic an event ..
+   var myevent = {name: 'Jim', awesome: true, points: 666};
+   for (var i = 0; i < 5; ++i) {
+      session.publish(mytopic, myevent);
+   }
+
+   // call some remote procedure ..
+   //session.call("http://api.wamp.ws/procedure#echo", "Hello!").then(log, log);
+
+   //session.prefix("wp", "http://wordpress.com#");
+   //session.call("wp:read", "sites/en.blog.wordpress.com").then(log, log);
+   //session.call("wp:read", "sites/en.blog.wordpress.com/posts/7").then(log, log);
+   //session.call("wp:read", "sites/en.blog.wordpress.com/posts/7/likes").then(log, log);
+};
+
+main();
+</div>
+      <pre id="log"></pre>
+      <div class="bbox" id="runmain">Eval</div>
+      <div class="bbox" id="runtest">Test</div>
+      <div class="bbox" id="clearlog">Clear</div>
+      <div id="tavendo"></div>
+
+      <script src="../../ace/ace.js" type="text/javascript" charset="utf-8"></script>
+      <script src="sandbox.js" type="text/javascript" charset="utf-8"></script>
+   </body>
+</html>

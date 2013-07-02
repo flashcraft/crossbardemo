@@ -1,0 +1,130 @@
+/********** web fonts locally *******/
+
+
+@font-face {
+    font-family: 'open_sansregular';
+    src: url('../../fonts/opensans-regular-webfont.eot');
+    src: url('../../fonts/opensans-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../../fonts/opensans-regular-webfont.woff') format('woff'),
+         url('../../fonts/opensans-regular-webfont.ttf') format('truetype'),
+         url('../../fonts/opensans-regular-webfont.svg#open_sansregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+html {
+   overflow-y: scroll;
+}
+
+body {
+
+   color: #1F1F1F;
+   font-family: 'open_sansregular', sans-serif;
+   /*font-family: Arial;*/
+   margin: 0;
+   font-size: 14px;
+   background-color: #fafafa;
+   position: relative;
+   
+}
+
+a
+{
+   color: #555;
+}
+a:hover
+{
+   color: #f60;
+}
+
+a > img
+{
+   border-style: none;
+}
+
+
+header {
+   position: relative;
+   width: 100%;
+   height: 87px;
+}
+
+#header_inner
+{
+   position: relative;
+   width: 960px;
+   height: 87px;
+   margin:auto;
+   padding: 0;
+   color: #666;
+
+}
+
+#demo_title
+{
+   font-size: 24px;
+   position: absolute;
+   left: 330px;
+   bottom: 12px;
+}
+
+#tavendo_logo {
+   position: absolute;
+   right: 20px;
+   bottom: 17px;
+}
+#demo_body
+{
+   width: 850px;
+   height: 800px;
+   border: 1px solid black;
+   margin: 5em auto;
+   position: relative;
+}
+
+
+/* element positionioning */
+/* needs to be top & left in order for movement to work */
+#square1
+{
+   position: absolute;
+   top: 100px;
+   left: 347px;
+   /*-webkit-transition: opacity 1s ease-in-out;
+   -moz-transition: opacity 1s ease-in-out;
+   -o-transition: opacity 1s ease-in-out;
+   transition: opacity 1s ease-in-out;*/
+}
+#square2
+{
+   position: absolute;
+   top: 100px;
+   left: 100px;
+}
+#arrow1_left
+{
+   position: absolute;
+   top: 55px;
+   left: 214px;
+}
+#arrow1_right
+{
+   position: absolute;
+   top: 152px;
+   left: 228px;
+}
+
+
+#diagram_container > img
+{
+   opacity: 0;
+   /*-webkit-transition: opacity 1s ease-in-out;
+   -moz-transition: opacity 1s ease-in-out;
+   -o-transition: opacity 1s ease-in-out;
+   transition: opacity 1s ease-in-out;*/
+}
+#diagram_container .visible
+{
+   opacity: 1;
+}

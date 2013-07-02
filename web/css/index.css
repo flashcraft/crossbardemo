@@ -1,0 +1,195 @@
+/********** web fonts locally *******/
+
+
+/********** web fonts locally *******/
+
+
+@font-face {
+   font-family: 'Open Sans';
+   font-style: normal;
+   font-weight: normal;
+   src: url('../fonts/OpenSans-Regular.ttf');
+}
+
+html {
+   overflow-y: scroll;
+   height: auto;
+
+}
+
+body {
+   width: 100%;
+   color: #1F1F1F;
+   font-family: 'Open Sans', sans-serif;
+   /*font-family: Arial;*/
+   margin: 0;
+   font-size: 14px;
+   background-color: #fafafa;
+   
+}
+body.wide
+{
+   width: 1280px;
+   margin: 0 auto;
+}
+
+a
+{
+   color: #555;
+}
+a:hover
+{
+   color: #f60;
+}
+a > img
+{
+   border-style: none;
+}
+
+section
+{
+   margin: 3em 5em 0 3em;
+
+}
+
+
+header {
+   position: relative;
+   width: 100%;
+   margin: 0 auto;
+   height: 70px;
+}
+.wide .header
+{
+   width: 1280px;
+}
+
+#header_inner
+{
+   position: relative;
+   width: 960px;
+   height: 70px;
+   margin:auto;
+   padding: 0;
+   color: #666;
+
+}
+.wide #header_inner
+{
+   width: 1280px;
+}
+#demo_title
+{
+   position: absolute;
+   left: 323px;
+   bottom: 12px;
+}
+.wide #demo_title
+{
+   left: 545px;
+}
+
+#tavendo_logo {
+   position: absolute;
+   right: 20px;
+   bottom: 17px;
+}
+#demo_body
+{
+   width: 980px;
+   margin: 1em auto;
+}
+.wide #demo_body
+{
+   width: 1280px;
+   
+}
+
+.demos_list
+{
+   list-style: none;
+   margin: 2em 0 0 -2em;
+}
+
+.demos_list > li
+{
+   float: left;
+   width: 33%;
+   height: 290px;
+   margin-bottom: 1.5em;
+   position: relative;
+}
+
+.wide .demos_list > li
+{
+   width: 25%;
+}
+/*.demos_list > li:last-of-type
+{
+   float: none;
+   clear: both;
+   margin: 0 auto;
+}*/
+
+.demos_list > li  a
+{
+   display: block;
+   background-color: #aaa;
+   border-radius: 15px;
+   
+   padding: 10px 0;
+   width: 250px;
+   margin: 0 auto;
+      
+   color: white;
+   font-size: 20px;
+   text-align: center;
+   vertical-align: middle;
+   text-decoration: none; 
+   /*filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorstr='#cccccc', endColorstr='#aaaaaa');*/
+   box-shadow: 0 0 12px 2px rgba(0, 0, 0, 0.3);
+}
+
+.demos_list > li  a:hover
+{
+   background-color: #888;
+}
+
+.demos_list > li > .link_disable > a
+{
+
+}
+.demos_list > li > .link_disable > a:hover
+{
+   background-color: #aaa;
+}
+
+.demos_list > li > img
+{
+   display: block;
+   margin: 1em auto;
+   width: 280px;
+   height: auto;
+   box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, 0.5); 
+}
+
+.demos_list > li > img.noresize
+{
+   width: auto;
+}
+
+.demo_not_working
+{
+   background-color: #fff;
+   border: 1px solid grey;
+   color: #f60;
+
+   text-align: center;
+
+   width: 20em;
+   padding: 1em;
+   margin: auto;
+
+   position: relative;
+   bottom: 11em;
+}

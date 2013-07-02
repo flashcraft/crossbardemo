@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <meta charset="utf-8" />
+
+   <link rel="shortcut icon" href="../../img/favicon.ico">
+
+   <title>WebMQ UI Sync Demo</title>
+
+   <!-- Include Flash WebSocket via Conditional Comment:
+        http://msdn.microsoft.com/en-us/library/ms537512%28v=vs.85%29.aspx -->
+   <!--[if lte IE 9]>
+      <script type="text/javascript">
+        WEB_SOCKET_SWF_LOCATION = "../../flashws/WebSocketMain.swf";
+      </script>
+      <script type="text/javascript" src="../../flashws/swfobject.js"></script>
+      <script type="text/javascript" src="../../flashws/web_socket.js"></script>
+   <![endif]-->
+
+   <link href="../demo.css" rel="stylesheet">
+   
+   <link rel="stylesheet" href="uisync.css">
+   <link rel="stylesheet" href="../../jqueryui/css/ui-lightness/jquery-ui-1.8.23.custom.css">
+
+   <script type="text/javascript" src="../../js/jquery.min.js"></script>
+   <script type="text/javascript" src="../../jqueryui/js/jquery-ui-1.8.23.custom.min.js"></script>
+
+   <script type="text/javascript" src="../../js/autobahn.min.js"></script>
+
+   <script type="text/javascript" src="../util.js"></script>
+   <script type="text/javascript" src="../demo.js"></script>
+
+   <script type="text/javascript" src="uisync.js"></script>
+
+
+
+</head>
+<body>
+
+   <header>
+      <div id="header_inner">
+
+         <div id="demo_title">WebMQ UI Sync Demo 1</div>
+         <a href="http://tavendo.de" target="_blank">
+            <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
+
+         </a>
+
+      </div>
+   </header>
+
+   <section id="demo_body">
+
+      <!--<div class="box box_left">-->
+      <div class="box box_centered">
+
+         <div class="box_heading">
+            Sliders Demo
+         </div>
+
+            <div class="box_content">
+
+               <div>
+                  Controller Channel: <input type="text" id="controller-channel" size="6" maxlength="6" value="{{channel}}">
+                  <button id="controller-channel-switch" class="button">Switch</button>
+                  <button id="controller-channel-cancel" class="button">Cancel</button>
+                  <div class="new_window"><a id="new-window" href="" target="_blank">Open in additional Window</a></div>
+               </div>
+
+               <div class="demo">
+
+                  <p class="ui-state-default ui-corner-all ui-helper-clearfix uisync_header">
+                     <span class="ui-icon ui-icon-volume-on uisync_header_content"></span>
+                     Master volume
+                  </p>
+
+                  <div id="master"></div>
+
+                  <p class="ui-state-default ui-corner-all uisync_header">
+                     <span class="ui-icon ui-icon-signal uisync_header_content"></span>
+                     Graphic EQ
+                  </p>
+
+                  <div id="eq">
+                     <span>88</span>
+                     <span>77</span>
+                     <span>55</span>
+                     <span>33</span>
+                     <span>40</span>
+                     <span>45</span>
+                     <span>70</span>
+                  </div>
+
+               </div>
+
+               <div class="clearboth spacer_20"></div>
+
+               <div id="sliders_status_line" class="status_line">
+                  Status: <span class="statusline"></span>
+               </div>
+
+               <button id="helpButton" class="button">?</button> 
+
+         </div>
+      </div>
+
+      <div class="info_bar"  style="display: none;">
+
+         <p class="info_bar_heading">
+            This is a demonstration of using Tavendo WebMQ
+            to enable live syncing of jQuery UI elements across browsers.
+         </p>
+         <ul>
+            <li>
+               Works across several tabs or browsers by setting a common controller
+               channel in all instances.
+            </li>
+            <li>
+               All interactions on this demo occur in response to messages routed through an instance of Tavendo WebMQ.
+               Information on which instance is used is displayed in the status line at the bottom of the demo box. 
+              
+            </li>
+         </ul>
+      </div>
+
+      <div class="clearboth"></div>
+
+   </section>
+
+</body>
+</html>
