@@ -23,7 +23,8 @@ var buttons = [];
  * on refresh (F5) it succeeds. Needs further investigation.
  * With the sound files served from Apache, this does not happen ..
  */
-var samplesBaseUri = 'http://www.tavendo.de/static/snd/';
+//var samplesBaseUri = 'http://www.tavendo.de/static/snd/';
+var samplesBaseUri = 'snd/';
 
 
 function loadSample(btn, file) {
@@ -111,7 +112,7 @@ function setupDemo() {
             padButton(3, true);
             break;
       }
-   }
+   };
 
    window.onkeyup = function(e) {
 
@@ -131,10 +132,10 @@ function setupDemo() {
             padButton(3, false);
             break;
       }
-   }
+   };
 
    //$("#helpButton").click(toggleHelp);
-   $("#helpButton").click(function() { $(".info_bar").toggle() });
+   $("#helpButton").click(function() { $(".info_bar").toggle(); });
 }
 
 function onPadButtonDown(topicUri, event) {

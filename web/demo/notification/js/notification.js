@@ -56,8 +56,8 @@ function abChangeFavicon() {
 }
 
 
-function setupDemo() {   
-   
+function setupDemo() {
+
    $("#notification_message").val("Hello World!");
 
    // initialize any variables
@@ -70,7 +70,7 @@ function setupDemo() {
       font: '12px arial',
       width: 8,
       height: 11,
-	   fallback: true
+      fallback: true
    });
 
    // add elements
@@ -82,9 +82,8 @@ function setupDemo() {
 
    ad_countdown.style.visibility = 'hidden';
 
-   $("#helpButton").click(function() { $(".info_bar").toggle() });
- 
-};
+   $("#helpButton").click(function() { $(".info_bar").toggle(); });
+}
 
 function onChannelSwitch(oldChannelId, newChannelId) {
    // gets called during initialization of the demo and on each channel switch
@@ -108,14 +107,14 @@ function onChannelSwitch(oldChannelId, newChannelId) {
    $('#new-window').attr('href', window.location.pathname + '?channel=' + newChannelId);
    //$('#pubsub_new_window_link').html(window.location.origin + window.location.pathname + '?channel=' + newChannelId);
    $("#sub_topic_full").text(channelBaseUri + newChannelId);
-};
+}
 
 function sendNotification () {
 
    //ab.log("send", arguments);
    sess.publish("event:" + $("#pub_topic").val(), $("#notification_message").val(), false);
 
-};
+}
 
 function onNotification(topicUri, event) {
    ab.log(topicUri, event);
@@ -130,8 +129,7 @@ function onNotification(topicUri, event) {
    $("#webmqad_message").text(event);
    toggle("emptyEvent", true);
 
-};
-
+}
 
 // reset persistent state
 function reset() {
@@ -167,7 +165,7 @@ function toggle(event, newNotification) {
       ad_countdown.style.visibility = 'hidden';
       // switch arrow to pointing left
       window.setTimeout(function() {
-         ad.style.backgroundImage = "url('slide_in_left_arrow.png')";
+         ad.style.backgroundImage = "url('img/slide_in_left_arrow.png')";
       }, 500);
 
    } else {
@@ -175,9 +173,8 @@ function toggle(event, newNotification) {
       ad_shown = true;
       // switch arrow to pointing right
       window.setTimeout(function() {
-         ad.style.backgroundImage = "url('slide_in_right_arrow.png')";
+         ad.style.backgroundImage = "url('img/slide_in_right_arrow.png')";
       }, 500);
-      
    }
 
    // if triggered based on a new notification, 
@@ -194,7 +191,7 @@ function toggle(event, newNotification) {
             ad_shown = false;
             ad_countdown.style.visibility = 'hidden';
             window.setTimeout(function() {
-               ad.style.backgroundImage = "url('slide_in_left_arrow.png')";
+               ad.style.backgroundImage = "url('img/slide_in_left_arrow.png')";
             }, 500);
          }
       }, 1000 * ad_time_to_hide);
