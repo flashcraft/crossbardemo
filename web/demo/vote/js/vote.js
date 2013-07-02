@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- *  Copyright 2013 Tavendo GmbH. All rights reserved.
+ *  Copyright 2013 Tavendo GmbH. Licensed under the Apache 2.0 license.
  *
  ******************************************************************************/
 
@@ -65,9 +65,9 @@ function onAuth (permissions) {
 
 function main (session) {
    // subscribe to future vote event
-   session.subscribe("http://tavendo.de/webmq/demo/vote#onvote", 
+   session.subscribe("http://tavendo.de/webmq/demo/vote#onvote",
       function(topicUri, event) {
-         document.getElementById("votes" + event.subject).value = 
+         document.getElementById("votes" + event.subject).value =
             event.votes;
       });
 
@@ -75,7 +75,7 @@ function main (session) {
    session.call("http://tavendo.de/webmq/demo/vote#get").then(
       function(res){
          for(var i = 0; i < res.length; i++) {
-            document.getElementById("votes" + res[i].subject).value = 
+            document.getElementById("votes" + res[i].subject).value =
                res[i].votes;
          }
    }, ab.log);
@@ -83,15 +83,15 @@ function main (session) {
    // wire up vote buttons
    var voteButtons = document.getElementById("voteContainer").
       getElementsByTagName("button");
-   for(var i = 0; i < voteButtons.length; i++) {
+   for (var i = 0; i < voteButtons.length; i++) {
       voteButtons[i].onclick = function(evt) {
-         session.call("http://tavendo.de/webmq/demo/vote#vote", 
+         session.call("http://tavendo.de/webmq/demo/vote#vote",
                evt.target.id).then(ab.log, ab.log);
-      }
+      };
    }
 
    // subscribe to vote reset event
-   session.subscribe("http://tavendo.de/webmq/demo/vote#onreset", 
+   session.subscribe("http://tavendo.de/webmq/demo/vote#onreset",
       function() {
          var voteCounters = document.getElementById("voteContainer").
             getElementsByTagName("input");
@@ -115,16 +115,17 @@ var arrows = {};
 arrows.codeContainer = "codeContainer";
 arrows.left = "JSCode";
 arrows.right = "PLSQLCode";
+
 arrows.fromLeft = {
    get: {
-      color: "#92D050", 
+      color: "#92D050",
       direction: "lr",
       start: 12,
       end: 4,
       border: "top",
       fromLeft: 30,
       rightFudge: -7,
-      arrowHead: "greenright.png",
+      arrowHead: "img/greenright.png",
       arrowHeadPosition: "top",
       arrowHeadFudge: { left: -20, top: -11}
    },
@@ -136,7 +137,7 @@ arrows.fromLeft = {
       border: "top",
       fromLeft: 30,
       rightFudge: -7,
-      arrowHead: "greenright.png",
+      arrowHead: "img/greenright.png",
       arrowHeadPosition: "top",
       arrowHeadFudge: { left: -20, top: -11}
    },
@@ -148,11 +149,12 @@ arrows.fromLeft = {
       border: "bottom",
       fromLeft: 30,
       rightFudge: -7,
-      arrowHead: "greenright.png",
+      arrowHead: "img/greenright.png",
       arrowHeadPosition: "bottom",
       arrowHeadFudge: { left: -20, top: -11}
    }
-}
+};
+
 arrows.fromRight = {
    onVote: {
       color: "#00B0F0",
@@ -162,7 +164,7 @@ arrows.fromRight = {
       border: "bottom",
       fromLeft: -120,
       topFudge: 15,
-      arrowHead: "blueup.png",
+      arrowHead: "img/blueup.png",
       arrowHeadPosition: "top",
       arrowHeadFudge: { left: -11, top: -6}
    },
@@ -174,11 +176,11 @@ arrows.fromRight = {
       border: "bottom",
       fromLeft: -90,
       topFudge: 15,
-      arrowHead: "blueup.png",
+      arrowHead: "img/blueup.png",
       arrowHeadPosition: "top",
       arrowHeadFudge: { left: -11, top: -6}
    }
-}
+};
 
 arrows.drawArrows = function(obj) {
    var codeContainer = document.getElementById(arrows.codeContainer),
@@ -194,10 +196,10 @@ arrows.drawArrows = function(obj) {
       console.log("i, obj", obj);
       if(obj.hasOwnProperty(i)) {
          var arrow = obj[i];
-         
+
          // get the start & end lines
          var startHalf = arrow.direction === "lr" ? arrows.left : arrows.right;
-         var endHalf = arrow.direction === "lr" ? arrows.right : arrows.left; 
+         var endHalf = arrow.direction === "lr" ? arrows.right : arrows.left;
          arrow.startElement = $("#" + startHalf + " .code .line.number" + arrow.start)[0];
          arrow.endElement = $("#" + endHalf + " .code .line.number" + arrow.end)[0];
 
@@ -225,14 +227,14 @@ arrows.drawArrows = function(obj) {
          // draw arrowBox
          var arrowBox = document.createElement("div");
          $(arrowBox).addClass("arrowBox");
-         
+
          arrow.border === "top" ? arrowBox.style.borderTop = "3px solid " + arrow.color : arrowBox.style.borderBottom = "3px solid " + arrow.color;
          arrowBox.style.borderLeft = "3px solid " + arrow.color;
-         
+
          // fudge factors set the displacement for the beginning/end relative to the line start/middle 
          rightFudge = arrow.rightFudge ? arrow.rightFudge : 0;
          topFudge = arrow.topFudge ? arrow.topFudge : 0;
-         
+
          arrowBox.style.height = Math.abs(arrow.startCoords.y - arrow.endCoords.y) - topFudge + "px"; // decrease arrowBox height by fudhe factor
          arrowBox.style.width = Math.abs(arrow.startCoords.x - arrow.endCoords.x) + rightFudge + "px";
 
@@ -255,18 +257,13 @@ arrows.drawArrows = function(obj) {
       }
       console.log(obj[i]);
    }
-}
+};
 
 window.onload = function() {
    // syntaxhighlighter seesm to be slow, so draw arrows here
    arrows.drawArrows(arrows.fromLeft);
    arrows.drawArrows(arrows.fromRight);
-
 };
-
-
-
-
 
 function whereIs (x, y) {
    var dot = document.createElement("div");
@@ -274,5 +271,4 @@ function whereIs (x, y) {
    dot.style.left = x + "px";
    dot.style.top = y + "px";
    document.getElementsByTagName("body")[0].appendChild(dot);
-
 }
