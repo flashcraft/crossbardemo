@@ -86,6 +86,52 @@ connect.onAuth = function(permissions) {
 
    connect.sess.subscribe(connect.channelBaseUri + "#onpost", chat.onMessage); // CHECKME
 };
+
+connect.startTabConnect = function(id) {
+   ab._Deferred = jQuery.Deferred;
+
+   var tabSession = tabs.tabs[id].connection;
+
+   ab.connect(connect.wsuri,
+
+      function (session) {
+         tabSession.session = session;
+         ab.log("connected!");
+         connect.onTabConnect(tabSession);
+      },
+
+      function (code, reason, detail) {
+
+         tabSession.session = null;
+         switch (code) {
+            case ab.CONNECTION_UNSUPPORTED:
+               console.log("Browser does not support WebSocket");
+               break;
+            case ab.CONNECTION_CLOSED:
+               console.log("Connection for tab X closed");
+               break;
+            default:
+               ab.log(code, reason, detail);
+
+               tabSession.retryCount = tabSession.retryCount + 1;
+
+               break;
+         }
+      },
+
+      {'maxRetries': 60, 'connect.retryDelay': 2000}
+   );
+};
+connect.onTabConnect = function(tabSession) {
+   tabSession.session.authreq().then(function () {
+      tabSession.session.auth().then(function(permissions) {connect.onTabAuth(permissions, tabSession)}, ab.log);
+   }, function() { console.log("autrequest failure"); });
+};
+connect.onTabAuth = function(permissions, tabSession) {
+   ab.log("authenticated 2", permissions);
+
+   tabSession.retryCount = 0;
+};
 connect.switchChannel = function(newChannelId) {
    // FIXME - BACKEND: currently the subscription is for messages on ANY channel
 
@@ -545,10 +591,10 @@ tabs.tabtops = document.getElementById("tabtops");
 tabs.addTabTop = document.getElementById("addTab");
 tabs.tabscontainer = document.getElementById("tabscontainer");
 tabs.languages = {};
-tabs.availableLanguages = ["js", "plsql", "tsql", "python", "text"];
-tabs.localToAce = {js: "javascript", plsql: "sql", tsql: "sql", python: "python", text: "text"}; // FIXME - mappings for plsql + tsql
-tabs.localToSyntaxhighlighter = {js: "javascript", plsql: "plsql", tsql: "tsql", python: "python", text: "plain"};
-tabs.localToDisplay = {js: "JS", plsql: "PL/SQL", tsql: "T-SQL", python: "Python", text: "Text"};
+tabs.availableLanguages = ["js", "plsql", "tsql", "python", "text", "jswebmq"];
+tabs.localToAce = {js: "javascript", plsql: "sql", tsql: "sql", python: "python", text: "text", jswebmq: "javascript"}; // FIXME - mappings for plsql + tsql
+tabs.localToSyntaxhighlighter = {js: "javascript", plsql: "plsql", tsql: "tsql", python: "python", text: "plain", jswebmq: "javascript"};
+tabs.localToDisplay = {js: "JS", plsql: "PL/SQL", tsql: "T-SQL", python: "Python", text: "Text", jswebmq: "JS/WebMQ"};
 tabs.editors = {};
 tabs.tabs = {};
 tabs.tabSequence = [];
@@ -563,6 +609,8 @@ tabs.initialize = function() {
 
    document.getElementById("sendFullEditorContent").addEventListener("click", tabs.sendFullEditorContent);
    document.getElementById("sendSelectedEditorContent").addEventListener("click", tabs.sendSelectedEditorContent);
+   document.getElementById("evalFullEditorContent").addEventListener("click", tabs.evalFullEditorContent);
+   document.getElementById("evalSelectedEditorContent").addEventListener("click", tabs.evalSelectedEditorContent);
 
    tabs.tabtops.addEventListener("click", tabs.tabTopClicked);
    
@@ -709,7 +757,6 @@ tabs.addTab = function(language, content, ttitle) {
 
    var editor = document.createElement("div");
    $(editor).addClass("editor");
-   // tab.appendChild(editor);
    editorWrapper.appendChild(editor);
    tabs.editors[id] = ace.edit(editor);
    tabs.editors[id].setTheme("ace/theme/tomorrow_night");
@@ -735,9 +782,15 @@ tabs.addTab = function(language, content, ttitle) {
       tabs.tabs[id].titleInput.value = ttitle;
    }
 
+   // additional adds if jswebmq tab
+   if(language === "jswebmq") {
+      tabs.addEvalInfrastructure(id);
+   }
+
    // add the tabtop and the tab to the page
-   var addTab = document.getElementById("addTab");
-   tabs.tabtops.insertBefore(tabtop, addTab);
+   // var addTab = document.getElementById("addTab");
+   // tabs.tabtops.insertBefore(tabtop, addTab);
+   tabs.tabtops.appendChild(tabtop);
    // adjust the z-indices for the correct overlap of the box shadow
    tabs.zIndex -= 1;
    tabtop.style.zIndex = tabs.zIndex;
@@ -753,6 +806,16 @@ tabs.addTab = function(language, content, ttitle) {
 
    // set style on addTab in order to display fully
    document.getElementById("addTab").style.padding = "";
+};
+
+tabs.addEvalInfrastructure = function(id) {
+   console.log("addEval", id);
+   // add a session to WebMQ and store within the tabs object
+
+   // the store location for the session
+   tabs.tabs[id].connection = {};
+   tabs.tabs[id].eval = true;
+   connect.startTabConnect(id);
 };
 
 /*
@@ -811,8 +874,18 @@ tabs.switchTab = function(id) {
    tabs.editors[id].focus();
    tabs.editors[id].resize();
 
+   // check whether eval tab, and switch button state accordingly
+   var evalFullContentButton = document.getElementById("evalFullEditorContent");
+   if(tabs.tabs[id].eval === true) {
+      evalFullContentButton.style.display = "block";
+   } else {
+      evalFullContentButton.style.display = "none";
+   }
+
    // check whether selection exists in current tab, and switch button state accordingly
    tabs.onSelectionChanged(id);
+
+   
 
    // update the language dict
    var language = tabs.tabs[id].language;
@@ -937,17 +1010,24 @@ tabs.setFontSize = function(fontSize) {
 */
 tabs.onSelectionChanged = function(id) {
    var selection = tabs.editors[id].getSession().selection,
-       sendSelectionButton = document.getElementById("sendSelectedEditorContent");
+       sendSelectionButton = document.getElementById("sendSelectedEditorContent"),
+       evalSelectionButton = document.getElementById("evalSelectedEditorContent"); // should be cached - FIXME
 
    // check whether empty selection
    if ( selection.isEmpty()) {
       if(sendSelectionButton.style.display != "none") {
          sendSelectionButton.style.display = "none";
       }
+      if(evalSelectionButton.style.display != "none") {
+         evalSelectionButton.style.display = "none";
+      }
    }
    else {
       if(sendSelectionButton.style.display === "none") {
          sendSelectionButton.style.display = "block";
+      }
+      if(tabs.tabs[id].eval === true && evalSelectionButton.style.display === "none") {
+         evalSelectionButton.style.display = "block";
       }
    }
 };
@@ -972,6 +1052,23 @@ tabs.sendSelectedEditorContent = function() {
 
    tabs.sendMessage(tabs.constructMessage(body, language));
 };
+
+tabs.evalFullEditorContent = function() {
+   console.log("eval full editor content");
+   var code = tabs.editors[tabs.focusedTab].getValue();
+   // eval(code);
+   // var evFunction = "var session = tabs.tabs[" + tabs.focusedTab + "].connection.session " + code;
+   var evFunction = "var session = tabs.tabs[" + tabs.focusedTab + "].connection.session; " + code;
+   eval(evFunction);
+};
+tabs.evalSelectedEditorContent = function() {
+   console.log("eval selected editor content");
+   var code = tabs.editors[tabs.focusedTab].session.getTextRange(tabs.editors[tabs.focusedTab].getSelectionRange());
+   // eval(code);
+   var evFunction = "var session = tabs.tabs[" + tabs.focusedTab + "].connection.session; " + code;
+   eval(evFunction);
+};
+
 
 /*
    Constructs the message to be sent

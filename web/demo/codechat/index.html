@@ -53,23 +53,33 @@
    <div id="lower" class="half">
 
       <div id="tabswrapper">
-         <ul id="tabtops">
-            <!-- tabs tops for switching tabs are instantiated here -->
-            <li id="addTab">
+         <div id="tabtopsWrapper">
+            <ul id="tabtops">
+               <!-- tabs tops for switching tabs are instantiated here -->
+<!--                <li id="addTab">
+                  +
+                  <ul id="addTabLanguages" class="nonDisplay fullOpacity">
+                  </ul>
+               </li> -->
+            </ul>   
+            <div id="addTab">
                +
                <ul id="addTabLanguages" class="nonDisplay fullOpacity">
                <!-- <ul id="addTabLanguages"> -->
                      <!-- buttons for picking language of new tab are 
                      instantiated here -->
                </ul>
-            </li>
-         </ul>
+            </div>
+         </div>
+
          <div id="tabscontainer">
             <!-- tabs themselves are instantiated here -->
          </div>
 
          <button id="sendFullEditorContent" class="sendbutton">Send All</button>
          <button id="sendSelectedEditorContent" class="sendbutton">Send Selected</button>
+         <button id="evalFullEditorContent" class="evalbutton">Eval All</button>
+         <button id="evalSelectedEditorContent" class="evalbutton">Eval Selected</button>
       </div>
 
       <div id="statusLine">

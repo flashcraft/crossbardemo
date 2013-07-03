@@ -379,6 +379,27 @@ body,
    display: none;
    right: 20px;
 }
+.evalbutton 
+{
+   background-color: #555;
+   color: #fff;
+   border: none;
+   padding: 4px 8px;
+   position: absolute;
+   bottom: 100px;
+   width: 120px;
+   z-index: 10;
+}
+#evalFullEditorContent
+{
+   display: none;
+   right: 20px;
+}
+#evalSelectedEditorContent
+{
+   display: none;
+   right: 20px;
+}
 
 #languageButtonContainer
 {
@@ -418,6 +439,12 @@ body,
    padding: 10px 0 0 0;
 }
 
+#tabtopsWrapper
+{
+    display: inline-block;
+
+}
+
 #tabtops 
 {
    margin: -2px 0;
@@ -425,6 +452,7 @@ body,
    /*overflow-x: hidden;*/
    height: 42px;
    overflow: hidden;
+   display: inline-block;
 }
 #tabtops > li 
 {
@@ -451,12 +479,15 @@ body,
    border: 1px solid #DCC74E;
    border-bottom: 2px solid #f7f2d4;
 }
-#tabtops #addTab
+#tabtops #addTab,
+#addTab
 {
     background-color: #F1EABD;
 
     text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
     color: #444;
+    display: inline-block;
+    height: 100%;
 }
 .deleteButton
 {
