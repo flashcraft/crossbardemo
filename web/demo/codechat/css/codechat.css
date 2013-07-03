@@ -63,6 +63,11 @@ body,
    {
       display:block;
    }
+   
+   
+
+}
+@media (min-width: 850px) and (max-width: 1530px) {
    #branding:hover #codeChat,
    #branding:hover #poweredBy
    {
@@ -73,14 +78,15 @@ body,
    {
       padding-bottom: 12px;
    }
-   #branding:hover
+
+  #branding:hover
    {
       background-color: #F9F8EE;
       border: 1px solid #DCC74E;
       box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.3);
    }
-
 }
+
 
 @media (min-width: 1530px) {
    #codeChat
@@ -90,7 +96,7 @@ body,
    #poweredBy
    {
       display: block;
-     }
+   }
 }
 
 

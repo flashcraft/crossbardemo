@@ -356,7 +356,8 @@ var getChannelAndNick = {
    nick: {},
    setButton: document.getElementById("setChannelAndNick"),
    cancelButton: document.getElementById("cancelChannelAndNick"),
-   requiredInput: {channel: false, nick: false}
+   requiredInput: {channel: false, nick: false},
+   previouslyShown: false
 };
 
 // any way to do this in more elegant + shorter notation ? - CHECKME
@@ -365,7 +366,6 @@ getChannelAndNick.channel.reminder = document.getElementById("initialInputChanne
 getChannelAndNick.channel.changed = false;
 getChannelAndNick.channel.minLength = 3;
 getChannelAndNick.channel.maxLength = 10;
-// getChannelAndNick.channel.regEx = /^[A-Za-z0-9_]+$/;
 getChannelAndNick.channel.regEx = /^[A-Za-z0-9_-]+$/;
 
 getChannelAndNick.nick.input = document.getElementById("initialInputNick");
@@ -391,12 +391,42 @@ getChannelAndNick.setup = function() {
    this.nick.input.addEventListener("keyup", function() {
       getChannelAndNick.keyup("nick");
    });
+   this.channel.input.onchange = function() {
+      getChannelAndNick.keyup("channel");
+   };
    this.setButton.addEventListener("click", this.set);
    this.cancelButton.addEventListener("click", this.cancel);
 };
 
+var tchannels; 
+getChannelAndNick.setupChannelSelector = function(res) {
+   console.log("channel selector setup", res);
+   var channels = [];
+   for(var i = 0; i < res.length; i++) {
+      channels[i] = res[i].channel;
+   }
+   console.log("channels", channels);
+   tchannels = channels;
+
+   $("#initialInputChannel").combobox(channels);
+}
+
 getChannelAndNick.start = function() {
+   console.log("gcan start");
    var self = getChannelAndNick;
+
+   // start setup of the getNickAndChannel combobox
+   // if not previously shown
+   // cannot be called before the overlay is shown, since jquery doesn't operate on
+   // element with present display: none;
+   // calling again on each display does not make sense with the combobox, since
+   // this does not lead to an update of the selectable channels, but only adds
+   // more surrounding HTML
+   // CHANGEME / FIXME: combobox needs to allow updates of its content
+   if(getChannelAndNick.previouslyShown === false) {
+      connect.sess.call(connect.channelBaseUri + "#channels").then(getChannelAndNick.setupChannelSelector, ab.log);
+      getChannelAndNick.previouslyShown = true;
+   }   
 
    // set nick and channel if already previously defined (e.g. via URL)
    if(chat.nick !== undefined) {
@@ -435,7 +465,7 @@ getChannelAndNick.keydown = function(evt, type) {
 };
 getChannelAndNick.keyup = function(type) {
    var self = this;
-
+   console.log("keyup triggered");
    // check whether the input fulfills the backend rules
    var typeObj = self[type],
        input = typeObj.input;
@@ -520,7 +550,6 @@ tabs.localToAce = {js: "javascript", plsql: "sql", tsql: "sql", python: "python"
 tabs.localToSyntaxhighlighter = {js: "javascript", plsql: "plsql", tsql: "tsql", python: "python", text: "plain"};
 tabs.localToDisplay = {js: "JS", plsql: "PL/SQL", tsql: "T-SQL", python: "Python", text: "Text"};
 tabs.editors = {};
-// tabs.titles = {};
 tabs.tabs = {};
 tabs.tabSequence = [];
 tabs.loneTab = null;
@@ -733,7 +762,14 @@ tabs.addTab = function(language, content, ttitle) {
 tabs.keyboardOperation = function(evt) {
    // ctrl + enter to send entire content of editor
    if(evt.which === 13 && evt.ctrlKey === true) {
-      tabs.sendFullEditorContent();
+      // switch depending on whether there is a selection to be sent
+      var selection = tabs.editors[tabs.focusedTab].getSession().selection;
+      if (selection.isEmpty()) {
+         tabs.sendFullEditorContent();
+      } else {
+         tabs.sendSelectedEditorContent();
+      }
+      
    }
 };
 
@@ -901,7 +937,7 @@ tabs.setFontSize = function(fontSize) {
 */
 tabs.onSelectionChanged = function(id) {
    var selection = tabs.editors[id].getSession().selection,
-   sendSelectionButton = document.getElementById("sendSelectedEditorContent");
+       sendSelectionButton = document.getElementById("sendSelectedEditorContent");
 
    // check whether empty selection
    if ( selection.isEmpty()) {
