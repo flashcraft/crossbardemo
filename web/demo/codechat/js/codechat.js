@@ -13,6 +13,7 @@
 
 var globalTabSessions = {};
 
+var gCode;
 
 (function () { // see at end: self-executing anonymous function
 /// connect object
@@ -611,6 +612,19 @@ tabs.addTabMenuShown = false;
 tabs.zIndex = 1000000; // initially set to number high enough that max number of tabs opened during a session does not exceed it
 tabs.zIndexSelected = tabs.zIndex + 1;
 tabs.lastClosedTab = {};
+tabs.snippetsOverlay = document.getElementById("snippetsOverlay");
+tabs.snippets = [
+   {title: "CodeChat", image: "screenshot_codechat.png", link: "codechat/index.html", language: "jswebmq", ttitle: "Snippets for CodeChat", code: "// add a javascript tab"},
+   {title: "Notification", image: "screenshot_notifications.png", link: "notification/index.html?channel=123456", language: "jswebmq", ttitle: "Snippets for Notifications", code: "// send a notification /n session.publish('http://tavendo.de/webmq/demo/notifications/123456', 'Sent from CodeChat!', false);"},
+   {title: "Chat", image: "screenshot_chat.png", link: "chat/index.html", language: "jswebmq", ttitle: "Snippets for Chat", code: "// add a javascript tab"},
+   {title: "Vote", image: "screenshot_vote.png", link: "vote/index.html", language: "jswebmq", ttitle: "Snippets for Vote", code: "// add a javascript tab"},
+   {title: "Gridfilter", image: "screenshot_gridfilter.png", link: "form/knockout/gridfilter/index.html", language: "jswebmq", ttitle: "Snippets for Gridfilter", code: "// add a javascript tab"},
+   // {title: "CodeChat", image: "screenshot_codechat.png", link: "codechat/index.html", language: "jswebmq", ttitle: "Snippets for XXX", code: "// add a javascript tab"},
+   // {title: "Notification", image: "screenshot_notifications.png", link: "codechat/index.html", language: "jswebmq", ttitle: "Snippets for XXX", code: "// add a javascript tab"},
+   // {title: "Chat", image: "screenshot_chat.png", link: "chat/index.html", language: "jswebmq", ttitle: "Snippets for XXX", code: "// add a javascript tab"},
+   // {title: "Vote", image: "screenshot_vote.png", link: "vote/index.html", language: "jswebmq", ttitle: "Snippets for XXX", code: "// add a javascript tab"},
+   // {title: "Gridfilter", image: "screenshot_gridfilter.png", link: "form/knockout/gridfilter/index.html", language: "jswebmq", ttitle: "Snippets for XXX", code: "// add a javascript tab"}
+];
 
 tabs.initialize = function() {
 
@@ -629,7 +643,10 @@ tabs.initialize = function() {
       return false;
    });
 
-   var addTabLanguages = document.getElementById("addTabLanguages");
+   var addTabLanguages = document.getElementById("addTabLanguages"),
+       snippetsButtonContainer = document.getElementById("snippetsButtonContainer"),
+       snippetsButton = document.getElementById("snippetsButton");
+   
    $.each(tabs.availableLanguages, function(index, value) {
       var listItem = document.createElement("li"),
           button = document.createElement("button"),
@@ -642,9 +659,46 @@ tabs.initialize = function() {
          $("#addTabLanguages").addClass("nonDisplay");
       });
 
-      listItem.appendChild(button);
+      // listItem.appendChild(button);
+      addTabLanguages.insertBefore(button, snippetsButtonContainer);
       addTabLanguages.appendChild(listItem);
    });
+
+   snippetsButton.addEventListener("click", function() {
+      $(tabs.snippetsOverlay).removeClass("nonDisplay");
+   });
+
+   // add the items to the snippets overlay
+   var snippetsBox = document.getElementById("snippetsBox");
+   for (var i = 0; i < tabs.snippets.length; i++) {
+      var snippet = tabs.snippets[i],
+          item = document.createElement("div"),
+          title = document.createElement("h2"),
+          // image = document.createElement("img"),
+          demolink = document.createElement("a");
+      title.textContent = snippet.title;
+      // image.src = "img/" + snippet.image;
+      demolink.textContent = "open in other window";
+      demolink.href = "/demo/" + snippet.link;
+      demolink.target = "_blank";
+      title.addEventListener("click", (function(language, code, ttitle) {
+         return function() {
+            tabs.addTab(language, code, ttitle);
+            $(tabs.snippetsOverlay).addClass("nonDisplay");
+         }         
+      })(snippet.language, snippet.code, snippet.ttitle));
+      // image.addEventListener("click", function() {
+      //    tabs.addTab(snippet.language, snippet.code, snippet.ttitle);
+      //    $(tabs.snippetsOverlay).addClass("nonDisplay");
+      // })
+      item.appendChild(title);
+      // item.appendChild(image);
+      item.appendChild(demolink);
+      console.log("item " + i + ":", item);
+
+      snippetsBox.appendChild(item);
+   }
+
 
    tabs.addTab(configuration.defaultLanguage);
 };
@@ -817,7 +871,6 @@ tabs.addTab = function(language, content, ttitle) {
 
 tabs.addEvalInfrastructure = function(id) {
    console.log("addEval", id);
-   // add a session to WebMQ and store within the tabs object
 
    // the store location for the session
    tabs.tabs[id].connection = {};
@@ -939,6 +992,7 @@ tabs.destroyTab = function(id) {
           button = document.createElement("button"),
           addTabLanguages = document.getElementById("addTabLanguages");
       button.textContent = "last closed";
+      $(button).addClass("lastClosedButton");
       listItem.appendChild(button);
       addTabLanguages.appendChild(listItem);
       tabs.lastClosedTab.button = button;
@@ -1064,11 +1118,13 @@ var scopeCheck = "defined";
 tabs.evalFullEditorContent = function() {
    console.log("eval full editor content");
    var code = tabs.editors[tabs.focusedTab].getValue();
+   gCode = code;
    // eval(code);
    // var evFunction = "var session = tabs.tabs[" + tabs.focusedTab + "].connection.session " + code;
    // var evFunction = "var session = tabs.tabs[" + tabs.focusedTab + "].connection.session; console.log('scopeCheck is ' + scopeCheck);";
    var evFunction = "var session = globalTabSessions[" + tabs.focusedTab + "]; console.log(session.sessionid()); " + code;
    eval.apply(window, [evFunction]);
+
 
    // var evFunction = "console.log(this); console.log('scopeCheck is '+ scopeCheck);" // 'this' is logged as empty, but global is still accessible;
    // maskedEval(evFunction);
@@ -1317,3 +1373,12 @@ var configuration = {
 housekeeping.initialize();
 })(); // make all self-executing anonymous function to clear the global scope & 
 // avoid problems with eval. does not exclude loaded libraries, but works in principle
+
+
+function dissect (string) {
+   for(var i = 0; i < string.length; i++) {
+      var chr = string.charAt(i);
+      var chrC = string.charCodeAt(i)
+      console.log(chr, chrC);
+   }
+}

@@ -560,6 +560,27 @@ http://jsfiddle.net/YXT7j/66/ - http://stackoverflow.com/questions/13122230/abso
     color: #fff;
 }
 
+#addTabLanguages .lastClosedButton 
+{
+  background-color: rgb(112, 112, 104);
+  color: rgb(241, 236, 206);
+}
+#addTabLanguages .lastClosedButton:hover
+{
+  background-color: #222; 
+}
+
+#addTabLanguages #snippetsButton
+{
+  background-color: red;
+  color: white;
+}
+#addTabLanguages #snippetsButton:hover
+{
+  background-color: green;
+  color: white;
+}
+
 /*#addTab:hover #addTabLanguages
 {
    display: block;
@@ -811,6 +832,43 @@ button:hover
 }
 
 
+#snippetsBox
+{
+  overflow: auto;
+  width: 460px;
+}
+
+#snippetsBox > div
+{
+  display: inline-block;
+  width: 191px;
+  padding: 0 1em 0 0;
+  text-align: center;
+}
+
+#snippetsBox > div > h2
+{
+  cursor: pointer;
+  margin: 1em 0 0 0;
+  text-align: center;
+}
+#snippetsBox > div > h2:hover
+{
+  color: red;
+}
+#snippetsBox > div > a
+{
+  color: #777;
+  text-decoration: none;
+}
+#snippetsBox > div > a:visited
+{
+  color: #777;
+}
+#snippetsBox > div > a:hover
+{
+  text-decoration: underline;
+}
 
 /* generic */
 
