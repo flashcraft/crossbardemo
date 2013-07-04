@@ -11,9 +11,11 @@
 "use strict"; // may cause problems when concatenating this with other, non-strict code
 // solved by wrapping entire demo code in a function & declaring only within this - FIXME
 
+var globalTabSessions = {};
 
+
+(function () { // see at end: self-executing anonymous function
 /// connect object
-
 var connect = {
    wsuri: get_appliance_url("hub-websocket", "ws://localhost/ws"),
    sess: null,
@@ -26,6 +28,7 @@ var connect = {
 };
 
 connect.startConnect = function() {
+   console.log("startConnect called");
    ab._Deferred = jQuery.Deferred;
 
    ab.connect(connect.wsuri,
@@ -77,12 +80,23 @@ connect.onAuth = function(permissions) {
    housekeeping.statusline.statusText = "Connected to " + connect.wsuri;
    connect.retryCount = 0;
 
+   // check if channel or nick in URL
+   connect.urlData = connect.getDataFromUrl();
+   chat.nick = connect.urlData.nick; // may remain undefined
+
+   // get nick and channel on initial load if not both gotten from URL
+   if(!connect.urlData.nick || !connect.urlData.channel) {
+      getChannelAndNick.start();
+   }
+
    // switch channel & update the URL if at least channel has been set already
    if(connect.urlData.nick && connect.urlData.channel) {
       connect.switchChannel(connect.urlData.channel);
    }
    housekeeping.updateStatusline();
    housekeeping.setNewWindowLinkAndUrl();
+
+
 
    connect.sess.subscribe(connect.channelBaseUri + "#onpost", chat.onMessage); // CHECKME
 };
@@ -96,6 +110,7 @@ connect.startTabConnect = function(id) {
 
       function (session) {
          tabSession.session = session;
+         globalTabSessions[id] = session; // for the eval scoping
          ab.log("connected!");
          connect.onTabConnect(tabSession);
       },
@@ -229,18 +244,10 @@ housekeeping.changeFontSize = function(evt) {
 };
 
 housekeeping.initialize = function() {
+
    
    housekeeping.statusline.statusText = "Not connected.";
    housekeeping.updateStatusline();
-
-   // check if channel or nick in URL
-   connect.urlData = connect.getDataFromUrl();
-   chat.nick = connect.urlData.nick; // may remain undefined
-
-   // get nick and channel on initial load if not both gotten from URL
-   if(!connect.urlData.nick || !connect.urlData.channel) {
-      getChannelAndNick.start();
-   }
 
    housekeeping.newWindowLink = document.getElementById('new-window');
 
@@ -253,7 +260,7 @@ housekeeping.initialize = function() {
 
    tabs.initialize();
    chat.initialize();
-
+console.log("housekeeping.initialize called");
    connect.startConnect();
 };
 /*
@@ -1053,13 +1060,18 @@ tabs.sendSelectedEditorContent = function() {
    tabs.sendMessage(tabs.constructMessage(body, language));
 };
 
+var scopeCheck = "defined";
 tabs.evalFullEditorContent = function() {
    console.log("eval full editor content");
    var code = tabs.editors[tabs.focusedTab].getValue();
    // eval(code);
    // var evFunction = "var session = tabs.tabs[" + tabs.focusedTab + "].connection.session " + code;
-   var evFunction = "var session = tabs.tabs[" + tabs.focusedTab + "].connection.session; " + code;
-   eval(evFunction);
+   // var evFunction = "var session = tabs.tabs[" + tabs.focusedTab + "].connection.session; console.log('scopeCheck is ' + scopeCheck);";
+   var evFunction = "var session = globalTabSessions[" + tabs.focusedTab + "]; console.log(session.sessionid()); " + code;
+   eval.apply(window, [evFunction]);
+
+   // var evFunction = "console.log(this); console.log('scopeCheck is '+ scopeCheck);" // 'this' is logged as empty, but global is still accessible;
+   // maskedEval(evFunction);
 };
 tabs.evalSelectedEditorContent = function() {
    console.log("eval selected editor content");
@@ -1068,6 +1080,21 @@ tabs.evalSelectedEditorContent = function() {
    var evFunction = "var session = tabs.tabs[" + tabs.focusedTab + "].connection.session; " + code;
    eval(evFunction);
 };
+
+// function maskedEval(scr)
+// {
+//    console.log("mev called");
+//    // set up an object to serve as the context for the code
+//    // being evaluated. 
+//    var mask = {};
+//    // mask global properties 
+//    for (p in this)
+//       mask[p] = undefined;
+//       // mask.session = tabs.tabs[id].connection.session;
+
+//    // execute script in private context
+//    (new Function( "with(this) { " + scr + "}")).call(mask);
+// }
 
 
 /*
@@ -1288,3 +1315,5 @@ var configuration = {
 };
 
 housekeeping.initialize();
+})(); // make all self-executing anonymous function to clear the global scope & 
+// avoid problems with eval. does not exclude loaded libraries, but works in principle
