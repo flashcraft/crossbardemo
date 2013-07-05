@@ -63,6 +63,11 @@ body,
    {
       display:block;
    }
+   
+   
+
+}
+@media (min-width: 850px) and (max-width: 1530px) {
    #branding:hover #codeChat,
    #branding:hover #poweredBy
    {
@@ -73,14 +78,15 @@ body,
    {
       padding-bottom: 12px;
    }
-   #branding:hover
+
+  #branding:hover
    {
       background-color: #F9F8EE;
       border: 1px solid #DCC74E;
       box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.3);
    }
-
 }
+
 
 @media (min-width: 1530px) {
    #codeChat
@@ -90,7 +96,7 @@ body,
    #poweredBy
    {
       display: block;
-     }
+   }
 }
 
 
@@ -373,6 +379,27 @@ body,
    display: none;
    right: 20px;
 }
+.evalbutton 
+{
+   background-color: #555;
+   color: #fff;
+   border: none;
+   padding: 4px 8px;
+   position: absolute;
+   bottom: 100px;
+   width: 120px;
+   z-index: 10;
+}
+#evalFullEditorContent
+{
+   display: none;
+   right: 20px;
+}
+#evalSelectedEditorContent
+{
+   display: none;
+   right: 20px;
+}
 
 #languageButtonContainer
 {
@@ -412,6 +439,12 @@ body,
    padding: 10px 0 0 0;
 }
 
+#tabtopsWrapper
+{
+    display: inline-block;
+
+}
+
 #tabtops 
 {
    margin: -2px 0;
@@ -419,6 +452,7 @@ body,
    /*overflow-x: hidden;*/
    height: 42px;
    overflow: hidden;
+   display: inline-block;
 }
 #tabtops > li 
 {
@@ -445,12 +479,15 @@ body,
    border: 1px solid #DCC74E;
    border-bottom: 2px solid #f7f2d4;
 }
-#tabtops #addTab
+#tabtops #addTab,
+#addTab
 {
     background-color: #F1EABD;
 
     text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
     color: #444;
+    display: inline-block;
+    height: 100%;
 }
 .deleteButton
 {
@@ -521,6 +558,27 @@ http://jsfiddle.net/YXT7j/66/ - http://stackoverflow.com/questions/13122230/abso
 {
     background-color: #444;   
     color: #fff;
+}
+
+#addTabLanguages .lastClosedButton 
+{
+  background-color: rgb(112, 112, 104);
+  color: rgb(241, 236, 206);
+}
+#addTabLanguages .lastClosedButton:hover
+{
+  background-color: #222; 
+}
+
+#addTabLanguages #snippetsButton
+{
+  background-color: red;
+  color: white;
+}
+#addTabLanguages #snippetsButton:hover
+{
+  background-color: green;
+  color: white;
 }
 
 /*#addTab:hover #addTabLanguages
@@ -774,6 +832,43 @@ button:hover
 }
 
 
+#snippetsBox
+{
+  overflow: auto;
+  width: 460px;
+}
+
+#snippetsBox > div
+{
+  display: inline-block;
+  width: 191px;
+  padding: 0 1em 0 0;
+  text-align: center;
+}
+
+#snippetsBox > div > h2
+{
+  cursor: pointer;
+  margin: 1em 0 0 0;
+  text-align: center;
+}
+#snippetsBox > div > h2:hover
+{
+  color: red;
+}
+#snippetsBox > div > a
+{
+  color: #777;
+  text-decoration: none;
+}
+#snippetsBox > div > a:visited
+{
+  color: #777;
+}
+#snippetsBox > div > a:hover
+{
+  text-decoration: underline;
+}
 
 /* generic */
 

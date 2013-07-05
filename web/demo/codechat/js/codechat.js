@@ -11,9 +11,12 @@
 "use strict"; // may cause problems when concatenating this with other, non-strict code
 // solved by wrapping entire demo code in a function & declaring only within this - FIXME
 
+var globalTabSessions = {};
 
+var gCode;
+
+(function () { // see at end: self-executing anonymous function
 /// connect object
-
 var connect = {
    wsuri: get_appliance_url("hub-websocket", "ws://localhost/ws"),
    sess: null,
@@ -26,6 +29,7 @@ var connect = {
 };
 
 connect.startConnect = function() {
+   console.log("startConnect called");
    ab._Deferred = jQuery.Deferred;
 
    ab.connect(connect.wsuri,
@@ -77,6 +81,15 @@ connect.onAuth = function(permissions) {
    housekeeping.statusline.statusText = "Connected to " + connect.wsuri;
    connect.retryCount = 0;
 
+   // check if channel or nick in URL
+   connect.urlData = connect.getDataFromUrl();
+   chat.nick = connect.urlData.nick; // may remain undefined
+
+   // get nick and channel on initial load if not both gotten from URL
+   if(!connect.urlData.nick || !connect.urlData.channel) {
+      getChannelAndNick.start();
+   }
+
    // switch channel & update the URL if at least channel has been set already
    if(connect.urlData.nick && connect.urlData.channel) {
       connect.switchChannel(connect.urlData.channel);
@@ -84,7 +97,56 @@ connect.onAuth = function(permissions) {
    housekeeping.updateStatusline();
    housekeeping.setNewWindowLinkAndUrl();
 
+
+
    connect.sess.subscribe(connect.channelBaseUri + "#onpost", chat.onMessage); // CHECKME
+};
+
+connect.startTabConnect = function(id) {
+   ab._Deferred = jQuery.Deferred;
+
+   var tabSession = tabs.tabs[id].connection;
+
+   ab.connect(connect.wsuri,
+
+      function (session) {
+         tabSession.session = session;
+         globalTabSessions[id] = session; // for the eval scoping
+         ab.log("connected!");
+         connect.onTabConnect(tabSession);
+      },
+
+      function (code, reason, detail) {
+
+         tabSession.session = null;
+         switch (code) {
+            case ab.CONNECTION_UNSUPPORTED:
+               console.log("Browser does not support WebSocket");
+               break;
+            case ab.CONNECTION_CLOSED:
+               console.log("Connection for tab X closed");
+               break;
+            default:
+               ab.log(code, reason, detail);
+
+               tabSession.retryCount = tabSession.retryCount + 1;
+
+               break;
+         }
+      },
+
+      {'maxRetries': 60, 'connect.retryDelay': 2000}
+   );
+};
+connect.onTabConnect = function(tabSession) {
+   tabSession.session.authreq().then(function () {
+      tabSession.session.auth().then(function(permissions) {connect.onTabAuth(permissions, tabSession)}, ab.log);
+   }, function() { console.log("autrequest failure"); });
+};
+connect.onTabAuth = function(permissions, tabSession) {
+   ab.log("authenticated 2", permissions);
+
+   tabSession.retryCount = 0;
 };
 connect.switchChannel = function(newChannelId) {
    // FIXME - BACKEND: currently the subscription is for messages on ANY channel
@@ -183,18 +245,10 @@ housekeeping.changeFontSize = function(evt) {
 };
 
 housekeeping.initialize = function() {
+
    
    housekeeping.statusline.statusText = "Not connected.";
    housekeeping.updateStatusline();
-
-   // check if channel or nick in URL
-   connect.urlData = connect.getDataFromUrl();
-   chat.nick = connect.urlData.nick; // may remain undefined
-
-   // get nick and channel on initial load if not both gotten from URL
-   if(!connect.urlData.nick || !connect.urlData.channel) {
-      getChannelAndNick.start();
-   }
 
    housekeeping.newWindowLink = document.getElementById('new-window');
 
@@ -207,7 +261,7 @@ housekeeping.initialize = function() {
 
    tabs.initialize();
    chat.initialize();
-
+console.log("housekeeping.initialize called");
    connect.startConnect();
 };
 /*
@@ -356,7 +410,8 @@ var getChannelAndNick = {
    nick: {},
    setButton: document.getElementById("setChannelAndNick"),
    cancelButton: document.getElementById("cancelChannelAndNick"),
-   requiredInput: {channel: false, nick: false}
+   requiredInput: {channel: false, nick: false},
+   previouslyShown: false
 };
 
 // any way to do this in more elegant + shorter notation ? - CHECKME
@@ -365,7 +420,6 @@ getChannelAndNick.channel.reminder = document.getElementById("initialInputChanne
 getChannelAndNick.channel.changed = false;
 getChannelAndNick.channel.minLength = 3;
 getChannelAndNick.channel.maxLength = 10;
-// getChannelAndNick.channel.regEx = /^[A-Za-z0-9_]+$/;
 getChannelAndNick.channel.regEx = /^[A-Za-z0-9_-]+$/;
 
 getChannelAndNick.nick.input = document.getElementById("initialInputNick");
@@ -391,12 +445,42 @@ getChannelAndNick.setup = function() {
    this.nick.input.addEventListener("keyup", function() {
       getChannelAndNick.keyup("nick");
    });
+   this.channel.input.onchange = function() {
+      getChannelAndNick.keyup("channel");
+   };
    this.setButton.addEventListener("click", this.set);
    this.cancelButton.addEventListener("click", this.cancel);
 };
 
+var tchannels; 
+getChannelAndNick.setupChannelSelector = function(res) {
+   console.log("channel selector setup", res);
+   var channels = [];
+   for(var i = 0; i < res.length; i++) {
+      channels[i] = res[i].channel;
+   }
+   console.log("channels", channels);
+   tchannels = channels;
+
+   $("#initialInputChannel").combobox(channels);
+}
+
 getChannelAndNick.start = function() {
+   console.log("gcan start");
    var self = getChannelAndNick;
+
+   // start setup of the getNickAndChannel combobox
+   // if not previously shown
+   // cannot be called before the overlay is shown, since jquery doesn't operate on
+   // element with present display: none;
+   // calling again on each display does not make sense with the combobox, since
+   // this does not lead to an update of the selectable channels, but only adds
+   // more surrounding HTML
+   // CHANGEME / FIXME: combobox needs to allow updates of its content
+   if(getChannelAndNick.previouslyShown === false) {
+      connect.sess.call(connect.channelBaseUri + "#channels").then(getChannelAndNick.setupChannelSelector, ab.log);
+      getChannelAndNick.previouslyShown = true;
+   }   
 
    // set nick and channel if already previously defined (e.g. via URL)
    if(chat.nick !== undefined) {
@@ -435,7 +519,7 @@ getChannelAndNick.keydown = function(evt, type) {
 };
 getChannelAndNick.keyup = function(type) {
    var self = this;
-
+   console.log("keyup triggered");
    // check whether the input fulfills the backend rules
    var typeObj = self[type],
        input = typeObj.input;
@@ -515,12 +599,11 @@ tabs.tabtops = document.getElementById("tabtops");
 tabs.addTabTop = document.getElementById("addTab");
 tabs.tabscontainer = document.getElementById("tabscontainer");
 tabs.languages = {};
-tabs.availableLanguages = ["js", "plsql", "tsql", "python", "text"];
-tabs.localToAce = {js: "javascript", plsql: "sql", tsql: "sql", python: "python", text: "text"}; // FIXME - mappings for plsql + tsql
-tabs.localToSyntaxhighlighter = {js: "javascript", plsql: "plsql", tsql: "tsql", python: "python", text: "plain"};
-tabs.localToDisplay = {js: "JS", plsql: "PL/SQL", tsql: "T-SQL", python: "Python", text: "Text"};
+tabs.availableLanguages = ["js", "plsql", "tsql", "python", "text", "jswebmq"];
+tabs.localToAce = {js: "javascript", plsql: "sql", tsql: "sql", python: "python", text: "text", jswebmq: "javascript"}; // FIXME - mappings for plsql + tsql
+tabs.localToSyntaxhighlighter = {js: "javascript", plsql: "plsql", tsql: "tsql", python: "python", text: "plain", jswebmq: "javascript"};
+tabs.localToDisplay = {js: "JS", plsql: "PL/SQL", tsql: "T-SQL", python: "Python", text: "Text", jswebmq: "JS/WebMQ"};
 tabs.editors = {};
-// tabs.titles = {};
 tabs.tabs = {};
 tabs.tabSequence = [];
 tabs.loneTab = null;
@@ -529,11 +612,26 @@ tabs.addTabMenuShown = false;
 tabs.zIndex = 1000000; // initially set to number high enough that max number of tabs opened during a session does not exceed it
 tabs.zIndexSelected = tabs.zIndex + 1;
 tabs.lastClosedTab = {};
+tabs.snippetsOverlay = document.getElementById("snippetsOverlay");
+tabs.snippets = [
+   {title: "CodeChat", image: "screenshot_codechat.png", link: "codechat/index.html", language: "jswebmq", ttitle: "Snippets for CodeChat", code: "// add a javascript tab"},
+   {title: "Notification", image: "screenshot_notifications.png", link: "notification/index.html?channel=123456", language: "jswebmq", ttitle: "Snippets for Notifications", code: "// send a notification /n session.publish('http://tavendo.de/webmq/demo/notifications/123456', 'Sent from CodeChat!', false);"},
+   {title: "Chat", image: "screenshot_chat.png", link: "chat/index.html", language: "jswebmq", ttitle: "Snippets for Chat", code: "// add a javascript tab"},
+   {title: "Vote", image: "screenshot_vote.png", link: "vote/index.html", language: "jswebmq", ttitle: "Snippets for Vote", code: "// add a javascript tab"},
+   {title: "Gridfilter", image: "screenshot_gridfilter.png", link: "form/knockout/gridfilter/index.html", language: "jswebmq", ttitle: "Snippets for Gridfilter", code: "// add a javascript tab"},
+   // {title: "CodeChat", image: "screenshot_codechat.png", link: "codechat/index.html", language: "jswebmq", ttitle: "Snippets for XXX", code: "// add a javascript tab"},
+   // {title: "Notification", image: "screenshot_notifications.png", link: "codechat/index.html", language: "jswebmq", ttitle: "Snippets for XXX", code: "// add a javascript tab"},
+   // {title: "Chat", image: "screenshot_chat.png", link: "chat/index.html", language: "jswebmq", ttitle: "Snippets for XXX", code: "// add a javascript tab"},
+   // {title: "Vote", image: "screenshot_vote.png", link: "vote/index.html", language: "jswebmq", ttitle: "Snippets for XXX", code: "// add a javascript tab"},
+   // {title: "Gridfilter", image: "screenshot_gridfilter.png", link: "form/knockout/gridfilter/index.html", language: "jswebmq", ttitle: "Snippets for XXX", code: "// add a javascript tab"}
+];
 
 tabs.initialize = function() {
 
    document.getElementById("sendFullEditorContent").addEventListener("click", tabs.sendFullEditorContent);
    document.getElementById("sendSelectedEditorContent").addEventListener("click", tabs.sendSelectedEditorContent);
+   document.getElementById("evalFullEditorContent").addEventListener("click", tabs.evalFullEditorContent);
+   document.getElementById("evalSelectedEditorContent").addEventListener("click", tabs.evalSelectedEditorContent);
 
    tabs.tabtops.addEventListener("click", tabs.tabTopClicked);
    
@@ -545,7 +643,10 @@ tabs.initialize = function() {
       return false;
    });
 
-   var addTabLanguages = document.getElementById("addTabLanguages");
+   var addTabLanguages = document.getElementById("addTabLanguages"),
+       snippetsButtonContainer = document.getElementById("snippetsButtonContainer"),
+       snippetsButton = document.getElementById("snippetsButton");
+   
    $.each(tabs.availableLanguages, function(index, value) {
       var listItem = document.createElement("li"),
           button = document.createElement("button"),
@@ -558,9 +659,46 @@ tabs.initialize = function() {
          $("#addTabLanguages").addClass("nonDisplay");
       });
 
-      listItem.appendChild(button);
+      // listItem.appendChild(button);
+      addTabLanguages.insertBefore(button, snippetsButtonContainer);
       addTabLanguages.appendChild(listItem);
    });
+
+   snippetsButton.addEventListener("click", function() {
+      $(tabs.snippetsOverlay).removeClass("nonDisplay");
+   });
+
+   // add the items to the snippets overlay
+   var snippetsBox = document.getElementById("snippetsBox");
+   for (var i = 0; i < tabs.snippets.length; i++) {
+      var snippet = tabs.snippets[i],
+          item = document.createElement("div"),
+          title = document.createElement("h2"),
+          // image = document.createElement("img"),
+          demolink = document.createElement("a");
+      title.textContent = snippet.title;
+      // image.src = "img/" + snippet.image;
+      demolink.textContent = "open in other window";
+      demolink.href = "/demo/" + snippet.link;
+      demolink.target = "_blank";
+      title.addEventListener("click", (function(language, code, ttitle) {
+         return function() {
+            tabs.addTab(language, code, ttitle);
+            $(tabs.snippetsOverlay).addClass("nonDisplay");
+         }         
+      })(snippet.language, snippet.code, snippet.ttitle));
+      // image.addEventListener("click", function() {
+      //    tabs.addTab(snippet.language, snippet.code, snippet.ttitle);
+      //    $(tabs.snippetsOverlay).addClass("nonDisplay");
+      // })
+      item.appendChild(title);
+      // item.appendChild(image);
+      item.appendChild(demolink);
+      console.log("item " + i + ":", item);
+
+      snippetsBox.appendChild(item);
+   }
+
 
    tabs.addTab(configuration.defaultLanguage);
 };
@@ -680,7 +818,6 @@ tabs.addTab = function(language, content, ttitle) {
 
    var editor = document.createElement("div");
    $(editor).addClass("editor");
-   // tab.appendChild(editor);
    editorWrapper.appendChild(editor);
    tabs.editors[id] = ace.edit(editor);
    tabs.editors[id].setTheme("ace/theme/tomorrow_night");
@@ -706,9 +843,15 @@ tabs.addTab = function(language, content, ttitle) {
       tabs.tabs[id].titleInput.value = ttitle;
    }
 
+   // additional adds if jswebmq tab
+   if(language === "jswebmq") {
+      tabs.addEvalInfrastructure(id);
+   }
+
    // add the tabtop and the tab to the page
-   var addTab = document.getElementById("addTab");
-   tabs.tabtops.insertBefore(tabtop, addTab);
+   // var addTab = document.getElementById("addTab");
+   // tabs.tabtops.insertBefore(tabtop, addTab);
+   tabs.tabtops.appendChild(tabtop);
    // adjust the z-indices for the correct overlap of the box shadow
    tabs.zIndex -= 1;
    tabtop.style.zIndex = tabs.zIndex;
@@ -726,6 +869,15 @@ tabs.addTab = function(language, content, ttitle) {
    document.getElementById("addTab").style.padding = "";
 };
 
+tabs.addEvalInfrastructure = function(id) {
+   console.log("addEval", id);
+
+   // the store location for the session
+   tabs.tabs[id].connection = {};
+   tabs.tabs[id].eval = true;
+   connect.startTabConnect(id);
+};
+
 /*
    Catches specific key combinations within the editor 
    div to enable keyboard triggering of events outside of the editor
@@ -733,7 +885,14 @@ tabs.addTab = function(language, content, ttitle) {
 tabs.keyboardOperation = function(evt) {
    // ctrl + enter to send entire content of editor
    if(evt.which === 13 && evt.ctrlKey === true) {
-      tabs.sendFullEditorContent();
+      // switch depending on whether there is a selection to be sent
+      var selection = tabs.editors[tabs.focusedTab].getSession().selection;
+      if (selection.isEmpty()) {
+         tabs.sendFullEditorContent();
+      } else {
+         tabs.sendSelectedEditorContent();
+      }
+      
    }
 };
 
@@ -775,8 +934,18 @@ tabs.switchTab = function(id) {
    tabs.editors[id].focus();
    tabs.editors[id].resize();
 
+   // check whether eval tab, and switch button state accordingly
+   var evalFullContentButton = document.getElementById("evalFullEditorContent");
+   if(tabs.tabs[id].eval === true) {
+      evalFullContentButton.style.display = "block";
+   } else {
+      evalFullContentButton.style.display = "none";
+   }
+
    // check whether selection exists in current tab, and switch button state accordingly
    tabs.onSelectionChanged(id);
+
+   
 
    // update the language dict
    var language = tabs.tabs[id].language;
@@ -823,6 +992,7 @@ tabs.destroyTab = function(id) {
           button = document.createElement("button"),
           addTabLanguages = document.getElementById("addTabLanguages");
       button.textContent = "last closed";
+      $(button).addClass("lastClosedButton");
       listItem.appendChild(button);
       addTabLanguages.appendChild(listItem);
       tabs.lastClosedTab.button = button;
@@ -901,17 +1071,24 @@ tabs.setFontSize = function(fontSize) {
 */
 tabs.onSelectionChanged = function(id) {
    var selection = tabs.editors[id].getSession().selection,
-   sendSelectionButton = document.getElementById("sendSelectedEditorContent");
+       sendSelectionButton = document.getElementById("sendSelectedEditorContent"),
+       evalSelectionButton = document.getElementById("evalSelectedEditorContent"); // should be cached - FIXME
 
    // check whether empty selection
    if ( selection.isEmpty()) {
       if(sendSelectionButton.style.display != "none") {
          sendSelectionButton.style.display = "none";
       }
+      if(evalSelectionButton.style.display != "none") {
+         evalSelectionButton.style.display = "none";
+      }
    }
    else {
       if(sendSelectionButton.style.display === "none") {
          sendSelectionButton.style.display = "block";
+      }
+      if(tabs.tabs[id].eval === true && evalSelectionButton.style.display === "none") {
+         evalSelectionButton.style.display = "block";
       }
    }
 };
@@ -936,6 +1113,45 @@ tabs.sendSelectedEditorContent = function() {
 
    tabs.sendMessage(tabs.constructMessage(body, language));
 };
+
+var scopeCheck = "defined";
+tabs.evalFullEditorContent = function() {
+   console.log("eval full editor content");
+   var code = tabs.editors[tabs.focusedTab].getValue();
+   gCode = code;
+   // eval(code);
+   // var evFunction = "var session = tabs.tabs[" + tabs.focusedTab + "].connection.session " + code;
+   // var evFunction = "var session = tabs.tabs[" + tabs.focusedTab + "].connection.session; console.log('scopeCheck is ' + scopeCheck);";
+   var evFunction = "var session = globalTabSessions[" + tabs.focusedTab + "]; console.log(session.sessionid()); " + code;
+   eval.apply(window, [evFunction]);
+
+
+   // var evFunction = "console.log(this); console.log('scopeCheck is '+ scopeCheck);" // 'this' is logged as empty, but global is still accessible;
+   // maskedEval(evFunction);
+};
+tabs.evalSelectedEditorContent = function() {
+   console.log("eval selected editor content");
+   var code = tabs.editors[tabs.focusedTab].session.getTextRange(tabs.editors[tabs.focusedTab].getSelectionRange());
+   // eval(code);
+   var evFunction = "var session = tabs.tabs[" + tabs.focusedTab + "].connection.session; " + code;
+   eval(evFunction);
+};
+
+// function maskedEval(scr)
+// {
+//    console.log("mev called");
+//    // set up an object to serve as the context for the code
+//    // being evaluated. 
+//    var mask = {};
+//    // mask global properties 
+//    for (p in this)
+//       mask[p] = undefined;
+//       // mask.session = tabs.tabs[id].connection.session;
+
+//    // execute script in private context
+//    (new Function( "with(this) { " + scr + "}")).call(mask);
+// }
+
 
 /*
    Constructs the message to be sent
@@ -1155,3 +1371,14 @@ var configuration = {
 };
 
 housekeeping.initialize();
+})(); // make all self-executing anonymous function to clear the global scope & 
+// avoid problems with eval. does not exclude loaded libraries, but works in principle
+
+
+function dissect (string) {
+   for(var i = 0; i < string.length; i++) {
+      var chr = string.charAt(i);
+      var chrC = string.charCodeAt(i)
+      console.log(chr, chrC);
+   }
+}

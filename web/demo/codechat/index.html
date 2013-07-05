@@ -53,23 +53,38 @@
    <div id="lower" class="half">
 
       <div id="tabswrapper">
-         <ul id="tabtops">
-            <!-- tabs tops for switching tabs are instantiated here -->
-            <li id="addTab">
+         <div id="tabtopsWrapper">
+            <ul id="tabtops">
+               <!-- tabs tops for switching tabs are instantiated here -->
+<!--                <li id="addTab">
+                  +
+                  <ul id="addTabLanguages" class="nonDisplay fullOpacity">
+                  </ul>
+               </li> -->
+            </ul>   
+            <div id="addTab">
                +
                <ul id="addTabLanguages" class="nonDisplay fullOpacity">
                <!-- <ul id="addTabLanguages"> -->
                      <!-- buttons for picking language of new tab are 
                      instantiated here -->
+                  <li id="snippetsButtonContainer">
+                     <button id="snippetsButton">
+                        Snippets
+                     </button>                     
+                  </li>
                </ul>
-            </li>
-         </ul>
+            </div>
+         </div>
+
          <div id="tabscontainer">
             <!-- tabs themselves are instantiated here -->
          </div>
 
          <button id="sendFullEditorContent" class="sendbutton">Send All</button>
          <button id="sendSelectedEditorContent" class="sendbutton">Send Selected</button>
+         <button id="evalFullEditorContent" class="evalbutton">Eval All</button>
+         <button id="evalSelectedEditorContent" class="evalbutton">Eval Selected</button>
       </div>
 
       <div id="statusLine">
@@ -126,6 +141,7 @@
                      Channel
                   </span>
                   <input id="initialInputChannel" type="text">
+
                   <span id="initialInputChannelReminder" class="initialInputReminder">
                      Please enter between 3 and 10 alphanumeric characters, '-' or '_'.
                   </span>
@@ -168,7 +184,28 @@
       </div>
    </div>
 
-   <script type="text/javascript" src="../../js/jquery.min.js"></script>
+   <div id="snippetsOverlay" class="fullscreenOverlay nonDisplay">
+      <div class="fullscreenOverlayTableWrapper">
+         <div class="fullscreenOverlayWrapper">
+            <div id="snippetsBox" class="fullscreenOverlayInputBox">
+
+               <h1>
+                  Display code snippets<br>
+                  - pick a demo
+               </h1>
+               
+               
+               
+
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <script type="text/javascript" src="../../js/jquery.min.js"></script> <!-- check if this works with the new jqueryUI !!!-->
+   <link rel="stylesheet" href="../../jquery.combobox/style.css">
+   <script type="text/javascript" src="../../jquery.combobox/jquery.combobox.js"></script>
+
    <script type="text/javascript" src="../../js/autobahn.min.js"></script>
    <script type="text/javascript" src="../util.js"></script>
    
