@@ -1,6 +1,6 @@
 ﻿/******************************************************************************
  *
- *  Copyright 2012 Tavendo GmbH. All rights reserved.
+ *  Copyright 2012-2013 Tavendo GmbH. All rights reserved.
  *
  ******************************************************************************/
 
@@ -23,7 +23,7 @@ var retryDelay = 2;
 
 function updateStatusline(status) {
    $(".statusline").text(status);
-};
+}
 
 
 function connect() {
@@ -83,76 +83,72 @@ function onAuth(permissions) {
    // send request for initial data cut from DB
    // fill grid with this data
    session.call("api:read", {start: 0, limit: 100}).then(fillList, ab.log); // if no start & limit: start: 1, limit: 10
-   
+
    // subscribe to data change events
    session.subscribe("event:oncreate", onItemCreated);
    session.subscribe("event:onupdate", onItemUpdated);
    session.subscribe("event:ondelete", onItemDeleted);
-
-};
+}
 
 function fillList(res) {
-      
    for (var i = 0; i < res.length; i++) {
       vm.listData.push(new listItem(res[i]));
    }
    // set focus to first list element
    vm.displayDetails(vm.listData()[0]);
-};
+}
 
 function onItemCreated(uri, obj) {
    ab.log("onItemCreates");
-   
+
    vm.listData.push(new listItem(obj));
 
    // highlight this for a short while
-   var index = getIndexFromId(obj.id);   
+   var index = getIndexFromId(obj.id);
    vm.listData()[index].itemState("hasBeenCreated");
    window.setTimeout(function() { vm.listData()[index].itemState(''); }, 1000);
-   
 }
+
 function onItemUpdated(uri, obj) {
-   ab.log("onItemUpdated");   
+   ab.log("onItemUpdated");
    var index = getIndexFromId(obj.id);
-   
+
    // update locally stored values that habe been updated remotely
    for (var i in obj) {
       if(obj.hasOwnProperty(i)) {
-         vm.listData()[index][i](obj[i]);   
-      }      
+         vm.listData()[index][i](obj[i]);
+      }
    }
+
    // update the details view if this shows the updated item
    if (vm.detailsCurrent.id() === obj.id) {
-      
+
       vm.displayDetails(vm.listData()[index]);
 
       // temporary highlighting of the changed details
       for (var i in obj) {
          if (obj.hasOwnProperty(i) && i != "id" ){
             vm.detailsEditable.hasBeenEdited[i](true);
-            (function(it) { 
-                  window.setTimeout(function() { 
-                        vm.detailsEditable.hasBeenEdited[it](false); 
+            (function(it) {
+                  window.setTimeout(function() {
+                        vm.detailsEditable.hasBeenEdited[it](false);
                   }, 1400);
-            })(i); 
-         };        
+            })(i);
+         }
       }
-
-   };
+   }
 
    // temporary highlighting of the list item
    var previousItemState = vm.listData()[index].itemState();
    vm.listData()[index].itemState("hasBeenEdited");
    window.setTimeout(function() { vm.listData()[index].itemState(previousItemState); }, 1400);
-
-
-   
 }
-function onItemDeleted(uri, id) {
-   ab.log("onItemDeleted");
+
+function onItemDeleted(uri, obj) {
+   ab.log("onItemDeleted", obj);
    // highlight item, then delete
-   var index = getIndexFromId(id);
-   vm.listData()[index].itemState("isBeingDeleted");   
+   var index = getIndexFromId(obj.id);
+   vm.listData()[index].itemState("isBeingDeleted");
 
    window.setTimeout(function() {
       var fadeTime = 200;
@@ -174,13 +170,11 @@ function getIndexFromId(id) {
       }
    }
    return index;
-};
+}
 
 $(document).ready(function () {
    updateStatusline("Not connected.");
-
    setupDemo();
-
    connect();
 });
 
@@ -192,7 +186,7 @@ function ViewModel() {
       //whenever the array changes, make one loop to update the index on each
       this.subscribe(function(newValue) {
          if (newValue) {
-            
+
             var item;
             for (var i = 0, j = newValue.length; i < j; i++) {
                item = newValue[i];
@@ -214,7 +208,7 @@ function ViewModel() {
    this.listData = ko.observableArray([]).indexed('index');
 
    // details editable observables
-   
+
    self.detailsEditable = {
       "index": ko.observable(),
       "orderNumber": ko.observable(),
@@ -242,7 +236,6 @@ function ViewModel() {
          "price": ko.observable(false)
       }
    };
- 
 
    self.addButtonVisible = ko.observable(true);
    self.deleteButtonVisible = ko.observable(true);
@@ -278,14 +271,14 @@ function ViewModel() {
    this.checkForValueChange = function(viewmodel, event) {
       //self.exevent = event;
       //ab.log("checking", viewmodel, event.target.value, event.target.id);
-      var valueId = event.target.id; 
+      var valueId = event.target.id;
       var currentValue = event.target.value;
       // ab.log("vId", valueId, "cv", currentValue);
       // convert to number on number fields before comparison
       if (self.inputs[valueId] === "num") {
          currentValue = parseFloat(currentValue, 10);
       }
-      
+
       var storedValue = self.detailsCurrent[valueId]();
 
       if (currentValue !== storedValue && self.detailsEditable.fieldValueChanged[valueId]() === false) {
@@ -310,7 +303,7 @@ function ViewModel() {
       else if (valueId === "orderNumber" && currentValue !== "") {
          self.orderNumberMissing(false);
       }
-      
+
       // switch buttons based on whether there have been changes and all required data present
       if (self.orderNumberMissing() === false && self.nameMissing() === false && self.detailsEditable.fieldValueChanged.counter() > 0) {
          //ab.log("ok");
@@ -328,8 +321,6 @@ function ViewModel() {
       }
 
    };
-
-   
 
    this.switchDetailsDisplayed = function(listItem, event) {
       // check whether switching currently blocked
@@ -350,20 +341,17 @@ function ViewModel() {
             self.switchWarning(true);
          }
       }
+   };
 
-   }
-
-   
-   
    this.displayDetails = function(listItem, event) {
 
       self.clearDetailsChanged();
       self.switchWarning(false);
-            
+
       // copy the observables to the details editable observables
       for (var i = 0; i < self.detailsIds.length; i++) {
          self.detailsEditable[self.detailsIds[i]](listItem[self.detailsIds[i]]());
-      };
+      }
 
       // reset the field states - IMPLEMENT ME
 
@@ -372,7 +360,7 @@ function ViewModel() {
 
       // switch highlighting to displayed
       if (self.detailsCurrent.itemState() !== 'isNew') {
-         self.detailsCurrent.itemState('isBeingDisplayed');         
+         self.detailsCurrent.itemState('isBeingDisplayed');
       }
 
       // if previously highlighted item !== current item, and not shown as being deleted, remove highlighting
@@ -402,17 +390,15 @@ function ViewModel() {
          }
          else if (self.inputs[i] === "num" && set[i] === "") {
             delete set[i];
-         }        
-      };
+         }
+      }
       return set;
    };
 
    this.saveDetailsEdits = function() {
 
-
-
       // block from switching before the call has returned
-      self.switchingBlocked = true;        
+      self.switchingBlocked = true;
 
       // switch based on need to create new item or modification of existing one
       if (self.detailsCurrent.itemState() === 'isNew') {
@@ -424,7 +410,7 @@ function ViewModel() {
 
          self.normalizeSet(saveSet);
          console.log("saveSet ", saveSet);
-         
+
          session.call("api:create", saveSet).then(
             function(res) {
 
@@ -441,16 +427,13 @@ function ViewModel() {
                self.detailsCurrent.itemState('isBeingDisplayed');
                // display details to clear field states + set button states
                self.displayDetails(self.listData()[self.detailsCurrent.index()]);
-
                // re-enable the 'add item' button
                self.addButtonVisible(true);
             },
             ab.log
             );
-         
       }
       else {
-
          var updateSet = {};
 
          updateSet["id"] = self.detailsCurrent["id"]();
@@ -462,7 +445,6 @@ function ViewModel() {
 
          self.normalizeSet(updateSet);
 
-         
          session.call("api:update", updateSet).then(
             function(res) {
 
@@ -477,10 +459,7 @@ function ViewModel() {
             },
             ab.log
             );
-
       }
-      
-     
    };
 
    this.cancelDetailsEdits = function() {
@@ -496,7 +475,6 @@ function ViewModel() {
       else {
          self.displayDetails(self.listData()[self.detailsCurrent.index()]);
       }
-      
    };
 
    this.addListItem = function() {
@@ -512,7 +490,6 @@ function ViewModel() {
          "inStock": "",
          "itemState": "isNew", // FIXME
          "price": ""
-         
       };
       self.listData.push(new listItem(newItem));
       //set itemState (hack, no idea why the regular set as part of newItem not working - FIXME
@@ -528,22 +505,17 @@ function ViewModel() {
 
       self.orderNumberMissing(true);
       self.nameMissing(true);
-
-      
-
    };
 
    this.deleteListItem = function( listItem, event ) {
-           
-
       session.call("api:delete", listItem.id()).then(
          function(res) {
             var index = listItem.index();
             // delete the item
-            onItemDeleted("localDelete", listItem.id());
+            onItemDeleted("localDelete", {id: listItem.id()});
          },
          ab.log
-         );          
+         );
    };
 
    this.deleteListItemLocal = function( index, locallyDeleted ) {
@@ -559,7 +531,6 @@ function ViewModel() {
             }
          }
          changeFocus = focussedElementExists ? false : true;
-         
       }
 
       self.listData.splice(index, 1); // splice without listData(), since otherwise no ko refresh triggered
@@ -589,7 +560,6 @@ function ViewModel() {
             self.clearDetailsChanged();
          }
       }
-      
    };
 
    this.clearDetailsChanged = function() {
@@ -603,16 +573,11 @@ function ViewModel() {
       }
       // reset the counter to 0
       fieldValueChanged.counter(0);
-
-
    };
-
-   
-
-};
+}
 
 function listItem(data) {
-   return {      
+   return {
       orderNumber: ko.observable(data["orderNumber"]),
       name: ko.observable(data["name"]),
       price: ko.observable(data["price"]),
@@ -622,7 +587,7 @@ function listItem(data) {
       id: ko.observable(data["id"]),
       itemState: ko.observable()
    };
-};
+}
 
 var vm = new ViewModel(); // instantiates the view model and makes its methods accessible 
 
@@ -636,7 +601,7 @@ function setupDemo() {
    });
 
    $('#new-window').attr('href', window.location.pathname);
-};
+}
 
 function addTestItems( numberOfItemsToAdd ) {
    for ( var i = 0; i < numberOfItemsToAdd + 1; i++ ) {
@@ -647,9 +612,9 @@ function addTestItems( numberOfItemsToAdd ) {
             // ab.log("saved", res);
          },
          ab.log
-      );  
+      );
    }
-};
+}
 
 var oracleForm = {};
 
@@ -662,8 +627,7 @@ oracleForm.testEvents = function(evt, rep) {
             var saveSet = { inStock: i, name: "Test Item " + i, orderNumber: "TT-" + i, price: i*3.5, size: i +4, weight: i*1.3+40 };
             vm.normalizeSet(saveSet);
             session.call("api:create", saveSet).then(ab.log, ab.log);
-         }  
-
+         }
          break;
       case "delete":
          // console.log("no deleting yet");
@@ -679,8 +643,8 @@ oracleForm.testEvents = function(evt, rep) {
                         onItemDeleted("localDelete", obj[i].id);
                      },
                      ab.log
-                  ); 
-               }               
+                  );
+               }
             }
          }, ab.log);
 
@@ -695,12 +659,11 @@ oracleForm.testEvents = function(evt, rep) {
                   console.log("id ", obj[i].id);
                   var updated = { id: obj[i].id, orderNumber: "updated " + i*rep};
                   session.call("api:update", updated).then(ab.log, ab.log);
-               };
-            };
+               }
+            }
          }, ab.log);
          break;
       default:
          break;
    }
-} 
-
+};

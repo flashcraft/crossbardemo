@@ -298,6 +298,7 @@ AS
    PROCEDURE crud_delete (p_id NUMBER, p_sess webmq_session)
    IS
       l_current         product%ROWTYPE;
+      l_res             JSON := JSON();
       l_exclude         webmq_sessionids := webmq_sessionids();
    BEGIN
       BEGIN
@@ -309,9 +310,11 @@ AS
       DELETE FROM product WHERE id = p_id;
       COMMIT;
 
+      l_res.put('id', p_id);
+
       l_exclude.extend();
       l_exclude(1) := p_sess.sessionid;
-      webmq.publish(BASEURI || 'ondelete', json_value(p_id), p_exclude => l_exclude);
+      webmq.publish(BASEURI || 'ondelete', l_res, p_exclude => l_exclude);
 
    END crud_delete;
 

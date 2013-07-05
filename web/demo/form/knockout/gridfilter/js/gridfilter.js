@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- *  Copyright 2012 Tavendo GmbH. All rights reserved.
+ *  Copyright 2012-2013 Tavendo GmbH. All rights reserved.
  *
  ******************************************************************************/
 
@@ -29,7 +29,7 @@ function isValueChar(e) {
 
 function updateStatusline(status) {
    $(".statusline").text(status);
-};
+}
 
 gridfilter = {};
 
@@ -38,7 +38,7 @@ gridfilter.displayEmptyRow = function() {
    var emptyRow = { "name": " ", "orderNumber": " ", "weight": " ", "size": " ", "inStock": " ", "price": " " };
    vm.tableData.push(new product(emptyRow));
    vm.noEntries(true);
-}
+};
 
 gridfilter.currentlyHighlighted = [];
 
@@ -46,7 +46,7 @@ gridfilter.isEmptyObject = function(obj) {
    // from http://stackoverflow.com/questions/4994201/is-object-empty
 
    // null and undefined are empty
-   if (obj == null) return true;
+   if (obj === null) return true;
    // Assume if it has a length property with a non-zero value
    // that that property is correct.
    if (obj.length && obj.length > 0)    return false;
@@ -57,7 +57,7 @@ gridfilter.isEmptyObject = function(obj) {
    }
 
    return true;
-}
+};
 
 
 function connect() {
@@ -123,8 +123,7 @@ function onAuth(permissions) {
    sess.subscribe("api:oncreate", onItemCreated);
    sess.subscribe("api:onupdate", onItemUpdated);
    sess.subscribe("api:ondelete", onItemDeleted);
-      
-};
+}
 
 function onItemCreated(uri, obj){
    console.log("item created", uri, obj);
@@ -134,7 +133,7 @@ function onItemCreated(uri, obj){
    // re-request the set to display for the current filter settings
    sess.call("api:filter", vm.filter(), rows).then(function(obj) {
       // console.log("received set to check", obj.length);
-      
+
       // check whether the added item is contained in the revised set
       // that should be the current display
       console.log("results set has length " + obj.length);
@@ -142,10 +141,10 @@ function onItemCreated(uri, obj){
       var found = false;
       for(var i = 0; i < obj.length; i++) {
          // console.log("i", i);
-       
+
          if(obj[i].id === addedItemId) {
             console.log("added item found in results set");
-            found = true;  
+            found = true;
 
             // add the item id to 'currently highlighted' array
             gridfilter.currentlyHighlighted.push(obj[i].id);
@@ -169,7 +168,7 @@ function onItemCreated(uri, obj){
       }
    }, ab.log);
 
-};
+}
 
 // function onItemCreated(uri, obj){
 //    // console.log("item created", uri, obj);
@@ -208,9 +207,7 @@ function onItemCreated(uri, obj){
 
 //       }
 
-//    }
-
-      
+//    }     
 
 //    }, ab.log);
 
@@ -257,7 +254,7 @@ function onItemCreated(uri, obj){
          //    }
 
 function onItemUpdated(uri, obj){
-   
+
    // console.log("item updated", obj.id);   
    var index = getIndexFromId(obj.id);
 
@@ -270,7 +267,7 @@ function onItemUpdated(uri, obj){
    // temporary highlighting of the grid item
    var previousItemState = vm.tableData()[index].itemState();
    vm.tableData()[index].itemState("hasBeenEdited");
-   window.setTimeout(function() { vm.tableData()[index].itemState(previousItemState); }, 1400);  
+   window.setTimeout(function() { vm.tableData()[index].itemState(previousItemState); }, 1400);
 
    // update the changes 
    for(var i in obj) {
@@ -278,15 +275,14 @@ function onItemUpdated(uri, obj){
          vm.tableData()[index][i](obj[i]);
       }
    }
-   
-};
+}
 
 
 /* bug: sometimes, with multiple quick deletions,
     one item remains undeleted - FIXME
 */
-function onItemDeleted(uri, id){
-   console.log("item deleted", id);
+function onItemDeleted(uri, obj){
+   console.log("item deleted", obj.id);
    var index = getIndexFromId(id);
 
    // do nothing if the updated item is not part of the currently
@@ -296,7 +292,7 @@ function onItemDeleted(uri, id){
       return;
    }
 
-   vm.tableData()[index].itemState("isBeingDeleted");   
+   vm.tableData()[index].itemState("isBeingDeleted");
 
    window.setTimeout(function() {
       var fadeTime = 200;
@@ -332,20 +328,17 @@ function onItemDeleted(uri, id){
                      vm.tableData.push(newRow); // can just push, since this is always added at the end;
                      return;
                   }
-               }               
+               }
             }
             // check whether current list is empty
             if (vm.tableData().length === 0) {
                console.log("grid now empty");
                gridfilter.displayEmptyRow();
             }
-         })
+         });
       }, fadeTime);
    }, 1400);
-
-
-
-};
+}
 
 // gives the current index of the item to be updated or deleted 
 // within the grid
@@ -360,19 +353,16 @@ function getIndexFromId(id) {
       }
    }
    return index;
-};
+}
 
 function onOraCallError(error) {
    ab.log("oce", error);
    $("#error_overlay").show();
-};
-
+}
 
 $(document).ready(function() {
    updateStatusline("Not connected.");
-
    setupDemo();
-
    connect();
 });
 
@@ -387,7 +377,7 @@ function ViewModel() {
    this.requestsSent = ko.observable(0);
 
    // filter currently contains values changed from default empty
-   this.currentFilterValues = ko.observable(false);  
+   this.currentFilterValues = ko.observable(false);
 
    // textual inputs
    this.name = ko.observable("");
@@ -419,7 +409,7 @@ function ViewModel() {
    };
 
    this.filter = ko.computed(function() {
-           
+
       var filterSet = {};
       // triggers based on single change
       // calculates entire filter set based on present input states
@@ -449,12 +439,10 @@ function ViewModel() {
          self.requestsSent(self.requestsSent() + 1);
          // console.log("filter set ", filterSet);
          sess.call("api:filter", filterSet, rows).then(onDataReceived, ab.log);
-      };
+      }
       return filterSet;
    }, this);
 
-   
-   
    this.resetFilter = function() {
       console.log("clear filter clicked");
       // textual inputs
@@ -475,9 +463,8 @@ function ViewModel() {
 
       // hide the reset button
       this.currentFilterValues(false);
-   } 
-
-};
+   };
+}
 
 function product(data) {
    return {
@@ -490,7 +477,7 @@ function product(data) {
       price: ko.observable(data["price"]),
       itemState: ko.observable()
    };
-};
+}
 
 var vm = new ViewModel(); // instantiates the view model and makes its methods accessible 
 
@@ -499,14 +486,14 @@ function setupDemo() {
    ko.applyBindings(vm);
 
    $("#helpButton").click(function() {
-      $(".info_bar").toggle();      
+      $(".info_bar").toggle();
    });
-};
+}
 
 function onDataReceived(data) {
    refreshGridData(data);
-   console.log("grid data received ", data)
-};
+   console.log("grid data received ", data);
+}
 
 function refreshGridData(data) {
    // handle empty return set - IMPLEMENT ME
@@ -530,9 +517,6 @@ function refreshGridData(data) {
       vm.noEntries(true);
    }
 }
-
-
-
 
 /*
    Highlights any of the 'currentyHighlighted' items that are found in the current grid
@@ -565,7 +549,7 @@ gridfilter.setCurrentHighlights = function() {
 */
 gridfilter.removeHighlight = function(id) {
    // console.log("remove highlight from ", id);
-   
+
    var index = getIndexFromId(id);
    // console.log("index to remove at ", index);
    if(index != "notFound") {
@@ -574,7 +558,7 @@ gridfilter.removeHighlight = function(id) {
 
    for(var i = 0; i < gridfilter.currentlyHighlighted.length; i++) {
       if(gridfilter.currentlyHighlighted[i] === id) {
-         gridfilter.currentlyHighlighted.splice(i, 1);   
+         gridfilter.currentlyHighlighted.splice(i, 1);
       }
    }
 
@@ -587,7 +571,6 @@ gridfilter.removeHighlight = function(id) {
 
 //   var filteredData = [];
 //   var intermediateData = currentData;
-   
 //   for (var i in filterData) {
 //      if (filterData.hasOwnProperty(i)) {
 //         //ab.log("i", i);
