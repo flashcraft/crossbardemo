@@ -618,11 +618,11 @@ tabs.zIndexSelected = tabs.zIndex + 1;
 tabs.lastClosedTab = {};
 tabs.snippetsOverlay = document.getElementById("snippetsOverlay");
 tabs.snippets = [
-   {title: "CodeChat", image: "screenshot_codechat.png", link: "codechat/index.html", language: "jswebmq", ttitle: "Snippets for CodeChat", code: "codechat.txt"},
-   {title: "Notification", image: "screenshot_notifications.png", link: "notification/index.html?channel=123456", language: "jswebmq", ttitle: "Snippets for Notifications", code: "notification.txt"},
-   {title: "Chat", image: "screenshot_chat.png", link: "chat/index.html", language: "jswebmq", ttitle: "Snippets for Chat", code: "chat.txt"},
-   {title: "Vote", image: "screenshot_vote.png", link: "vote/index.html", language: "jswebmq", ttitle: "Snippets for Vote", code: "vote.txt"},
-   {title: "Gridfilter", image: "screenshot_gridfilter.png", link: "form/knockout/gridfilter/index.html", language: "jswebmq", ttitle: "Snippets for Gridfilter", code: "gridfilter.txt"}
+   {title: "CodeChat", image: "screenshot_codechat.png", link: "codechat/index.html", language: "jswebmq", ttitle: "Snippets for CodeChat", code: "codechat.js"},
+   {title: "Notification", image: "screenshot_notifications.png", link: "notification/index.html?channel=123456", language: "jswebmq", ttitle: "Snippets for Notifications", code: "notification.js"},
+   {title: "Chat", image: "screenshot_chat.png", link: "chat/index.html", language: "jswebmq", ttitle: "Snippets for Chat", code: "chat.js"},
+   {title: "Vote", image: "screenshot_vote.png", link: "vote/index.html", language: "jswebmq", ttitle: "Snippets for Vote", code: "vote.js"},
+   {title: "Gridfilter", image: "screenshot_gridfilter.png", link: "form/knockout/gridfilter/index.html", language: "jswebmq", ttitle: "Snippets for Gridfilter", code: "gridfilter.js"}
 ];
 
 tabs.initialize = function() {
@@ -690,12 +690,24 @@ tabs.initialize = function() {
          return function() {
             // loading code via AJAX goes here - IMPLEMENT ME
             var ajCode;
-            $.get("snippets/" + code, function(data) {
+            var url = "snippets/" + code;
+            console.log("Adding code snippets", language, code, ttitle, url);
+
+            if (true) {
+               var data = httpGet(url);
                tabs.addTab(language, data, ttitle);
-            });
+            } else {
+               // FIXME: this version does NOT work. for some reasons, it
+               // immediately evalutes (!) (wtf?) the code snippets .. which does no
+               // good since e.g. AB session is only available later
+               $.get(url, function(data) {
+                  console.log("Got code snippets for " + code, data);
+                  tabs.addTab(language, data, ttitle);
+               });
+            }
 
             $(tabs.snippetsOverlay).addClass("nonDisplay");
-         }         
+         };
       })(snippet.language, snippet.code, snippet.ttitle));
       // image.addEventListener("click", function() {
       //    tabs.addTab(snippet.language, snippet.code, snippet.ttitle);
@@ -873,7 +885,7 @@ tabs.startAddEvalInfrastructure = function(id) {
 };
 tabs.finishAddEvalInfrastructure = function(id) {
    var evTab = tabs.tabs[id];
-   evTab.connection.context = tabs.createContext({session: evTab.connection.session});
+   evTab.connection.context = tabs.createContext({session: evTab.connection.session, ab: ab});
 };
 /* create iframe for an eval tab to separate code for eval */
 tabs.createContext = function(context) {
