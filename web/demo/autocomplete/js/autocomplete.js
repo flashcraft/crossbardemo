@@ -79,6 +79,10 @@ function onAuth(permissions) {
    // make call to establish whether necessary oracle connection is available   
    sess.call("api:search", "a", { "after": 0, "limit": 10 }).then(ab.log, onOraCallError);
 
+   sess.call("api:count", "").then(function(count) {
+      var formatedCount = parseInt(count/1000) + "." + parseInt((count/1000 - parseInt(count/1000))*1000);
+      vm.totalRecords(formatedCount);
+   }, ab.log);
 }
 
 
@@ -148,6 +152,8 @@ function ViewModel() {
       //return true; // otherwise default key action is cancelled (needed if called via event binding)
    };
    self.enteredName.subscribe(self.sendChange);
+
+   self.totalRecords = ko.observable();
 
    self.handleCursor = function(viewmodel, event) {
       switch (event.which) {
@@ -333,6 +339,7 @@ function setupDemo() {
    $("#helpButton").click(function() {
       $(".info_bar").toggle();
    });
+
 }
 
 /************************************************

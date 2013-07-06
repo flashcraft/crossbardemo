@@ -135,6 +135,9 @@ function onAuth(permissions) {
    } else {
       switchChannel(randomChannelId());
    }
+
+   afterAuth();
+
 };
 
 var setupInfoDictionary = {};
@@ -202,4 +205,5 @@ $(document).ready(function()
    setupDemo();
 
    connect();
+   
 });

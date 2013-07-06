@@ -5,7 +5,7 @@
 
    <link rel="shortcut icon" href="../../img/favicon.ico">
 
-   <title>WebMQ Autocomplete Demo</title>
+   <title>Autocomplete with Oracle</title>
 
    <link rel="stylesheet" href="../demo.css">
    <link rel="stylesheet" href="css/autocomplete.css">
@@ -33,10 +33,14 @@
 
    <header>
       <div id="header_inner">
-         <div id="demo_title">WebMQ Autocomplete Demo</div>
+         <div id="demo_title">
+            <span>Autocomplete</span><br>
+            <span>with Oracle Database</span>
+         </div>
          <a href="http://tavendo.de" target="_blank">
             <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
          </a>
+         <img id="webmq_logo" src="../../img/webmq_logo.png">
       </div>
       <center>
          <a href="https://github.com/tavendo/WebMQDemo/tree/master/web/demo/autocomplete">Source Code</a>
@@ -72,6 +76,11 @@
             
             </div>
             
+         </div>
+
+         <div id="searchWithin">
+            Search within<br>
+            <span data-bind="text: totalRecords"></span> records.
          </div>
 
          <div id="autcompleteBackgroundData">
@@ -129,7 +138,7 @@
       </div>
 
 
-      <button id="helpButton" class="webmq_demo_button">?</button> 
+      <button id="helpButton" class="button webmq_demo_button">?</button> 
       
       
 

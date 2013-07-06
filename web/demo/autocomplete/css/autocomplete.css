@@ -43,37 +43,12 @@ a > img
    border-style: none;
 }
 
-
-header {
-   position: relative;
-   width: 100%;
-   height: 87px;
-}
-
-#header_inner
-{
-   position: relative;
-   width: 960px;
-   height: 87px;
-   margin:auto;
-   padding: 0;
-   color: #666;
-
-}
-
 #demo_title
 {
-   font-size: 24px;
-   position: absolute;
-   left: 330px;
-   bottom: 12px;
+   padding-top: 12px;
 }
 
-#tavendo_logo {
-   position: absolute;
-   right: 20px;
-   bottom: 17px;
-}
+
 #demo_body
 {
    width: 900px;
@@ -91,9 +66,19 @@ header {
    position: relative;
 }
 
+#searchWithin
+{
+   font-size: 18px;
+   margin: 2em 0 0 2em;
+}
+#searchWithin > span
+{
+   color: #f60;
+}
+
 #autcompleteBackgroundData
 {
- margin: 12em 0 0;
+ margin: 7em 0 0;
 }
 
 
@@ -247,7 +232,7 @@ header {
 
 .autcompleteBox
 {
-    background-color: #fff;
+    background-color: #F4F4F4;
 
     border-radius: 3px;
     box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.5);

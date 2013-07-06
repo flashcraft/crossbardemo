@@ -13,9 +13,16 @@ function setupDemo() {
       setupPicker(i);
    }
 
+
    $("#helpButton").click(function() { $(".info_bar").toggle() });
 
 }
+
+function afterAuth() {
+   $.farbtastic('#picker0').setColor("#f60");
+   $.farbtastic('#picker1').setColor("#555");
+   $.farbtastic('#picker2').setColor("#fff");
+};
 
 
 
