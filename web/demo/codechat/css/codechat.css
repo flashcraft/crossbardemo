@@ -437,22 +437,29 @@ body,
    margin: 0 0 -30px 0; /* the bottom margin is the negative value of the footer's height */
    position: relative;
    padding: 10px 0 0 0;
+   overflow: hidden;
 }
 
 #tabtopsWrapper
 {
-    display: inline-block;
+   display: inline-block;
 
+   height: 42px;
+   position: relative;
 }
+
+#tabtopsWrapper > div 
+{
+   display: inline-block;
+}
+
 
 #tabtops 
 {
    margin: -2px 0;
    z-index: 4;
    /*overflow-x: hidden;*/
-   height: 42px;
    overflow: hidden;
-   display: inline-block;
 }
 #tabtops > li 
 {
@@ -461,7 +468,7 @@ body,
    border-bottom: none;
    border-radius: 0px 0px 0 0;
    list-style: none;
-   display: inline-block;
+   /*display: inline-block;*/
    /*z-index: 5;*/
    background-color: rgba(134, 134, 134, 0.38);
    position: relative;
@@ -470,6 +477,7 @@ body,
    color: rgb(141, 141, 141);
    border: 1px solid transparent;
    border-bottom: 1px solid #dcc74e;
+   display: inline-block;
 }
 #tabtops > li.selected 
 {
@@ -479,15 +487,30 @@ body,
    border: 1px solid #DCC74E;
    border-bottom: 2px solid #f7f2d4;
 }
-#tabtops #addTab,
 #addTab
 {
-    background-color: #F1EABD;
+   position: absolute;
+   width: 107px;
+   right: -107px;
+   top: -1px;
 
-    text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
-    color: #444;
-    display: inline-block;
-    height: 100%;
+   /*background-color: #F1EABD;*/
+   text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+   color: #444;
+   /*height: 100%;*/
+;
+   z-index: 10;
+   height: 40px;
+}
+#addTab.addTabExpanded
+{
+   background-color: #EFE8BB;
+   height: auto;
+}
+#addTab > span
+{
+  display: inline-block;
+  height: 100%;
 }
 .deleteButton
 {
@@ -503,6 +526,12 @@ body,
    text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
 }
 
+#addTabButton
+{
+   padding: 8px 10px;
+   background-color: #EFE8BB;
+}
+
 /* getting this to display at list width, no limited by that of the parent element:
 http://jsfiddle.net/YXT7j/66/ - http://stackoverflow.com/questions/13122230/absolute-element-inherits-parent-width-but-i-want-it-to-stretch-according-its-ch;
 */
@@ -513,7 +542,6 @@ http://jsfiddle.net/YXT7j/66/ - http://stackoverflow.com/questions/13122230/abso
    /*display: inline-block;*/
    margin: 0;
    padding: 0;
-   white-space: nowrap;
    border-radius: 0px;
 
    opacity: 1;
@@ -523,7 +551,6 @@ http://jsfiddle.net/YXT7j/66/ - http://stackoverflow.com/questions/13122230/abso
    -o-transition: opacity 1s;*/
    transition: all 0.3s ease 0.2s;
    height: 100%;
-   display: inline-block;
 }
 #addTabLanguages.nonDisplay
 {
@@ -541,7 +568,6 @@ http://jsfiddle.net/YXT7j/66/ - http://stackoverflow.com/questions/13122230/abso
 #addTabLanguages > li 
 {
    list-style: none;
-   display: inline-block;
    padding: 4px;
    margin: 0;
 }
@@ -670,6 +696,7 @@ http://jsfiddle.net/YXT7j/66/ - http://stackoverflow.com/questions/13122230/abso
    display: inline-block;
    padding: 3px 15px;
    color: #999;
+   position: relative;
 }
 #statusLine > div > span
 {
@@ -703,7 +730,8 @@ div#statusIndicator > span
 {
    cursor: pointer;
 }
-button 
+button,
+.button 
 {
    cursor: pointer;
    color: #fff;
@@ -711,7 +739,8 @@ button
    border: none;
    padding: 4px 8px;
 }
-button:hover
+button:hover,
+.button:hover
 {
     background-color: #bbb;
    
@@ -733,6 +762,19 @@ button:hover
 #statusText
 {
 
+}
+
+#evaluatedMessage
+{
+   position: absolute;
+   bottom: 50px;
+   left: 0;
+   display: inline-block;
+
+   background-color: #bbb;   
+   color: #666;
+   padding: 6px 9px;
+   white-space: nowrap;
 }
 
 #statusLine > #fontResizeButtons
@@ -872,7 +914,8 @@ button:hover
 
 /* generic */
 
-.nonDisplay
+.nonDisplay,
+#evaluatedMessage.nonDisplay
 {
    display: none;
    /*opacity: 0;*/

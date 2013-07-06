@@ -7,19 +7,6 @@
    <link rel="stylesheet" href="css/codechat.css">
 </head>
 <body>
-<!-- 
-   <div id="branding">
-      <div id="tavendoRoot">
-         <img src="tavendoRoot.png" alt="Tavendo Root Company Symbol">
-      </div>
-      <div id="codeChat">
-         <img src="codeChat.png" alt="CodeChat">
-      </div>
-      <div id="poweredBy">
-         powered by <a href="http://tavendo.de">Tavendo WebMQ</a>
-      </div>
-   </div> -->
-
    <div id="upper" class="half">
 
       <div id="branding">
@@ -54,16 +41,21 @@
 
       <div id="tabswrapper">
          <div id="tabtopsWrapper">
-            <ul id="tabtops">
-               <!-- tabs tops for switching tabs are instantiated here -->
-<!--                <li id="addTab">
-                  +
-                  <ul id="addTabLanguages" class="nonDisplay fullOpacity">
-                  </ul>
-               </li> -->
-            </ul>   
+            
+            <div>
+               <ul id="tabtops">
+                  <!-- tabs tops for switching tabs are instantiated here -->
+   <!--                <li id="addTab">
+                     +
+                     <ul id="addTabLanguages" class="nonDisplay fullOpacity">
+                     </ul>
+                  </li> -->
+               </ul>
+            </div>  
             <div id="addTab">
-               +
+               <span id="addTabButton">
+                  +
+               </span>
                <ul id="addTabLanguages" class="nonDisplay fullOpacity">
                <!-- <ul id="addTabLanguages"> -->
                      <!-- buttons for picking language of new tab are 
@@ -103,6 +95,9 @@
                   Open in additional Window
                </a>
             </span>
+            <div id="evaluatedMessage" class="nonDisplay">
+               -- placeholder message --
+            </div>
          </div>
          
          <div id="statusIndicator">

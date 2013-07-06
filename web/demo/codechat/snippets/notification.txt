@@ -1,0 +1,8 @@
+// send a notification 
+session.publish('http://tavendo.de/webmq/demo/notifications/123456', 'Sent from CodeChat!');
+
+// subscribe to notifications
+session.subscribe('http://tavendo.de/webmq/demo/notifications/123456', function(topicUri, event) {
+   console.log('received notification');
+   console.log('text: ', event);
+})
