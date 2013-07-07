@@ -87,3 +87,18 @@ function get_appliance_url(service, fallback_url, timeout) {
       }
    }
 }
+
+
+function getWebMQURL(fallback_url) {
+   return get_appliance_url("hub-websocket", fallback_url);
+}
+
+
+function httpGet(theUrl) {
+   var xmlHttp = null;
+
+   xmlHttp = new XMLHttpRequest();
+   xmlHttp.open( "GET", theUrl, false );
+   xmlHttp.send( null );
+   return xmlHttp.responseText;
+}

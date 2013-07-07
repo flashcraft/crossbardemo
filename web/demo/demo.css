@@ -63,6 +63,20 @@ a > img
    border-style: none;
 }
 
+.githubwrapper {
+padding: 20px;
+}
+
+.github {
+   color: rgb(226, 181, 0);
+   height: 60px;
+}
+.github:hover {
+   color: #fff;
+}
+.github:visited {
+   color: rgb(226, 181, 0);
+}
 
 section
 {

@@ -1,84 +1,79 @@
 ﻿/******************************************************************************
  *
- *  Copyright 2012-2013 Tavendo GmbH. All rights reserved.
+ * Copyright (c) 2012-2013 Tavendo GmbH. Licensed under the Apache 2.0 license.
  *
  ******************************************************************************/
 
-/* to fix or add
+// Get Tavendo WebMQ WebSocket URL (we also provide a fallback URL)
+var wsuri = getWebMQURL("ws://localhost/ws");
 
-   - highlighting for "isBeingEdited" externally?
-
-   - Chrome Android does not display the save/cancel buttons
-
-*/
-
-
-var channelBaseUri = "http://tavendo.de/webmq/demo/koform#";
-
-var wsuri = get_appliance_url("hub-websocket", "ws://localhost/ws");
+// WAMP session object
 var session = null;
-var retryCount = 0;
-var retryDelay = 2;
+
+// KnockoutJS viewmodel
+var vm = null;
 
 
-function updateStatusline(status) {
-   $(".statusline").text(status);
-}
+// Application entry point
+//
+$(document).ready(function () {
+
+   // Instantiate and bind the viewmodel
+   vm = new ViewModel();
+   ko.applyBindings(vm);
+
+   $("#helpButton").click(function() {
+      $(".info_bar").toggle();
+   });
+
+   $('#new-window').attr('href', window.location.pathname);
+
+   // Connect to Tavendo WebMQ
+   connect();
+});
 
 
+// Connect to Tavendo WebMQ
+//
 function connect() {
 
    ab._Deferred = jQuery.Deferred;
 
    ab.connect(wsuri,
 
-      function (sess) {
-         session = sess;
-         ab.log("connected!");
-         onConnect0();
+      // connection established handler
+      function (newSession) {
+         session = newSession;
+         onConnect();
       },
 
+      // connection lost handler
       function (code, reason, detail) {
-
          session = null;
-         switch (code) {
-            case ab.CONNECTION_UNSUPPORTED:
-               window.location = "https://webmq.tavendo.de:9090/help/browsers";
-               //alert("Browser does not support WebSocket");
-               break;
-            case ab.CONNECTION_CLOSED:
-               window.location.reload();
-               break;
-            default:
-               ab.log(code, reason, detail);
-
-               retryCount = retryCount + 1;
-               updateStatusline("Connection lost. Reconnecting (" + retryCount + ") in " + retryDelay + " secs ..");
-
-               break;
-         }
-      },
-
-      { 'maxRetries': 60, 'retryDelay': 2000 }
+         updateStatusline(reason);
+      }
    );
 }
 
 
-function onConnect0() {
+// Fired when connection to Tavendo WebMQ was established
+//
+function onConnect () {
+   // Authenticate as anonymous ..
    session.authreq().then(function () {
-      session.auth().then(onAuth, ab.log);
+      session.auth().then(onAuthenticated, ab.log);
    }, ab.log);
 }
 
 
-function onAuth(permissions) {
-   // ab.log("authenticated!", permissions);
+// Fired when session was authenticated to Tavendo WebMQ
+//
+function onAuthenticated (permissions) {
+   updateStatusline("Connected and authenticated to " + wsuri + " in session " + session.sessionid());
 
-   updateStatusline("Connected to " + wsuri);
-   retryCount = 0;
-
-   session.prefix("event", channelBaseUri);
-   session.prefix("api", channelBaseUri);
+   // setup some URI prefixes
+   session.prefix("event", "http://tavendo.de/webmq/demo/koform#");
+   session.prefix("api", "http://tavendo.de/webmq/demo/koform#");
 
    // send request for initial data cut from DB
    // fill grid with this data
@@ -90,7 +85,13 @@ function onAuth(permissions) {
    session.subscribe("event:ondelete", onItemDeleted);
 }
 
-function fillList(res) {
+
+function updateStatusline (status) {
+   document.getElementById("statusline").innerHTML = status;
+}
+
+
+function fillList (res) {
    for (var i = 0; i < res.length; i++) {
       vm.listData.push(new listItem(res[i]));
    }
@@ -98,9 +99,8 @@ function fillList(res) {
    vm.displayDetails(vm.listData()[0]);
 }
 
-function onItemCreated(uri, obj) {
-   ab.log("onItemCreates");
 
+function onItemCreated (uri, obj) {
    vm.listData.push(new listItem(obj));
 
    // highlight this for a short while
@@ -109,8 +109,8 @@ function onItemCreated(uri, obj) {
    window.setTimeout(function() { vm.listData()[index].itemState(''); }, 1000);
 }
 
-function onItemUpdated(uri, obj) {
-   ab.log("onItemUpdated");
+
+function onItemUpdated (uri, obj) {
    var index = getIndexFromId(obj.id);
 
    // update locally stored values that habe been updated remotely
@@ -144,8 +144,8 @@ function onItemUpdated(uri, obj) {
    window.setTimeout(function() { vm.listData()[index].itemState(previousItemState); }, 1400);
 }
 
-function onItemDeleted(uri, obj) {
-   ab.log("onItemDeleted", obj);
+
+function onItemDeleted (uri, obj) {
    // highlight item, then delete
    var index = getIndexFromId(obj.id);
    vm.listData()[index].itemState("isBeingDeleted");
@@ -162,7 +162,8 @@ function onItemDeleted(uri, obj) {
    }, 1400);
 }
 
-function getIndexFromId(id) {
+
+function getIndexFromId (id) {
    var index;
    for (var i = 0; i < vm.listData().length; i++) {
       if (vm.listData()[i].id() === id) {
@@ -172,13 +173,8 @@ function getIndexFromId(id) {
    return index;
 }
 
-$(document).ready(function () {
-   updateStatusline("Not connected.");
-   setupDemo();
-   connect();
-});
 
-function ViewModel() {
+function ViewModel () {
 
    //track an index on items in an observableArray
    ko.observableArray.fn.indexed = function(prop) {
@@ -576,7 +572,8 @@ function ViewModel() {
    };
 }
 
-function listItem(data) {
+
+function listItem (data) {
    return {
       orderNumber: ko.observable(data["orderNumber"]),
       name: ko.observable(data["name"]),
@@ -589,21 +586,8 @@ function listItem(data) {
    };
 }
 
-var vm = new ViewModel(); // instantiates the view model and makes its methods accessible 
+function addTestItems (numberOfItemsToAdd) {
 
-function setupDemo() {
-
-   // set up the basic grid
-   ko.applyBindings(vm);
-
-   $("#helpButton").click(function() {
-      $(".info_bar").toggle();
-   });
-
-   $('#new-window').attr('href', window.location.pathname);
-}
-
-function addTestItems( numberOfItemsToAdd ) {
    for ( var i = 0; i < numberOfItemsToAdd + 1; i++ ) {
       // create item to send
       var saveSet = { inStock: i, name: "Test Item " + i, orderNumber: "TT-" + i, price: i*3.5, size: i +4, weight: i*1.3+40 };

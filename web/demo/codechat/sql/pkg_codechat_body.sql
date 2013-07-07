@@ -128,7 +128,7 @@ AS
       IF p_post.exist('syntax') THEN
          IF p_post.get('syntax').is_string THEN
             l_syntax := p_post.get('syntax').get_string;
-            IF l_syntax IS NULL OR l_syntax NOT IN ('js', 'plsql', 'tsql', 'python', 'text') THEN
+            IF l_syntax IS NULL OR l_syntax NOT IN ('js', 'jswebmq', 'plsql', 'tsql', 'python', 'text') THEN
                webmq.raise(BASEURI || 'invalid_argument', 'Invalid value "' || l_syntax || '" for object property "syntax". Must be one of: js, plsql, tsql, python, text');
             END IF;
          ELSE

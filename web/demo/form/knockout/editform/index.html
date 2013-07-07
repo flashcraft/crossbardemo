@@ -20,16 +20,6 @@
          <script type="text/javascript" src="../../flashws/web_socket.js"></script>
       <![endif]-->
 
-   <script src="../../../../js/jquery.min.js"></script>
-
-   <script src="../../../../js/knockout.min.js"></script>
-
-   
-   <script type="text/javascript" src="../../../../js/autobahn.min.js"></script>
-   <script type="text/javascript" src="../../../util.js"></script>
-
-   <script type="text/javascript" src="js/editform.js"></script>
-
 </head>
 
 <body>
@@ -45,7 +35,10 @@
          </a>
          <img id="webmq_logo" src="../../../../img/webmq_logo.png">
       </div>
+      <center>A simple editable KnockoutJS-based Form with Oracle backend that synchronizes in real-time.</center>
       <center>
+         <a href="">Open 2nd demo instance</a>
+         <a href="">How it works</a>
          <a href="https://github.com/tavendo/WebMQDemo/tree/master/web/demo/form/knockout/editform">Source Code</a>
       </center>
    </header>
@@ -201,7 +194,7 @@
       <button id="helpButton" class="webmq_demo_button button">?</button> 
 
       <div class="status_line statusline_outside">
-         Status: <span class="statusline"></span>
+         Status: <span id="statusline">Not connected.</span>
       </div>
 
       <div class="info_bar" style="display: none;">
@@ -267,6 +260,12 @@
       </div>
       
    </div>
+
+   <script src="../../../../js/jquery.min.js"></script>
+   <script src="../../../../js/knockout.min.js"></script>
+   <script src="../../../../js/autobahn.min.js"></script>
+   <script src="../../../util.js"></script>
+   <script src="js/editform.js"></script>
 
 </body>
 </html>
