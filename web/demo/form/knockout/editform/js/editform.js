@@ -39,6 +39,7 @@ function connect() {
 
    // Get Tavendo WebMQ WebSocket URL
    var wsuri = ab.getServerUrl();
+   updateStatusline("Connecting to " + wsuri);
 
    // Now connect to create a new WAMP session ..
    ab.connect(wsuri,
@@ -71,7 +72,7 @@ function onConnect () {
 // Fired when session was authenticated to Tavendo WebMQ
 //
 function onAuthenticated (permissions) {
-   updateStatusline("Connected and authenticated to " + session.wsuri() + " in session " + session.sessionid());
+   updateStatusline("Connected to " + session.wsuri() + " in session " + session.sessionid());
 
    // setup some URI prefixes
    session.prefix("event", "http://tavendo.de/webmq/demo/koform#");
