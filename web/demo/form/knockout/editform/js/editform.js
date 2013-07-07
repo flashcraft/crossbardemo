@@ -25,7 +25,7 @@ $(document).ready(function () {
 
    $('#new-window').attr('href', window.location.pathname);
 
-   // Connect to Tavendo WebMQ
+   // Connect to backend ..
    connect();
 });
 
@@ -34,12 +34,13 @@ $(document).ready(function () {
 //
 function connect() {
 
+   // Using jQuery deferreds
    ab.Deferred = jQuery.Deferred;
-   //ab.debug(true, true, true);
 
-   // Get Tavendo WebMQ WebSocket URL (we also provide a fallback URL)
-   var wsuri = getWebMQURL("ws://localhost/ws");
+   // Get Tavendo WebMQ WebSocket URL
+   var wsuri = ab.getServerUrl();
 
+   // Now connect to create a new WAMP session ..
    ab.connect(wsuri,
 
       // connection established handler
