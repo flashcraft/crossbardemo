@@ -25,68 +25,42 @@ $(document).ready(function () {
 
    $('#new-window').attr('href', window.location.pathname);
 
-   // Connect to backend ..
-   connect();
-});
-
-
-// Connect to Tavendo WebMQ
-//
-function connect() {
-
    // Using jQuery deferreds
    ab.Deferred = jQuery.Deferred;
 
-   // Get Tavendo WebMQ WebSocket URL
-   var wsuri = ab.getServerUrl();
-   updateStatusline("Connecting to " + wsuri);
-
-   // Now connect to create a new WAMP session ..
-   ab.connect(wsuri,
-
-      // connection established handler
+   // Connect to Tavendo WebMQ ..
+   //
+   ab.launch(
+      // session configuration
+      {
+         wsuri: ab.getServerUrl(), // Tavendo WebMQ server URL
+         appkey: null // authenticate as anonymous
+      },
+      // session open handler
       function (newSession) {
          session = newSession;
-         onConnect();
-      },
+         updateStatusline("Connected to " + session.wsuri() + " in session " + session.sessionid());
 
-      // connection lost handler
+         // setup some URI prefixes
+         session.prefix("event", "http://tavendo.de/webmq/demo/koform#");
+         session.prefix("api", "http://tavendo.de/webmq/demo/koform#");
+
+         // send request for initial data cut from DB
+         // fill grid with this data
+         session.call("api:read", {start: 0, limit: 100}).then(fillList, ab.log);
+
+         // subscribe to data change events
+         session.subscribe("event:oncreate", onItemCreated);
+         session.subscribe("event:onupdate", onItemUpdated);
+         session.subscribe("event:ondelete", onItemDeleted);
+      },
+      // session close handler
       function (code, reason, detail) {
          session = null;
          updateStatusline(reason);
       }
    );
-}
-
-
-// Fired when connection to Tavendo WebMQ was established
-//
-function onConnect () {
-   // Authenticate as anonymous ..
-   session.authreq().then(function () {
-      session.auth().then(onAuthenticated, ab.log);
-   }, ab.log);
-}
-
-
-// Fired when session was authenticated to Tavendo WebMQ
-//
-function onAuthenticated (permissions) {
-   updateStatusline("Connected to " + session.wsuri() + " in session " + session.sessionid());
-
-   // setup some URI prefixes
-   session.prefix("event", "http://tavendo.de/webmq/demo/koform#");
-   session.prefix("api", "http://tavendo.de/webmq/demo/koform#");
-
-   // send request for initial data cut from DB
-   // fill grid with this data
-   session.call("api:read", {start: 0, limit: 100}).then(fillList, ab.log); // if no start & limit: start: 1, limit: 10
-
-   // subscribe to data change events
-   session.subscribe("event:oncreate", onItemCreated);
-   session.subscribe("event:onupdate", onItemUpdated);
-   session.subscribe("event:ondelete", onItemDeleted);
-}
+});
 
 
 function updateStatusline (status) {
