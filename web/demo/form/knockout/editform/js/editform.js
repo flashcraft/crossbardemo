@@ -52,9 +52,7 @@ function connect() {
       function (code, reason, detail) {
          session = null;
          updateStatusline(reason);
-      },
-
-      {sessionIdent: "MySession"}
+      }
    );
 }
 
