@@ -2258,7 +2258,10 @@ code.google.com/p/crypto-js/wiki/License
  * See license text at http://www.opensource.org/licenses/mit-license.php
  */
 
+/*global console: false, MozWebSocket: false, when: false, CryptoJS: false */
+
 "use strict";
+
 
 /** @define {string} */
 var AUTOBAHNJS_VERSION = '?.?.?';
@@ -2447,7 +2450,7 @@ ab.deriveKey = function (secret, extra) {
    } else {
       return secret;
    }
-}
+};
 
 
 ab._idchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -2464,7 +2467,7 @@ ab._newid = function () {
 
 ab._newidFast = function () {
     return Math.random().toString(36);
-}
+};
 
 ab.log = function () {
       //console.log.apply(console, !!arguments.length ? arguments : [this]);
@@ -2550,7 +2553,7 @@ ab.PrefixMap.prototype.resolve = function (curie, pass) {
    }
 
    // either pass-through or null
-   if (pass == true) {
+   if (pass === true) {
       return curie;
    } else {
       return null;
@@ -2570,7 +2573,7 @@ ab.PrefixMap.prototype.shrink = function (uri, pass) {
    }
 
    // either pass-through or null
-   if (pass == true) {
+   if (pass === true) {
       return uri;
    } else {
       return null;
@@ -3216,6 +3219,8 @@ ab._connect = function (peer) {
       // fired when session has been closed
       function(code, reason) {
 
+         var stop = null;
+
          switch (code) {
 
             case ab.CONNECTION_CLOSED:
@@ -3232,7 +3237,7 @@ ab._connect = function (peer) {
 
                peer.retryCount += 1;
 
-               if (peer.connects == 0) {
+               if (peer.connects === 0) {
 
                   // the connection could not be established in the first place
                   // which likely means invalid server WS URI or such things
@@ -3245,11 +3250,11 @@ ab._connect = function (peer) {
                   if (peer.retryCount <= peer.options.maxRetries) {
 
                      // notify the app of scheduled reconnect
-                     var stop = peer.onHangup(ab.CONNECTION_UNREACHABLE_SCHEDULED_RECONNECT,
-                                              "Connection unreachable - scheduled reconnect to occur in " + (peer.options.retryDelay / 1000) + " second(s).",
-                                             {delay: peer.options.retryDelay,
-                                              retries: peer.retryCount,
-                                              maxretries: peer.options.maxRetries});
+                     stop = peer.onHangup(ab.CONNECTION_UNREACHABLE_SCHEDULED_RECONNECT,
+                                          "Connection unreachable - scheduled " + peer.retryCount + "th reconnect to occur in " + (peer.options.retryDelay / 1000) + " second(s).",
+                                          {delay: peer.options.retryDelay,
+                                           retries: peer.retryCount,
+                                           maxretries: peer.options.maxRetries});
 
                      if (!stop) {
                         if (ab._debugconnect) {
@@ -3276,11 +3281,11 @@ ab._connect = function (peer) {
                if (peer.retryCount <= peer.options.maxRetries) {
 
                   // notify the app of scheduled reconnect
-                  var stop = peer.onHangup(ab.CONNECTION_LOST_SCHEDULED_RECONNECT,
-                                           "Connection lost - scheduled reconnect to occur in " + (peer.options.retryDelay / 1000) + " second(s).",
-                                          {delay: peer.options.retryDelay,
-                                           retries: peer.retryCount,
-                                           maxretries: peer.options.maxRetries});
+                  stop = peer.onHangup(ab.CONNECTION_LOST_SCHEDULED_RECONNECT,
+                                       "Connection lost - scheduled " + peer.retryCount + "th reconnect to occur in " + (peer.options.retryDelay / 1000) + " second(s).",
+                                       {delay: peer.options.retryDelay,
+                                        retries: peer.retryCount,
+                                        maxretries: peer.options.maxRetries});
 
                   if (!stop) {
                      if (ab._debugconnect) {
@@ -3300,7 +3305,6 @@ ab._connect = function (peer) {
 
             default:
                throw "unhandled close code in ab._connect";
-               break;
          }
       },
 
@@ -3320,19 +3324,19 @@ ab.connect = function (wsuri, onconnect, onhangup, options) {
       peer.options = options;
    }
 
-   if (peer.options.retryDelay == undefined) {
+   if (peer.options.retryDelay === undefined) {
       peer.options.retryDelay = 5000;
    }
 
-   if (peer.options.maxRetries == undefined) {
+   if (peer.options.maxRetries === undefined) {
       peer.options.maxRetries = 10;
    }
 
-   if (peer.options.skipSubprotocolCheck == undefined) {
+   if (peer.options.skipSubprotocolCheck === undefined) {
       peer.options.skipSubprotocolCheck = false;
    }
 
-   if (peer.options.skipSubprotocolAnnounce == undefined) {
+   if (peer.options.skipSubprotocolAnnounce === undefined) {
       peer.options.skipSubprotocolAnnounce = false;
    }
 
@@ -3347,7 +3351,7 @@ ab.connect = function (wsuri, onconnect, onhangup, options) {
          if (ab._debugconnect) {
              console.log(code, reason, detail);
          }
-      }
+      };
    } else {
       peer.onHangup = onhangup;
    }
@@ -3356,6 +3360,92 @@ ab.connect = function (wsuri, onconnect, onhangup, options) {
    peer.retryCount = 0; // number of retries since last successful connect
 
    ab._connect(peer);
+};
+
+
+ab.launch = function (appConfig, onOpen, onClose) {
+
+   function Rpc(session, uri) {
+      return function() {
+         var args = [uri];
+         for (var j = 0; j < arguments.length; ++j) {
+            args.push(arguments[j]);
+         }
+         //arguments.unshift(uri);
+         return ab.Session.prototype.call.apply(session, args);
+      };
+   }
+
+   function createApi(session, perms) {
+      session.api = {};
+      for (var i = 0; i < perms.rpc.length; ++i) {
+         var uri = perms.rpc[i].uri;
+
+         var _method = uri.split("#")[1];
+         var _class = uri.split("#")[0].split("/");
+         _class = _class[_class.length - 1];
+
+         if (!(_class in session.api)) {
+            session.api[_class] = {};
+         }
+
+         session.api[_class][_method] = new Rpc(session, uri);
+      }
+   }
+
+   ab.connect(appConfig.wsuri,
+
+      // connection established handler
+      function (session) {
+         if (!appConfig.appkey || appConfig.appkey === "") {
+            // Authenticate as anonymous ..
+            session.authreq().then(function () {
+               session.auth().then(function (permissions) {
+                  //createApi(session, permissions);
+                  if (onOpen) {
+                     onOpen(session);
+                  } else if (ab._debugconnect) {
+                     session.log('Session opened.');
+                  }
+               }, session.log);
+            }, session.log);
+         } else {
+            // Authenticate as appkey ..
+            session.authreq(appConfig.appkey, appConfig.appextra).then(function (challenge) {
+
+               var signature = null;
+
+               if (typeof(appConfig.appsecret) === 'function') {
+                  signature = appConfig.appsecret(challenge);
+               } else {
+                  // derive secret if salted WAMP-CRA
+                  var secret = ab.deriveKey(appConfig.appsecret, JSON.parse(challenge).authextra);
+
+                  // direct sign
+                  signature = session.authsign(challenge, secret);
+               }
+
+               session.auth(signature).then(function (permissions) {
+                  //createApi(session, permissions);
+                  if (onOpen) {
+                     onOpen(session);
+                  } else if (ab._debugconnect) {
+                     session.log('Session opened.');
+                  }
+               }, session.log);
+            }, session.log);
+         }
+      },
+
+      // connection lost handler
+      function (code, reason, detail) {
+         if (onClose) {
+            onClose(code, reason, detail);
+         } else if (ab._debugconnect) {
+            ab.log('Session closed.', code, reason, detail);
+         }
+      }
+   );
 };
 
 ab._UA_FIREFOX = new RegExp(".*Firefox/([0-9+]*).*")
