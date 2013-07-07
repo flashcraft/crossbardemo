@@ -37,6 +37,8 @@ $(document).ready(function () {
 //
 function connect() {
 
+   ab._Deferred = jQuery.Deferred;
+
    ab.connect(wsuri,
 
       // connection established handler
