@@ -1,3 +1,7 @@
+/*
+Insert random record into sales table
+*/
+
 DROP TABLE test.sales
 #
 

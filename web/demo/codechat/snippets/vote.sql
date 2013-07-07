@@ -20,7 +20,7 @@ END;
 DECLARE
    l_num NUMBER;
    l_idx PLS_INTEGER;
-   type array_t is varray(3) of varchar2(10);
+   TYPE array_t IS VARRAY(3) OF VARCHAR2(10);
    l_arr array_t := array_t('Lemon', 'Banana', 'Chocolate');
 BEGIN
    FOR i IN 1..10
