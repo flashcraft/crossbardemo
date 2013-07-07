@@ -855,7 +855,7 @@ button:hover,
 
 .initialInput
 {
-    margin: 0 0 0 20px;
+   margin: 0 0 0 20px;
 
 }
 .initialInputText
@@ -865,7 +865,7 @@ button:hover,
 }
 #initialInputExplanation
 {
-    color: #999;
+   color: #999;
    
 }
 #initialInputButtons
@@ -876,40 +876,68 @@ button:hover,
 
 #snippetsBox
 {
-  overflow: auto;
-  width: 460px;
+   overflow: auto;
+   width: 460px;
 }
 
 #snippetsBox > div
 {
-  display: inline-block;
-  width: 191px;
-  padding: 0 1em 0 0;
-  text-align: center;
+   display: inline-block;
+   width: 191px;
+   padding: 0 1em 0 0;
+   text-align: center;
 }
 
 #snippetsBox > div > h2
 {
-  cursor: pointer;
-  margin: 1em 0 0 0;
-  text-align: center;
+   margin: 1em 0 0 0;
+   text-align: center;
 }
 #snippetsBox > div > h2:hover
 {
-  color: red;
 }
 #snippetsBox > div > a
 {
-  color: #777;
-  text-decoration: none;
+   color: #777;
+   text-decoration: none;
+   cursor: pointer;
 }
 #snippetsBox > div > a:visited
 {
-  color: #777;
+   color: #777;
 }
 #snippetsBox > div > a:hover
 {
-  text-decoration: underline;
+   text-decoration: underline;
+}
+
+#snippetsBox #snippetsCancel
+{
+    display: block;
+   
+    text-align: center;
+    width: 100%;
+    margin-top: 2em;
+}
+
+.codeLink
+{
+    padding: 0 1em;
+
+}
+
+#snippetsBox > div > a.codeLink:hover
+{
+   text-decoration: none;
+   color: #000;
+}
+.demoLink
+{
+    display: block;
+
+    width: 100px;
+    margin: 5px auto;
+    border-top: 1px solid #000;
 }
 
 /* generic */

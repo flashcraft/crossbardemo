@@ -5,175 +5,188 @@
       <meta charset="utf-8" />
       <link rel="shortcut icon" href="img/favicon.ico">
       <title>WebMQ - Demos</title>
-      <link rel="stylesheet" href="demo/demo.css" />
+      <!-- <link rel="stylesheet" href="demo/demo.css" /> -->
       <link rel="stylesheet" type="text/css" href="css/index.css" />
       <script type="text/javascript" src="js/jquery.min.js"></script>
       <script type="text/javascript" src="js/index.js"></script>
 
+      <!--[if !IE 7]>
+         <style type="text/css">
+            #page-wrap {display:table;height:100%}
+         </style>
+      <![endif]-->
+
    </head>
    <body>
-   <!--<body class="wide">-->
-   <!--
-      <header>
-         <div id="header_inner">
+      <div class="page-wrap">
+         <header>
+            <div id="header_inner">
+               <div id="demo_title">
+                  <span>Demos</span>
+               </div>      
+               <a href="http://tavendo.de" target="_blank">
+                  <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
+               </a>
+               <img id="webmq_logo" src="../../img/webmq_logo.png">
+            </div>
+         </header>
 
-            <div id="demo_title">WebMQ Demos</div>
-            <a href="http://tavendo.de"><img id="tavendo_logo" src="img/tavendo_logo_simple.png"></a>
+         <div id="demo_body">
+            <div id="demos_cta">
+               Try out some of the live <strong>demos</strong> below, and find out how you can <span class="orange"><a href="http://tavendo.de/webmq/advantages">do more with less</a></span>. Full source code is on <a href="https://github.com/tavendo/WebMQDemo">GitHub</a>.
+            </div>
+            <ul class="demos_list">
+               
+               <li>
+                  <a href="demo/pubsub/index.html">
+                     PubSub 
+                     <img src="img/screenshot_pubsub.png" />
+                  </a>
+                  PubSub
+               </li>
+               
+               <li>
+                  <a href="demo/notification/index.html">
+                     Notification
+                     <img src="img/screenshot_notifications.png" />
+                  </a>
+                  PubSub
+               </li>
+               
+               <li>
+                  <a href="demo/chat/index.html#1">
+                     Chat
+                     <img src="img/screenshot_chat.png" />
+                  </a>
+                  PubSub
+               </li>
+               
+               <li>&nbsp;</li>
+               <li>&nbsp;</li>
 
+               <li>
+                  <a href="demo/sliders/index.html">
+                     Sliders
+                     <img src="img/screenshot_sliders.png" />
+                  </a>
+                  PubSub, jQuery UI
+               </li>
+               
+               <li>
+                  <a href="demo/colorpicker/index.html">
+                     Colorpicker
+                     <img src="img/screenshot_colorpicker.png" />
+                  </a>               
+                  PubSub, jQuery UI
+               </li>
+               
+               <li>
+                  <!--[if lt IE 9]>
+                     <div class="link_disable">
+                  <![endif]-->
+                  <a href="demo/beatbox/index.html">
+                     Beatbox
+                     <img src="img/screenshot_beatbox.png" />
+                  </a>
+                  PubSub
+                  <!--[if lt IE 9]>
+                     </div>
+                  <![endif]-->
+                  <!--[if lt IE 9]>
+                     <div class="demo_not_working">Demo not working in your browser.<br> Please use Chrome, FireFox or Internet Explorer 9 or greater.</div>
+                  <![endif]-->
+               </li>
+
+               <li>
+                  <!--[if lt IE 9]>
+                     <div class="link_disable">
+                  <![endif]-->
+                  <a href="demo/dashboard/index.html">
+                     Dashboard
+                     <img src="img/screenshot_dashboard.png" />
+                  </a>
+                  PubSub, RPC, Oracle
+                  <!--[if lt IE 9]>
+                     </div>
+                  <![endif]-->
+                  <!--[if lt IE 9]>
+                     <div class="demo_not_working">Demo not working in your browser.<br> Please use Chrome, FireFox or Internet Explorer 9 or greater.</div>
+                  <![endif]-->
+               </li>
+               
+               <li>
+                  <!--[if lt IE 9]>
+                     <div class="link_disable">
+                  <![endif]-->
+                  <a href="demo/dashboardcontroller/index.html">
+                     Dashboard Controls
+                     <img src="img/screenshot_dashboard_controls.png" />
+                  </a>
+                  PubSub, RPC
+                  <!--[if lt IE 9]>
+                     </div>
+                  <![endif]-->
+                  <!--[if lt IE 9]>
+                     <div class="demo_not_working">Demo not working in your browser.<br> Please use Chrome, FireFox or Internet Explorer 9 or greater.</div>
+                  <![endif]-->
+               </li>
+          
+               <li>
+                  <a href="demo/vote/index.html">
+                     Vote
+                     <img src="img/screenshot_vote.png" />
+                  </a>
+                  PubSub, RPC, Oracle
+               </li>
+
+               <li>
+                  <a href="demo/form/knockout/editform/index.html">
+                     Editform
+                     <img src="img/screenshot_form.png" />
+                  </a>
+                  RPC, PubSub, KnockoutJS, Oracle
+               </li>
+
+               <li>
+                  <a href="/demo/form/knockout/gridfilter/index.html">
+                     Gridfilter 
+                     <img src="img/screenshot_gridfilter.png" />
+                  </a>
+                  RPC, KnockoutJS, Oracle
+               </li>
+               
+               <li>
+                  <a href="demo/autocomplete/index.html">
+                     Autocomplete
+                     <img src="img/screenshot_autocomplete.png" />
+                  </a>
+                  RPC, Oracle
+               </li>
+
+               <li>
+                  <!--[if lt IE 10]>
+                     <div class="link_disable">
+                  <![endif]-->
+                  <a href="demo/codechat/index.html">
+                     CodeChat
+                     <img src="img/screenshot_codechat.png" />
+                  </a>
+                  PubSub, RPC, Oracle
+                  <!--[if lt IE 10]>
+                     </div>
+                  <![endif]-->               
+                  <!--[if lt IE 10]>
+                     <div class="demo_not_working">Demo not working in your browser.<br> Please use Chrome, FireFox or Internet Explorer 10 or greater.</div>
+                  <![endif]-->
+               </li>
+               
+            </ul>
+            <div class="clearboth"></div>
          </div>
-      </header>
--->
-      <div id="demo_body">
-         <ul class="demos_list">
-            
-            <li>
-               <a href="demo/pubsub/index.html">
-                  PubSub 
-                  <img src="img/screenshot_pubsub.png" />
-               </a>
-               PubSub
-            </li>
-            
-            <li>
-               <a href="demo/notification/index.html">
-                  Notification
-                  <img src="img/screenshot_notifications.png" />
-               </a>
-               PubSub
-            </li>
-            
-            <li>
-               <a href="demo/chat/index.html#1">
-                  Chat
-                  <img src="img/screenshot_chat.png" />
-               </a>
-               PubSub
-            </li>
-            
-            <li>&nbsp;</li>
-            <li>&nbsp;</li>
-
-            <li>
-               <a href="demo/sliders/index.html">
-                  Sliders
-                  <img src="img/screenshot_sliders.png" />
-               </a>
-               PubSub, jQuery UI
-            </li>
-            
-            <li>
-               <a href="demo/colorpicker/index.html">
-                  Colorpicker
-                  <img src="img/screenshot_colorpicker.png" />
-               </a>               
-               PubSub, jQuery UI
-            </li>
-            
-            <li>
-               <!--[if lt IE 9]>
-                  <div class="link_disable">
-               <![endif]-->
-               <a href="demo/beatbox/index.html">
-                  Beatbox
-                  <img src="img/screenshot_beatbox.png" />
-               </a>
-               PubSub
-               <!--[if lt IE 9]>
-                  </div>
-               <![endif]-->
-               <!--[if lt IE 9]>
-                  <div class="demo_not_working">Demo not working in your browser.<br> Please use Chrome, FireFox or Internet Explorer 9 or greater.</div>
-               <![endif]-->
-            </li>
-
-            <li>
-               <!--[if lt IE 9]>
-                  <div class="link_disable">
-               <![endif]-->
-               <a href="demo/dashboard/index.html">
-                  Dashboard
-                  <img src="img/screenshot_dashboard.png" />
-               </a>
-               PubSub, RPC, Oracle
-               <!--[if lt IE 9]>
-                  </div>
-               <![endif]-->
-               <!--[if lt IE 9]>
-                  <div class="demo_not_working">Demo not working in your browser.<br> Please use Chrome, FireFox or Internet Explorer 9 or greater.</div>
-               <![endif]-->
-            </li>
-            
-            <li>
-               <!--[if lt IE 9]>
-                  <div class="link_disable">
-               <![endif]-->
-               <a href="demo/dashboardcontroller/index.html">
-                  Dashboard Controls
-                  <img src="img/screenshot_dashboard_controls.png" />
-               </a>
-               PubSub, RPC
-               <!--[if lt IE 9]>
-                  </div>
-               <![endif]-->
-               <!--[if lt IE 9]>
-                  <div class="demo_not_working">Demo not working in your browser.<br> Please use Chrome, FireFox or Internet Explorer 9 or greater.</div>
-               <![endif]-->
-            </li>
-<!--
-            <li>&nbsp;</li>
-            <li>&nbsp;</li>
--->            
-            <li>
-               <a href="demo/vote/index.html">
-                  Vote
-                  <img src="img/screenshot_vote.png" />
-               </a>
-               PubSub, RPC, Oracle
-            </li>
-
-            <li>
-               <a href="demo/form/knockout/editform/index.html">
-                  Editform
-                  <img src="img/screenshot_form.png" />
-               </a>
-               RPC, PubSub, KnockoutJS, Oracle
-            </li>
-
-            <li>
-               <a href="/demo/form/knockout/gridfilter/index.html">
-                  Gridfilter 
-                  <img src="img/screenshot_gridfilter.png" />
-               </a>
-               RPC, KnockoutJS, Oracle
-            </li>
-            
-            <li>
-               <a href="demo/autocomplete/index.html">
-                  Autocomplete
-                  <img src="img/screenshot_autocomplete.png" />
-               </a>
-               RPC, Oracle
-            </li>
-
-            <li>
-               <!--[if lt IE 10]>
-                  <div class="link_disable">
-               <![endif]-->
-               <a href="demo/codechat/index.html">
-                  CodeChat
-                  <img src="img/screenshot_codechat.png" />
-               </a>
-               PubSub, RPC, Oracle
-               <!--[if lt IE 10]>
-                  </div>
-               <![endif]-->               
-               <!--[if lt IE 10]>
-                  <div class="demo_not_working">Demo not working in your browser.<br> Please use Chrome, FireFox or Internet Explorer 10 or greater.</div>
-               <![endif]-->
-            </li>
-            
-         </ul>
-       </div>
-      <div class="clearboth"></div>
+         
+      </div>
+      <div class="site-footer">
+         
+      </div>
    </body>
 </html>

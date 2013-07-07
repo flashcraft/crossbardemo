@@ -13,8 +13,6 @@
 
 html {
    overflow-y: scroll;
-   height: auto;
-
 }
 
 body {
@@ -57,43 +55,76 @@ section
 header {
    position: relative;
    width: 100%;
-   margin: 0 auto;
-   height: 70px;
-}
-.wide .header
-{
-   width: 1280px;
+   height: 103px;
+   background-color: #1b1b1b;
 }
 
 #header_inner
 {
    position: relative;
-   width: 960px;
-   height: 70px;
+   width: 1303px;
+   height: 100%;
    margin:auto;
    padding: 0;
    color: #666;
+   text-align: center;
+}
 
-}
-.wide #header_inner
-{
-   width: 1280px;
-}
 #demo_title
 {
-   position: absolute;
-   left: 323px;
-   bottom: 12px;
+   font-size: 27px;
+   font-weight: bold;
+   color: rgb(95, 95, 95);
+   display: inline-block;
+   text-align: right;
+   line-height: 11px;
+   padding-top: 32px;
 }
-.wide #demo_title
+#demo_title > span
 {
-   left: 545px;
+   display: block;
+}
+#demo_title > span:first-child
+{
+   font-size: 45px;
+   line-height: 38px;
 }
 
 #tavendo_logo {
    position: absolute;
-   right: 20px;
+   right: 81px;
    bottom: 17px;
+}
+
+#webmq_logo
+{
+   position: absolute;
+   left: 20px;
+   bottom: 17px;
+}
+
+#demos_cta
+{
+   color: #fff;
+
+   text-align: center;
+   font-size: 22px;
+}
+#demos_cta  a {
+   text-decoration: none;
+   color: #fff;
+}
+#demos_cta  a:visited {
+   text-decoration: none;
+   color: #fff;
+}
+#demos_cta  a:hover {
+   text-decoration: underline;
+}
+#demos_cta .orange a
+{
+   color: #f60;
+   
 }
 
 #demo_body
@@ -101,7 +132,7 @@ header {
    width: 1580px;
    /*width: 120%;*/
    margin: 1em auto;
-   -webkit-transform: scale(0.8);
+   -webkit-transform: scale(0.9);
    transform: scale(0.8);
 }
 .wide #demo_body
@@ -211,4 +242,34 @@ header {
 
    position: relative;
    bottom: 11em;
+}
+
+
+/* sticky footer rules */
+html, 
+body
+{
+   height: 100%;
+}
+
+.page-wrap
+{
+   min-height: 100%;
+}
+
+#demo_body
+{
+   overflow: auto;
+   padding-bottom: 150px;
+   margin-bottom: 6em;
+}
+
+.site-footer
+{  
+   position: relative;
+   margin-top: -150px;
+   height: 150px;
+   clear: both;
+
+   background-color: #000;
 }

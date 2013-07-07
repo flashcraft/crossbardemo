@@ -618,11 +618,19 @@ tabs.zIndexSelected = tabs.zIndex + 1;
 tabs.lastClosedTab = {};
 tabs.snippetsOverlay = document.getElementById("snippetsOverlay");
 tabs.snippets = [
-   {title: "CodeChat", image: "screenshot_codechat.png", link: "codechat/index.html", language: "jswebmq", ttitle: "Snippets for CodeChat", code: "codechat.js"},
-   {title: "Notification", image: "screenshot_notifications.png", link: "notification/index.html?channel=123456", language: "jswebmq", ttitle: "Snippets for Notifications", code: "notification.js"},
-   {title: "Chat", image: "screenshot_chat.png", link: "chat/index.html", language: "jswebmq", ttitle: "Snippets for Chat", code: "chat.js"},
-   {title: "Vote", image: "screenshot_vote.png", link: "vote/index.html", language: "jswebmq", ttitle: "Snippets for Vote", code: "vote.js"},
-   {title: "Gridfilter", image: "screenshot_gridfilter.png", link: "form/knockout/gridfilter/index.html", language: "jswebmq", ttitle: "Snippets for Gridfilter", code: "gridfilter.js"}
+   // {title: "CodeChat", image: "screenshot_codechat.png", link: "codechat/index.html", language: "jswebmq", ttitle: "Snippets for CodeChat", code: "codechat.js"},
+   // {title: "Notification", image: "screenshot_notifications.png", link: "notification/index.html?channel=123456", language: "jswebmq", ttitle: "Snippets for Notifications", code: "notification.js"},
+   // {title: "Chat", image: "screenshot_chat.png", link: "chat/index.html", language: "jswebmq", ttitle: "Snippets for Chat", code: "chat.js"},
+   // {title: "Vote", image: "screenshot_vote.png", link: "vote/index.html", language: "jswebmq", ttitle: "Snippets for Vote", code: "vote.js"},
+   // {title: "Gridfilter", image: "screenshot_gridfilter.png", link: "form/knockout/gridfilter/index.html", language: "jswebmq", ttitle: "Snippets for Gridfilter", code: "gridfilter.js"}
+   {title: "Notification", image: "screenshot_notifications.png", link: "notification/index.html?channel=123456", codeSnippets: [
+      {display: "JS", language: "jswebmq", ttitle: "JS snippets for Notifications", code: "notification.js"}
+      ]
+   },
+   {title: "Vote", image: "screenshot_vote.png", link: "vote/index.html", codeSnippets: [
+      {display: "JS", language: "jswebmq", ttitle: "JS snippets for Vote", code: "vote.js"}, 
+      {display: "PL/SQL", language: "plsql", ttitle: "PL/SQL snippets for Vote", code: "vote.sql"}]
+   }
 ];
 
 tabs.initialize = function() {
@@ -634,7 +642,6 @@ tabs.initialize = function() {
 
    tabs.tabtops.addEventListener("click", tabs.tabTopClicked);
    
-   // $(tabs.addTabTop).hover(tabs.toggleAddTabMenu, tabs.toggleAddTabMenu);
    tabs.addTabButton.addEventListener("click", tabs.toggleAddTabMenu);
    document.addEventListener("click", function(evt) {
       if (tabs.addTabMenuExpanded === true && evt.target != tabs.addTabTop && evt.target != tabs.addTabButton ) {
@@ -673,6 +680,12 @@ tabs.initialize = function() {
       $(tabs.snippetsOverlay).removeClass("nonDisplay");
    });
 
+   var snippetsCancelButton = document.getElementById("snippetsCancelButton");
+   snippetsCancelButton.addEventListener("click", function() {
+      $(tabs.snippetsOverlay).addClass("nonDisplay");
+   })
+
+
    // add the items to the snippets overlay
    var snippetsBox = document.getElementById("snippetsBox");
    for (var i = 0; i < tabs.snippets.length; i++) {
@@ -680,44 +693,56 @@ tabs.initialize = function() {
           item = document.createElement("div"),
           title = document.createElement("h2"),
           // image = document.createElement("img"),
-          demolink = document.createElement("a");
+          demolink = document.createElement("a"),
+          cancelButton = document.getElementById("snippetsCancel");
       title.textContent = snippet.title;
       // image.src = "img/" + snippet.image;
-      demolink.textContent = "open in other window";
-      demolink.href = "/demo/" + snippet.link;
-      demolink.target = "_blank";
-      title.addEventListener("click", (function(language, code, ttitle) {
-         return function() {
-            // loading code via AJAX goes here - IMPLEMENT ME
-            var ajCode;
-            var url = "snippets/" + code;
-            console.log("Adding code snippets", language, code, ttitle, url);
+      item.appendChild(title);
 
-            if (true) {
-               var data = httpGet(url);
-               tabs.addTab(language, data, ttitle);
-            } else {
-               // FIXME: this version does NOT work. for some reasons, it
-               // immediately evalutes (!) (wtf?) the code snippets .. which does no
-               // good since e.g. AB session is only available later
-               $.get(url, function(data) {
-                  console.log("Got code snippets for " + code, data);
+
+      for(var c = 0; c < snippet.codeSnippets.length; c++) {
+         var codeSnippet = snippet.codeSnippets[c],
+             codeLink = document.createElement("a");
+         
+         codeLink.textContent = codeSnippet.display;
+         $(codeLink).addClass("codeLink");
+         codeLink.addEventListener("click", (function(language, code, ttitle) {
+            return function() {
+               var ajCode;
+               var url = "snippets/" + code;
+               console.log("Adding code snippets", language, code, ttitle, url);
+
+               if (true) {
+                  var data = httpGet(url);
                   tabs.addTab(language, data, ttitle);
-               });
-            }
+               } else {
+                  // FIXME: this version does NOT work. for some reasons, it
+                  // immediately evalutes (!) (wtf?) the code snippets .. which does no
+                  // good since e.g. AB session is only available later
+                  $.get(url, function(data) {
+                     console.log("Got code snippets for " + code, data);
+                     tabs.addTab(language, data, ttitle);
+                  });
+               }
 
-            $(tabs.snippetsOverlay).addClass("nonDisplay");
-         };
-      })(snippet.language, snippet.code, snippet.ttitle));
+               $(tabs.snippetsOverlay).addClass("nonDisplay");
+            };
+         })(codeSnippet.language, codeSnippet.code, codeSnippet.ttitle));
+         item.appendChild(codeLink);
+      }
+      
       // image.addEventListener("click", function() {
       //    tabs.addTab(snippet.language, snippet.code, snippet.ttitle);
       //    $(tabs.snippetsOverlay).addClass("nonDisplay");
       // })
-      item.appendChild(title);
-      // item.appendChild(image);
+      
+      demolink.textContent = "open demo";
+      demolink.href = "/demo/" + snippet.link;
+      demolink.target = "_blank";
+      $(demolink).addClass("demoLink");
       item.appendChild(demolink);
 
-      snippetsBox.appendChild(item);
+      snippetsBox.insertBefore(item, cancelButton);
    }
 
 
