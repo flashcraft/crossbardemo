@@ -61,26 +61,42 @@ var unit_threshold = 0;
 
 // pie chart sections
 
-var chartColor01 = "#444";
-var chartColor02 = "#777";
-var chartColor03 = "#aaa";
-var chartColor04 = "#ddd";
+var themeColors = ["rgb(185, 96, 96)", "rgb(83, 38, 38)", "rgb(214, 165, 165)", "rgb(160, 18, 18)"];
+
+// var chartColor01 = "#444";
+// var chartColor02 = "#777";
+// var chartColor03 = "#aaa";
+// var chartColor04 = "#ddd";
+var chartColor01 = themeColors[0];
+var chartColor02 = themeColors[1];
+var chartColor03 = themeColors[2];
+var chartColor04 = themeColors[3];
 
 // bar chart bars
-var barColor01 = "#444";
-var barColor02 = "#888";
-var barColor03 = "#ccc";
+// var barColor01 = "#444";
+// var barColor02 = "#888";
+// var barColor03 = "#ccc";
+var barColor01 = themeColors[0];
+var barColor02 = themeColors[1];
+var barColor03 = themeColors[2];
 
 // hundred bar sections
-var hundredColor01 = "#444";
-var hundredColor02 = "#888";
-var hundredColor03 = "#ccc";
+// var hundredColor01 = "#444";
+// var hundredColor02 = "#888";
+// var hundredColor03 = "#ccc";
+var hundredColor01 = themeColors[0];
+var hundredColor02 = themeColors[1];
+var hundredColor03 = themeColors[2];
 
 // bullet graph section
-var bulletColor01= "#eee";
-var bulletColor02= "#ccc";
-var bulletColor03= "#aaa";
-var bulletColor04= "#888";
+// var bulletColor01= "#eee";
+// var bulletColor02= "#ccc";
+// var bulletColor03= "#aaa";
+// var bulletColor04= "#888";
+var bulletColor01 = themeColors[0];
+var bulletColor02 = themeColors[1];
+var bulletColor03 = themeColors[2];
+var bulletColor04 = themeColors[3];
 
 //var bar_chart_height = 105;
 
