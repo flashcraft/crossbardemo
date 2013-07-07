@@ -4,9 +4,6 @@
  *
  ******************************************************************************/
 
-// Get Tavendo WebMQ WebSocket URL (we also provide a fallback URL)
-var wsuri = getWebMQURL("ws://localhost/ws");
-
 // WAMP session object
 var session = null;
 
@@ -37,7 +34,11 @@ $(document).ready(function () {
 //
 function connect() {
 
-   ab._Deferred = jQuery.Deferred;
+   ab.Deferred = jQuery.Deferred;
+   //ab.debug(true, true, true);
+
+   // Get Tavendo WebMQ WebSocket URL (we also provide a fallback URL)
+   var wsuri = getWebMQURL("ws://localhost/ws");
 
    ab.connect(wsuri,
 
@@ -51,7 +52,9 @@ function connect() {
       function (code, reason, detail) {
          session = null;
          updateStatusline(reason);
-      }
+      },
+
+      {sessionIdent: "MySession"}
    );
 }
 
@@ -69,7 +72,7 @@ function onConnect () {
 // Fired when session was authenticated to Tavendo WebMQ
 //
 function onAuthenticated (permissions) {
-   updateStatusline("Connected and authenticated to " + wsuri + " in session " + session.sessionid());
+   updateStatusline("Connected and authenticated to " + session.wsuri() + " in session " + session.sessionid());
 
    // setup some URI prefixes
    session.prefix("event", "http://tavendo.de/webmq/demo/koform#");
