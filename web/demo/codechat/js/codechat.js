@@ -634,7 +634,6 @@ tabs.initialize = function() {
 
    tabs.tabtops.addEventListener("click", tabs.tabTopClicked);
    
-   // $(tabs.addTabTop).hover(tabs.toggleAddTabMenu, tabs.toggleAddTabMenu);
    tabs.addTabButton.addEventListener("click", tabs.toggleAddTabMenu);
    document.addEventListener("click", function(evt) {
       if (tabs.addTabMenuExpanded === true && evt.target != tabs.addTabTop && evt.target != tabs.addTabButton ) {
@@ -673,6 +672,12 @@ tabs.initialize = function() {
       $(tabs.snippetsOverlay).removeClass("nonDisplay");
    });
 
+   var snippetsCancelButton = document.getElementById("snippetsCancelButton");
+   snippetsCancelButton.addEventListener("click", function() {
+      $(tabs.snippetsOverlay).addClass("nonDisplay");
+   })
+
+
    // add the items to the snippets overlay
    var snippetsBox = document.getElementById("snippetsBox");
    for (var i = 0; i < tabs.snippets.length; i++) {
@@ -680,10 +685,13 @@ tabs.initialize = function() {
           item = document.createElement("div"),
           title = document.createElement("h2"),
           // image = document.createElement("img"),
-          demolink = document.createElement("a");
+          jslink = document.createElement("a"),
+          demolink = document.createElement("a"),
+          cancelButton = document.getElementById("snippetsCancel");
       title.textContent = snippet.title;
+      jslink.textContent = "JS";
       // image.src = "img/" + snippet.image;
-      demolink.textContent = "open in other window";
+      demolink.textContent = "open demo";
       demolink.href = "/demo/" + snippet.link;
       demolink.target = "_blank";
       title.addEventListener("click", (function(language, code, ttitle) {
@@ -705,7 +713,8 @@ tabs.initialize = function() {
       // item.appendChild(image);
       item.appendChild(demolink);
 
-      snippetsBox.appendChild(item);
+      // snippetsBox.appendChild(item);
+      snippetsBox.insertBefore(item, cancelButton);
    }
 
 
