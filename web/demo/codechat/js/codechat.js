@@ -93,6 +93,7 @@ connect.onAuth = function(permissions) {
    // switch channel & update the URL if at least channel has been set already
    if(connect.urlData.nick && connect.urlData.channel) {
       connect.switchChannel(connect.urlData.channel);
+      housekeeping.checkForSavedState(connect.urlData.channel, connect.urlData.nick);
    }
    housekeeping.updateStatusline();
    housekeeping.setNewWindowLinkAndUrl();
@@ -202,7 +203,13 @@ connect.getDataFromUrl = function() {
 
 
 
-var housekeeping = {};
+var housekeeping = {
+   chatCollapsed: false,
+   collapseChatButton: document.getElementById("collapseChatButton"),
+   expandChatButton: document.getElementById("expandChatButton"),
+   upperHeightPerc: 50,
+   upperHeightStored: 0
+};
 housekeeping.statusline = {
    nick: document.getElementById("nick"),
    channel: document.getElementById("channel"),
@@ -246,7 +253,6 @@ housekeeping.changeFontSize = function(evt) {
 };
 
 housekeeping.initialize = function() {
-
    
    housekeeping.statusline.statusText = "Not connected.";
    housekeeping.updateStatusline();
@@ -260,10 +266,14 @@ housekeeping.initialize = function() {
    
    housekeeping.changeSplit();
 
+   housekeeping.collapseChatButton.addEventListener("click", housekeeping.collapseChat);
+   housekeeping.expandChatButton.addEventListener("click", housekeeping.expandChat);
+
    tabs.initialize();
    chat.initialize();
-console.log("housekeeping.initialize called");
    connect.startConnect();
+
+   window.addEventListener("beforeunload", housekeeping.storeState);
 };
 /*
   Adjust the split between the chat & editor window halves
@@ -351,26 +361,73 @@ housekeeping.changeSplit = function() {
          upperHeight = minUpperHeight;
          lowerHeight = vh - minUpperHeight;
       }
-      upperHeightPerc = upperHeight / vh * 100;
-      lowerHeightPerc = lowerHeight / vh * 100;
+      housekeeping.upperHeightPerc = upperHeight / vh * 100;
+      // lowerHeightPerc = lowerHeight / vh * 100;
 
-      // apply adjustments
-      upperHalf.style.height = upperHeightPerc + "%";
-      lowerHalf.style.height = lowerHeightPerc + "%";
+      // // apply adjustments
+      // upperHalf.style.height = upperHeightPerc + "%";
+      // lowerHalf.style.height = lowerHeightPerc + "%";
 
-      // reset the position of the ghostSeparator
-      ghostSeparator.style.bottom = ghostSeparatorInitialOffset + "px";
+      // // reset the position of the ghostSeparator
+      // ghostSeparator.style.bottom = ghostSeparatorInitialOffset + "px";
 
-      // trigger resize of the Aced editor div
-      var editor = tabs.editors[tabs.focusedTab];
-      editor.resize();
+      // // trigger resize of the Ace editor div
+      // var editor = tabs.editors[tabs.focusedTab];
+      // editor.resize();
 
+      housekeeping.setSplit(housekeeping.upperHeightPerc);
 
       // make elements selectable again
       $(body).removeClass("unselectable");
 
    });
 };
+
+housekeeping.setSplit = function(upperHeightPerc) {
+   var ghostSeparator = document.getElementById("ghostSeparator"),
+       ghostSeparatorInitialOffset = -4, // get this from CSS instead - FIXME
+       upperHalf = document.getElementById("upper"),
+       lowerHalf = document.getElementById("lower");
+
+   // console.log(upperHalf, lowerHalf);
+
+   // needs percentage values, since when restoring split after a collapse chat, 
+   // it also needs to work after an intermittent viewport resize
+   // apply adjustments
+   upperHalf.style.height = upperHeightPerc + "%";
+   var lowerHeightPerc = (100 - upperHeightPerc) + "%";
+   lowerHalf.style.height = lowerHeightPerc + "%";
+
+   // reset the position of the ghostSeparator
+   ghostSeparator.style.bottom = ghostSeparatorInitialOffset + "px";
+
+   // trigger resize of the Ace editor div
+   var editor = tabs.editors[tabs.focusedTab];
+   editor.resize();
+};
+
+housekeeping.collapseChat = function() {
+   console.log("collapseChat");
+   var self = housekeeping;
+   $(self.collapseChatButton).addClass("nonDisplay");
+   $(self.expandChatButton).removeClass("nonDisplay");
+   housekeeping.upperHeightStored = housekeeping.upperHeightPerc;
+   housekeeping.setSplit(0);
+   var separator = document.getElementById("separator");
+   $(separator).addClass("nonDisplay");
+   housekeeping.chatCollapsed = true;
+};
+housekeeping.expandChat = function(){
+   console.log("expandChat");
+   var self = housekeeping;
+   $(self.collapseChatButton).removeClass("nonDisplay");
+   $(self.expandChatButton).addClass("nonDisplay");
+   housekeeping.setSplit(housekeeping.upperHeightStored);
+   var separator = document.getElementById("separator");
+   $(separator).removeClass("nonDisplay");
+   housekeeping.chatCollapsed = false;
+};
+
 
 housekeeping.viewport = (function() {
    // to get viewport dimensions, taken from
@@ -400,6 +457,91 @@ housekeeping.viewport = (function() {
    };
 })();
 
+
+housekeeping.storeState = function() {
+   if(localStorage) {
+      console.log("store State");
+      var key = {
+         channel: connect.subscribedChannel,
+         nick: chat.nick
+      };
+      var keyString = JSON.stringify(key); 
+      // get the necessary state data
+      var state = {};
+      // state if the display
+      state.upperHeightPerc = housekeeping.upperHeightPerc;
+      state.chatCollapsed = housekeeping.chatCollapsed;
+      // tabs, needs:
+      // - in sequence --> array - e.g. via key in tabs.tabs
+      // - language (internal value) - tabs.tabs[i].language
+      // - the ttitle - tabs.tabs[i].titleInput.value
+      // - the tab content - tabs.editors[i].getValue();
+      state.tabs = [];
+      for(var i in tabs.tabs) {
+         
+         if(tabs.tabs.hasOwnProperty(i)) {
+         // console.log("i", i);
+            var tstate = {};
+            tstate.id = i;
+            tstate.language = tabs.tabs[i].language;
+            tstate.ttitle = tabs.tabs[i].titleInput.value;
+            tstate.content = tabs.editors[i].getValue();
+            // console.log("tstate", tstate);
+            state.tabs.push(tstate);  
+         }
+      }
+      // console.log("state", state);
+      var stateSorted = state.tabs.sort(function(a,b){ if(a.i < b.i) { return 1; } else {return -1; } });
+      // console.log("stateSorted", stateSorted);
+      // remove the unnecessary id to save space in localstorage
+      for(var j = 0; j < stateSorted.length; j++) {
+         delete stateSorted[j].id;
+         // console.log("s", j, stateSorted[j]);
+      }
+      state.tabs = stateSorted;
+      // console.log("state finished", state);
+      var stateString = JSON.stringify(state);
+      
+      localStorage.setItem(keyString, stateString); 
+   }  
+
+};
+
+housekeeping.loadState = function(channel, nick) {
+   console.log("load State");
+   var key = {
+         "channel": channel,
+         "nick": nick
+      };
+   var keyString = JSON.stringify(key);
+   var state = JSON.parse(localStorage.getItem(keyString));
+   console.log("state loaded", state);
+
+   housekeeping.setSplit(state.upperHeightPerc);
+   
+   if(state.chatCollapsed === true) {
+      housekeeping.collapseChat();
+   }
+
+   // need to delete present tabs!! - IMPLEMENT ME
+
+   for(var i = 0; i < state.tabs.length; i++) {
+      var ttab = state.tabs[i];
+      tabs.addTab(ttab.language, ttab.content, ttab.ttitle);
+   }
+};
+
+housekeeping.checkForSavedState = function(channel, nick) {
+   // console.
+   var key = {
+         "channel": channel,
+         "nick": nick
+      };
+   var keyString = JSON.stringify(key);
+   if(localStorage.getItem(keyString)) {
+      housekeeping.loadState(channel, nick);
+   } 
+};
 
 /*
    The routines for the overlay that requests a channel and/or nick
@@ -575,6 +717,7 @@ getChannelAndNick.set = function() {
    }
    housekeeping.updateStatusline();
    housekeeping.setNewWindowLinkAndUrl();
+   housekeeping.checkForSavedState(self.channel.input.value, chat.nick);
 
    // hide the overlay
    $(self.overlay).addClass("nonDisplay");
@@ -1260,6 +1403,7 @@ chat.initialize = function() {
 
    // set the initial default font size for the chat
    chat.setFontSize(configuration.currentFontSize);
+
 };
 
 chat.getStoredChatMessages = function() {

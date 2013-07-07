@@ -349,6 +349,23 @@ body,
    display: block;
 }
 
+#collapseChat
+{
+    position: fixed;
+
+    top: 15px;
+    right: 17px;
+    z-index: 10;
+}
+#collapseChatButton
+{
+   
+}
+#expandChatButton
+{
+
+}
+
 /*
    Editor
 */
