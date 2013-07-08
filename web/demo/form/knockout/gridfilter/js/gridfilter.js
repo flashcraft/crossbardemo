@@ -111,8 +111,7 @@ function onAuth(permissions) {
    updateStatusline("Connected to " + wsuri);
    retryCount = 0;
 
-   //sess.prefix("event", "http://tavendo.de/webmq/koform#");
-   sess.prefix("api", "http://tavendo.de/webmq/demo/koform#");
+   sess.prefix("api", "http://tavendo.de/webmq/demo/product#");
 
    // send request for initial data cut from DB
    sess.call("api:filter", {}, rows).then(

@@ -25,34 +25,42 @@ $(document).ready(function () {
 
    $('#new-window').attr('href', window.location.pathname);
 
-   // Using jQuery deferreds
-   ab.Deferred = jQuery.Deferred;
+   // turn on WAMP debug output
+   //ab.debug(true, false, false);
+
+   // use jQuery deferreds
+   ab.Deferred = $.Deferred;
 
    // Connect to Tavendo WebMQ ..
    //
    ab.launch(
-      // session configuration
+      // WAMP app configuration
       {
-         wsuri: ab.getServerUrl(), // Tavendo WebMQ server URL
-         appkey: null // authenticate as anonymous
+         // Tavendo WebMQ server URL
+         wsuri: ab.getServerUrl(),
+         // authentication info
+         appkey: null, // authenticate as anonymous
+         appsecret: null,
+         appextra: null,
+         // additional session configuration
+         sessionConfig: {maxRetries: 10,
+                         sessionIdent: "MyFormSession"}
       },
       // session open handler
       function (newSession) {
          session = newSession;
          updateStatusline("Connected to " + session.wsuri() + " in session " + session.sessionid());
 
-         // setup some URI prefixes
-         session.prefix("event", "http://tavendo.de/webmq/demo/koform#");
-         session.prefix("api", "http://tavendo.de/webmq/demo/koform#");
+         // set an URI prefix
+         session.prefix("form", "http://tavendo.de/webmq/demo/product#");
 
-         // send request for initial data cut from DB
-         // fill grid with this data
-         session.call("api:read", {start: 0, limit: 100}).then(fillList, ab.log);
+         // request full data set initially and fill grid
+         session.call("form:read", {start: 0, limit: 100}).then(fillList, session.log);
 
          // subscribe to data change events
-         session.subscribe("event:oncreate", onItemCreated);
-         session.subscribe("event:onupdate", onItemUpdated);
-         session.subscribe("event:ondelete", onItemDeleted);
+         session.subscribe("form:oncreate", onItemCreated);
+         session.subscribe("form:onupdate", onItemUpdated);
+         session.subscribe("form:ondelete", onItemDeleted);
       },
       // session close handler
       function (code, reason, detail) {
@@ -69,11 +77,16 @@ function updateStatusline (status) {
 
 
 function fillList (res) {
+   // fill grid with records
    for (var i = 0; i < res.length; i++) {
       vm.listData.push(new listItem(res[i]));
    }
+
    // set focus to first list element
    vm.displayDetails(vm.listData()[0]);
+
+   // WAMP session specific logging ..
+   session.log("Filled grid with " + res.length + " entries.");
 }
 
 
@@ -233,7 +246,7 @@ function ViewModel () {
    this.mangleInputs = function(viewmodel, event) {
       // filter out non-numeric inputs on numeric input fields
       if (self.inputs[event.target.id] === "num") {
-         // ab.log("evt", event.keyCode);
+         // session.log("evt", event.keyCode);
          if (event.keyCode > 57 && event.keyCode !== 190) {
             return false;
          }
@@ -243,10 +256,10 @@ function ViewModel () {
 
    this.checkForValueChange = function(viewmodel, event) {
       //self.exevent = event;
-      //ab.log("checking", viewmodel, event.target.value, event.target.id);
+      //session.log("checking", viewmodel, event.target.value, event.target.id);
       var valueId = event.target.id;
       var currentValue = event.target.value;
-      // ab.log("vId", valueId, "cv", currentValue);
+      // session.log("vId", valueId, "cv", currentValue);
       // convert to number on number fields before comparison
       if (self.inputs[valueId] === "num") {
          currentValue = parseFloat(currentValue, 10);
@@ -279,7 +292,7 @@ function ViewModel () {
 
       // switch buttons based on whether there have been changes and all required data present
       if (self.orderNumberMissing() === false && self.nameMissing() === false && self.detailsEditable.fieldValueChanged.counter() > 0) {
-         //ab.log("ok");
+         //session.log("ok");
          self.saveButtonVisible(true);
          self.cancelButtonVisible(true);
       }
@@ -384,7 +397,7 @@ function ViewModel () {
          self.normalizeSet(saveSet);
          console.log("saveSet ", saveSet);
 
-         session.call("api:create", saveSet).then(
+         session.call("form:create", saveSet).then(
             function(res) {
 
                //// use return from DB for this
@@ -403,7 +416,7 @@ function ViewModel () {
                // re-enable the 'add item' button
                self.addButtonVisible(true);
             },
-            ab.log
+            session.log
             );
       }
       else {
@@ -418,7 +431,7 @@ function ViewModel () {
 
          self.normalizeSet(updateSet);
 
-         session.call("api:update", updateSet).then(
+         session.call("form:update", updateSet).then(
             function(res) {
 
                for (var i in res) {
@@ -430,7 +443,7 @@ function ViewModel () {
                // display details to clear field states + set button states
                self.displayDetails(self.listData()[self.detailsCurrent.index()]);
             },
-            ab.log
+            session.log
             );
       }
    };
@@ -481,13 +494,13 @@ function ViewModel () {
    };
 
    this.deleteListItem = function( listItem, event ) {
-      session.call("api:delete", listItem.id()).then(
+      session.call("form:delete", listItem.id()).then(
          function(res) {
             var index = listItem.index();
             // delete the item
             onItemDeleted("localDelete", {id: listItem.id()});
          },
-         ab.log
+         session.log
          );
    };
 
@@ -536,7 +549,7 @@ function ViewModel () {
    };
 
    this.clearDetailsChanged = function() {
-      //ab.log("clearing details");
+      //session.log("clearing details");
       var fieldValueChanged = self.detailsEditable.fieldValueChanged;
       // reset all changed values to false
       for (var i in fieldValueChanged) {
@@ -568,11 +581,11 @@ function addTestItems (numberOfItemsToAdd) {
    for ( var i = 0; i < numberOfItemsToAdd + 1; i++ ) {
       // create item to send
       var saveSet = { inStock: i, name: "Test Item " + i, orderNumber: "TT-" + i, price: i*3.5, size: i +4, weight: i*1.3+40 };
-      session.call("api:create", saveSet).then(
+      session.call("form:create", saveSet).then(
          function(res) {
-            // ab.log("saved", res);
+            // session.log("saved", res);
          },
-         ab.log
+         session.log
       );
    }
 }
@@ -587,42 +600,42 @@ oracleForm.testEvents = function(evt, rep) {
             console.log("constructing", i);
             var saveSet = { inStock: i, name: "Test Item " + i, orderNumber: "TT-" + i, price: i*3.5, size: i +4, weight: i*1.3+40 };
             vm.normalizeSet(saveSet);
-            session.call("api:create", saveSet).then(ab.log, ab.log);
+            session.call("form:create", saveSet).then(session.log, session.log);
          }
          break;
       case "delete":
          // console.log("no deleting yet");
          var items;
-         session.call("api:filter", {name: {type: "prefix", value: "test" }}, 500).then(function(obj) {
+         session.call("form:filter", {name: {type: "prefix", value: "test" }}, 500).then(function(obj) {
             for(var i = 0; i < rep; i++) {
                if(obj[i]) {
                   // var index = getIndexFromId(obj[i].id);
                   console.log("id ", obj[i].id);
-                  session.call("api:delete", obj[i].id).then(
+                  session.call("form:delete", obj[i].id).then(
                      function(res) {
                         // delete the item
                         onItemDeleted("localDelete", obj[i].id);
                      },
-                     ab.log
+                     session.log
                   );
                }
             }
-         }, ab.log);
+         }, session.log);
 
          break;
       case "update":
          // console.log("no update yet");
          var items;
-         session.call("api:filter", {name: {type: "prefix", value: "test" }}, 500).then(function(obj) {
+         session.call("form:filter", {name: {type: "prefix", value: "test" }}, 500).then(function(obj) {
             for(var i = 0; i < rep; i++) {
                if(obj[i]) {
                   // var index = getIndexFromId(obj[i].id);
                   console.log("id ", obj[i].id);
                   var updated = { id: obj[i].id, orderNumber: "updated " + i*rep};
-                  session.call("api:update", updated).then(ab.log, ab.log);
+                  session.call("api:update", updated).then(session.log, session.log);
                }
             }
-         }, ab.log);
+         }, session.log);
          break;
       default:
          break;

@@ -9,7 +9,7 @@ AS
    /**
     * RPC/Event URI prefix
     */
-   BASEURI CONSTANT VARCHAR2(200) := 'http://tavendo.de/webmq/demo/koform#';
+   BASEURI CONSTANT VARCHAR2(200) := 'http://tavendo.de/webmq/demo/product#';
 
    /**
     * Get objects. This procedure can drive ExtJS grids and properly

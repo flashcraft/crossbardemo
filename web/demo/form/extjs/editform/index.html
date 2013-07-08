@@ -1,93 +1,95 @@
 <!DOCTYPE html>
 <html>
-    <head>        
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <head>        
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   
-        <script type="text/javascript" src="../../../../extjs/ext-all.js"></script>
-        <link rel="stylesheet" type="text/css" href="../../../../extjs/ext-theme-neptune-all.css">
-        <script type="text/javascript" src="../../../../extjs/ext-theme-neptune.js"></script>
+      <script src="../../../../extjs/ext-all.js"></script>
+      <link rel="stylesheet" type="text/css" href="../../../../extjs/ext-theme-neptune-all.css">
+      <script src="../../../../extjs/ext-theme-neptune.js"></script>
 
-        <script type="text/javascript" src="../../../../js/autobahn.min.js"></script>  
-        <script type="text/javascript" src="../../../../js/autobahnextjs-dev.js"></script>
-        <script type="text/javascript" src="../../../util.js"></script>
+      <script src="../../../../js/jquery.min.js"></script>
+      <script src="../../../../js/autobahn.min.js"></script>  
+      <script src="../../../../js/autobahnextjs-dev.js"></script>
 
-        <title>WebMQ Form Demo</title>
-    </head>
+      <title>WebMQ Form Demo</title>
+   </head>
+   <body> 
+      <script>
+         // turn on WAMP debug output
+         ab.debug(true, false, false);
 
-   
-    <script>
-     //ab.debug(true);
-     var baseUri = "http://tavendo.de/webmq/demo/koform#";
+         // use jQuery deferreds
+         ab.Deferred = $.Deferred;
 
-     Ext.application({
-       extend: 'AB.app.WampApplication',
-       name:'ABexample',
+         var baseUri = "http://tavendo.de/webmq/demo/product#";
 
-       // the WAMP config
-       websocketURI: get_appliance_url("hub-websocket", "ws://localhost/ws"),
+         Ext.application({
+            extend: 'AB.app.WampApplication',
+            name:'ABexample',
 
-       launch: function(){
+            // the WAMP config
+            websocketURI: ab.getServerUrl(), // Tavendo WebMQ server URL
 
-         // create ExtJS model
-         //
-         Ext.define('Product', {
-            extend: 'Ext.data.Model',
-             proxy: {
-               type: 'wamp',
-               //debug: true,
-               // WAMP API
-               //
-               api: {
-                  // RPC URIs for CRUD operations
-                  create: baseUri + 'create',
-                  read: baseUri + 'read',
-                  update: baseUri + 'update',
-                  destroy: baseUri + 'delete',
+            // this fires when WAMP session was established
+            launch: function () {
+               // define ExtJS model for "Product"
+               Ext.define('Product', {
+                  extend: 'Ext.data.Model',
+                     proxy: {
+                        // proxy is of type WAMP
+                        type: 'wamp',
+                        // configuration of proxy WAMP API
+                        api: {
+                           // RPC URIs for CRUD operations
+                           create: baseUri + 'create',
+                           read: baseUri + 'read',
+                           update: baseUri + 'update',
+                           destroy: baseUri + 'delete',
+                           // Topic URIs for CRUD events
+                           oncreate: baseUri + 'oncreate',
+                           onupdate: baseUri + 'onupdate',
+                           ondestroy: baseUri + 'ondelete'
+                        }
+                     },
+                     fields: ['id',
+                              'name',
+                              'orderNumber',
+                              'weight',
+                              'size',
+                              'inStock',
+                              'price'],
+                     idProperty: "id"
+               });
 
-                  // Topic URIs for CRUD events
-                  oncreate: baseUri + 'oncreate',
-                  onupdate: baseUri + 'onupdate',
-                  ondestroy: baseUri + 'ondelete'
-               }
-            },
-            fields: ['id',
-                     'name',
-                     'orderNumber',
-                     'weight',
-                     'size',
-                     'inStock',
-                     'price'],
-            idProperty: "id"
+               // create ExtJS grid for "Product"
+               var v = Ext.create('Ext.container.Viewport', {
+                  layout: {
+                     type:'vbox',
+                     pack:'center',
+                     align:'center'
+                  },
+                  items: [{
+                     xtype:'grid',
+                     height: 400,
+                     width: 800,
+                     title: 'WebMQ Edit Form Demo',
+                     store: Ext.create('Ext.data.Store', {
+                        autoLoad: true,
+                        model: 'Product'
+                     }),
+                     columns: [
+                        { text: 'Order Number', dataIndex: 'orderNumber', flex: 1 },
+                        { text: 'Name',  dataIndex: 'name' },
+                        { text: 'Price', dataIndex: 'price' },
+                        { text: 'Weight', dataIndex: 'weight' },
+                        { text: 'Size', dataIndex: 'size' },
+                        { text: 'In Stock', dataIndex: 'inStock' }
+                     ],
+                  }]
+                 }
+               );
+            }
          });
-
-        var v = Ext.create('Ext.container.Viewport',{
-            layout: {
-              type:'vbox',
-              pack:'center',
-              align:'center'
-            },
-            items: [{
-              xtype:'grid',
-              height: 400,
-              width: 800,
-              title: 'WebMQ Edit Form Demo',
-              store: Ext.create('Ext.data.Store', {
-                  autoLoad: true,
-                  model: 'Product'
-              }),
-              columns: [
-                  { text: 'Order Number', dataIndex: 'orderNumber', flex: 1 },
-                  { text: 'Name',  dataIndex: 'name' },
-                  { text: 'Price', dataIndex: 'price' },
-                  { text: 'Weight', dataIndex: 'weight' },
-                  { text: 'Size', dataIndex: 'size' },
-                  { text: 'In Stock', dataIndex: 'inStock' }
-              ],
-            }]
-        });
-       }
-   });
-
-    </script>
-
+      </script>
+   </body>
 </html>
