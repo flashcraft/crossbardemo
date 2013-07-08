@@ -179,12 +179,12 @@ function onAuth(permissions) {
    sess.prefix("orasales", "http://tavendo.de/webmq/demo/dashboard#");
 
    // sales events
-   sess.subscribe("orasales:revenue", onRevenue);
-   sess.subscribe("orasales:revenue-by-product", onRevenueByProduct);
-   sess.subscribe("orasales:units-by-product", onUnitsByProduct);
-   sess.subscribe("orasales:revenue-by-region", onRevenueByRegion);
-   sess.subscribe("orasales:asp-by-region", onAspByRegion);
-   sess.subscribe("orasales:sale", onSale);
+   sess.subscribe("orasales:totalRevenue", onRevenue);
+   sess.subscribe("orasales:revenueByProduct", onRevenueByProduct);
+   sess.subscribe("orasales:unitsByProduct", onUnitsByProduct);
+   sess.subscribe("orasales:revenueByRegion", onRevenueByRegion);
+   sess.subscribe("orasales:aspByRegion", onAspByRegion);
+   sess.subscribe("orasales:onSale", onSale);
 
    sess.subscribe("orasales:revenue-threshold", onRevenueThresholdChanged);
    sess.subscribe("orasales:unit-threshold", onUnitThresholdChanged);
