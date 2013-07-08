@@ -24,6 +24,9 @@
                                "form/sql/pkg_product_spec.sql",
                                "form/sql/pkg_product_body.sql",
                                "form/sql/pkg_product_register.sql"],
-                "sqlUninstall": ["form/sql/uninstall.sql"]}
+                "sqlUninstall": ["form/sql/uninstall.sql"]},
+
+      "Dashboard": {"sqlInstall": ["dashboard/sql/sales.sql"],
+                    "sqlUninstall": ["dashboard/sql/uninstall.sql"]}
     }
 }
