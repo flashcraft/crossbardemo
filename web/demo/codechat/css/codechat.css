@@ -891,6 +891,12 @@ button:hover,
 }
 
 
+#setChannelAndNick
+{
+  border: 2px solid rgb(255, 147, 74);  
+}
+
+
 #snippetsBox
 {
    overflow: auto;

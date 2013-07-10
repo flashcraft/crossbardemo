@@ -468,38 +468,29 @@ housekeeping.storeState = function() {
       var keyString = JSON.stringify(key); 
       // get the necessary state data
       var state = {};
-      // state if the display
+      // state of the display
       state.upperHeightPerc = housekeeping.upperHeightPerc;
       state.chatCollapsed = housekeeping.chatCollapsed;
-      // tabs, needs:
-      // - in sequence --> array - e.g. via key in tabs.tabs
-      // - language (internal value) - tabs.tabs[i].language
-      // - the ttitle - tabs.tabs[i].titleInput.value
-      // - the tab content - tabs.editors[i].getValue();
+
       state.tabs = [];
       for(var i in tabs.tabs) {
          
          if(tabs.tabs.hasOwnProperty(i)) {
-         // console.log("i", i);
             var tstate = {};
             tstate.id = i;
             tstate.language = tabs.tabs[i].language;
             tstate.ttitle = tabs.tabs[i].titleInput.value;
             tstate.content = tabs.editors[i].getValue();
-            // console.log("tstate", tstate);
+            tstate.tabTitle = tabs.tabs[i].tabTitle;
             state.tabs.push(tstate);  
          }
       }
-      // console.log("state", state);
       var stateSorted = state.tabs.sort(function(a,b){ if(a.i < b.i) { return 1; } else {return -1; } });
-      // console.log("stateSorted", stateSorted);
       // remove the unnecessary id to save space in localstorage
       for(var j = 0; j < stateSorted.length; j++) {
          delete stateSorted[j].id;
-         // console.log("s", j, stateSorted[j]);
       }
       state.tabs = stateSorted;
-      // console.log("state finished", state);
       var stateString = JSON.stringify(state);
       
       localStorage.setItem(keyString, stateString); 
@@ -523,11 +514,15 @@ housekeeping.loadState = function(channel, nick) {
       housekeeping.collapseChat();
    }
 
-   // need to delete present tabs!! - IMPLEMENT ME
+   // delete the present tabs, 
+   // necessary when nick and/or channel are changed 
+   for(var id in tabs.tabs) {
+      tabs.destroyTab(id);
+   }
 
    for(var i = 0; i < state.tabs.length; i++) {
       var ttab = state.tabs[i];
-      tabs.addTab(ttab.language, ttab.content, ttab.ttitle);
+      tabs.addTab(ttab.language, ttab.content, ttab.ttitle, ttab.tabTitle);
    }
 };
 
@@ -554,7 +549,8 @@ var getChannelAndNick = {
    setButton: document.getElementById("setChannelAndNick"),
    cancelButton: document.getElementById("cancelChannelAndNick"),
    requiredInput: {channel: false, nick: false},
-   previouslyShown: false
+   previouslyShown: false,
+   requiredInfoEntered: false
 };
 
 // any way to do this in more elegant + shorter notation ? - CHECKME
@@ -571,6 +567,7 @@ getChannelAndNick.nick.changed = false;
 getChannelAndNick.nick.minLength = 3;
 getChannelAndNick.nick.maxLength = 10;
 getChannelAndNick.nick.regEx = /^[A-Za-z0-9_-]+$/;
+
 
 getChannelAndNick.setup = function() {
    var self = this;
@@ -652,7 +649,9 @@ getChannelAndNick.start = function() {
 getChannelAndNick.keydown = function(evt, type) {
    // block any entry after maxLength for input has been reached
    var kc = evt.keyCode;
-   if ((kc > 7 && kc < 46 && kc !== 32) || (kc > 90 && kc < 94) || (kc > 111 && kc < 186) ) {
+   if (kc === 13 && getChannelAndNick.requiredInfoEntered === true) {
+      getChannelAndNick.set();
+   } else if ((kc > 7 && kc < 46 && kc !== 32) || (kc > 90 && kc < 94) || (kc > 111 && kc < 186) ) {
       // filter non-character keypresses
       return true;
    } else if (getChannelAndNick[type].input.value.length === getChannelAndNick[type].maxLength) {
@@ -702,8 +701,10 @@ getChannelAndNick.keyup = function(type) {
    // display set button?
    if (requiredPresent === true && changed === true) {
       $(self.setButton).removeClass("nonVisible");
+      getChannelAndNick.requiredInfoEntered = true;
    } else {
       $(self.setButton).addClass("nonVisible");
+      getChannelAndNick.requiredInfoEntered = false;
    }
 };
 
@@ -944,13 +945,14 @@ tabs.tabTopClicked = function(evt) {
   Default is adding this as the rightmost tab,
   if anchor is passed, it is create to the right of this
 */
-tabs.addTab = function(language, content, ttitle) {
+tabs.addTab = function(language, content, ttitle, tabTitle) {
    // create unique id for the tab
    tabs.idCounter += 1;
    var id = tabs.idCounter;
 
    // create tabtop
    var tabtop = document.createElement("li");
+
    // create the correct tabtop header & udpate the languages dict
    if(tabs.languages[language]) {
       tabs.languages[language].openTabs += 1;
@@ -960,8 +962,15 @@ tabs.addTab = function(language, content, ttitle) {
    } else {
       tabs.languages[language] = { lastFocused: id, openTabs: 1, openedTabs: 1 };
    }
-   var headerText = tabs.localToDisplay[language] + " " + tabs.languages[language].openedTabs;
+   console.log("tabTitle", tabTitle);
+   var headerText
+   if(tabTitle === undefined) {
+      headerText = tabs.localToDisplay[language] + " " + tabs.languages[language].openedTabs;
+   } else {
+      headerText = tabTitle;
+   }
    tabtop.innerHTML = headerText;
+
    // add the delete button
    var deleteButton = document.createElement("div");
    $(deleteButton).addClass("deleteButton");
@@ -981,8 +990,6 @@ tabs.addTab = function(language, content, ttitle) {
    titleInput.maxLength = "80";
    title.appendChild(titleInput);
    tab.appendChild(title);
-   // tabs.titles[id] = titleInput;
-   // tabs.tabs[id].titleInput = titleInput;
 
    // add the editor into the tab
    var editorWrapper = document.createElement("div");
@@ -1010,7 +1017,8 @@ tabs.addTab = function(language, content, ttitle) {
    }
 
    // save the references to these for later access
-   tabs.tabs[id] = { "tabtop": tabtop, "tab": tab, "language": language, "titleInput": titleInput };
+   tabs.tabs[id] = { "tabtop": tabtop, "tab": tab, "language": language, "titleInput": titleInput, "tabTitle": headerText };
+
    tabs.tabSequence.push(id); // needs to handle anchor - IMPLEMENT ME;
    // set the tab title if provided
    if(ttitle){
@@ -1023,14 +1031,11 @@ tabs.addTab = function(language, content, ttitle) {
    }
 
    // add the tabtop and the tab to the page
-   // var addTab = document.getElementById("addTab");
-   // tabs.tabtops.insertBefore(tabtop, addTab);
    tabs.tabtops.appendChild(tabtop);
    // adjust the z-indices for the correct overlap of the box shadow
    tabs.zIndex -= 1;
    tabtop.style.zIndex = tabs.zIndex;
 
-   // tabs.tabtops.appendChild(tabtop);
    tabs.tabscontainer.appendChild(tab);
 
    // switch to the newly added tab
@@ -1169,7 +1174,8 @@ tabs.destroyTab = function(id) {
    tab.parentNode.removeChild(tab);
    // store language for later update of language dict
    var language = tabs.tabs[id].language,
-       title = tabs.tabs[id].titleInput.value;
+       ttitle = tabs.tabs[id].titleInput.value,
+       tabTitle = tabs.tabs[id].tabTitle;
    // clean up the tabs dict
    delete tabs.tabs[id];
 
@@ -1186,15 +1192,18 @@ tabs.destroyTab = function(id) {
 
    // store the editor content + language for getting last closed tab back
    tabs.lastClosedTab.language = language;
-   tabs.lastClosedTab.content = tabs.editors[id].getValue();
-   tabs.lastClosedTab.title = title;
+   tabs.lastClosedTab.content = tabs.editors[id].getValue(),
+   tabs.lastClosedTab.ttitle = ttitle,
+   tabs.lastClosedTab.tabTitle = tabTitle;
    // add or modify the last closed tab button
    
    if(!tabs.lastClosedTab.button) {
       var listItem = document.createElement("li"),
           button = document.createElement("button"),
           addTabLanguages = document.getElementById("addTabLanguages");
+      listItem.id = "lastClosed";
       button.textContent = "last closed";
+      // button.id = "lastClosedButton";
       $(button).addClass("lastClosedButton");
       listItem.appendChild(button);
       addTabLanguages.appendChild(listItem);
@@ -1251,9 +1260,14 @@ tabs.destroyTab = function(id) {
 tabs.restoreLastClosed = function() {
    var language = tabs.lastClosedTab.language,
        content = tabs.lastClosedTab.content,
-       title = tabs.lastClosedTab.title;
-   tabs.addTab(language, content, title);
+       ttitle = tabs.lastClosedTab.ttitle,
+       tabTitle = tabs.lastClosedTab.tabTitle;
+   tabs.addTab(language, content, ttitle, tabTitle);
    $("#addTabLanguages").addClass("nonDisplay");
+   // remove the last closed item
+   var addTabLanguages = document.getElementById("addTabLanguages");
+   addTabLanguages.removeChild(document.getElementById("lastClosed"));
+   tabs.lastClosedTab.button = null;
 };
 
 /* loops over existing editors and sets the new font size */
