@@ -6,7 +6,10 @@
 
 // startConnect();
 
+"use strict";
+var session = null;
 start();
+
 
 function start() {
    // set link to open a second instance

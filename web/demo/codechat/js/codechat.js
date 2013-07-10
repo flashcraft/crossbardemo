@@ -11,11 +11,9 @@
 "use strict"; // may cause problems when concatenating this with other, non-strict code
 // solved by wrapping entire demo code in a function & declaring only within this - FIXME
 
-// var globalTabSessions = {};
+// IMPORTANT - current state is with ab.launch used only partially and for testing - FIXME - add this across the board
 
-// var gCode;
 
-// (function () { // see at end: self-executing anonymous function
 /// connect object
 var connect = {
    wsuri: get_appliance_url("hub-websocket", "ws://localhost/ws"),
@@ -27,6 +25,65 @@ var connect = {
    channelBaseUri: "http://tavendo.de/webmq/demo/codechat",
    connected: false
 };
+
+connect.connect = function() {
+   // turn on WAMP debug output
+   //ab.debug(true, false, false);
+
+   // use jQuery deferreds
+   ab.Deferred = $.Deferred;
+
+   // Connect to Tavendo WebMQ ..
+   //
+   ab.launch(
+      // WAMP app configuration
+      {
+         // Tavendo WebMQ server URL
+         wsuri: ab.getServerUrl(),
+         // authentication info
+         appkey: null, // authenticate as anonymous
+         appsecret: null,
+         appextra: null,
+         // additional session configuration
+         sessionConfig: {maxRetries: 10,
+                         sessionIdent: "ChatGlobalSession"}
+      },
+      // session open handler
+      function (newSession) {
+         connect.sess = newSession;
+
+         connect.connected = true;
+         housekeeping.statusline.statusText = "Connected to " + connect.wsuri;
+         connect.retryCount = 0;
+
+         // check if channel or nick in URL
+         connect.urlData = connect.getDataFromUrl();
+         chat.nick = connect.urlData.nick; // may remain undefined
+
+         // get nick and channel on initial load if not both gotten from URL
+         if(!connect.urlData.nick || !connect.urlData.channel) {
+            getChannelAndNick.start();
+         }
+
+         // switch channel & update the URL if at least channel has been set already
+         if(connect.urlData.nick && connect.urlData.channel) {
+            connect.switchChannel(connect.urlData.channel);
+            housekeeping.checkForSavedState(connect.urlData.channel, connect.urlData.nick);
+         }
+         housekeeping.updateStatusline();
+         housekeeping.setNewWindowLinkAndUrl();
+
+
+
+         connect.sess.subscribe(connect.channelBaseUri + "#onpost", chat.onMessage); // CHECKME
+      },
+      // session close handler
+      function (code, reason, detail) {
+         session = null;
+         updateStatusline(reason);
+      }
+   );
+}
 
 connect.startConnect = function() {
    console.log("startConnect called");
@@ -271,7 +328,8 @@ housekeeping.initialize = function() {
 
    tabs.initialize();
    chat.initialize();
-   connect.startConnect();
+   // connect.startConnect();
+   connect.connect();
 
    window.addEventListener("beforeunload", housekeeping.storeState);
 };
@@ -1099,9 +1157,9 @@ tabs.keyboardOperation = function(evt) {
          tabs.sendFullEditorContent();
       } else {
          tabs.sendSelectedEditorContent();
-      }
-      
+      }      
    }
+   // need to add key combination for evaluation - IMPLEMENT ME / FIXME
 };
 
 /*
@@ -1374,7 +1432,8 @@ tabs.constructMessage = function(body, language) {
    The actual sending of the constructed message
 */
 tabs.sendMessage = function (message) {
-   connect.sess.call(connect.channelBaseUri + "#post", message).then(ab.log, ab.log); // include some error handling
+   // connect.sess.call(connect.channelBaseUri + "#post", message).then(ab.log, ab.log); // include some error handling
+   connect.sess.call(connect.channelBaseUri + "#post", message).then(function(res){ connect.sess.log(res);}, connect.sess.log); // include some error handling
 };
 
 
@@ -1574,5 +1633,3 @@ var configuration = {
 };
 
 housekeeping.initialize();
-// })(); // make all self-executing anonymous function to clear the global scope & 
-// avoid problems with eval. does not exclude loaded libraries, but works in principle

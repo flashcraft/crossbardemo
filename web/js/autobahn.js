@@ -2645,6 +2645,8 @@ ab.Session = function (wsuri, onopen, onclose, options) {
    self._txcnt = 0;
    self._rxcnt = 0;
 
+   //self.log = ab._createLogger(self);
+
    if (self._options && self._options.skipSubprotocolAnnounce) {
       self._websocket = ab._construct(self._wsuri);
    } else {
@@ -2781,6 +2783,7 @@ ab.Session = function (wsuri, onopen, onclose, options) {
             // only now that we have received the initial server-to-client
             // welcome message, fire application onopen() hook
             if (self._websocket_onopen !== null) {
+            	//self.log = ab._createLogger(self);
                self._websocket_onopen();
             }
          } else {
@@ -2870,6 +2873,23 @@ ab.Session = function (wsuri, onopen, onclose, options) {
       self._websocket_onclose = null;
       self._websocket = null;
    };
+
+   // session.log added here to ensure that self is the session object
+   // else there is a difference between function calls & function references
+	self.log = function () {
+		console.log("this", this);
+		console.log("self", self);
+	   //var self = this._session || this;
+	   if (self._options && 'sessionIdent' in self._options) {
+	      console.group("WAMP Session '" + self._options.sessionIdent + "' [" + self._session_id + "]");
+	   } else {
+	      console.group("WAMP Session " + "[" + self._session_id + "]");
+	   }
+	   for (var i = 0; i < arguments.length; ++i) {
+	      console.log(arguments[i]);
+	   }
+	   console.groupEnd();
+	};
 };
 
 
@@ -2938,18 +2958,21 @@ ab.Session.prototype.wsuri = function () {
 };
 
 
-ab.Session.prototype.log = function () {
-
-   var self = this;
-   if (self._options && 'sessionIdent' in self._options) {
-      console.group("WAMP Session '" + self._options.sessionIdent + "' [" + self._session_id + "]");
-   } else {
-      console.group("WAMP Session " + "[" + self._session_id + "]");
-   }
-   for (var i = 0; i < arguments.length; ++i) {
-      console.log(arguments[i]);
-   }
-   console.groupEnd();
+ab._createLogger = function (session) {
+	return function () {
+		console.log("this", session);
+	   if (session && session._options && 'sessionIdent' in session._options) {
+	      console.group("WAMP Session '" + session._options.sessionIdent + "' [" + session._session_id + "]");
+	   } else if (session) {
+	      console.group("WAMP Session " + "[" + session._session_id + "]");
+	   } else {
+	   	console.group("WAMP Session");
+	   }
+	   for (var i = 0; i < arguments.length; ++i) {
+	      console.log(arguments[i]);
+	   }
+	   console.groupEnd();		
+	}
 };
 
 
@@ -2999,6 +3022,7 @@ ab.Session.prototype.call = function () {
    var self = this;
 
    var d = new ab.Deferred();
+   d._session = self;
    var callid;
    while (true) {
       callid = ab._newidFast();
