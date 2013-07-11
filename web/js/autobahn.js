@@ -2874,22 +2874,17 @@ ab.Session = function (wsuri, onopen, onclose, options) {
       self._websocket = null;
    };
 
-   // session.log added here to ensure that self is the session object
-   // else there is a difference between function calls & function references
-	self.log = function () {
-		console.log("this", this);
-		console.log("self", self);
-	   //var self = this._session || this;
-	   if (self._options && 'sessionIdent' in self._options) {
-	      console.group("WAMP Session '" + self._options.sessionIdent + "' [" + self._session_id + "]");
-	   } else {
-	      console.group("WAMP Session " + "[" + self._session_id + "]");
-	   }
-	   for (var i = 0; i < arguments.length; ++i) {
-	      console.log(arguments[i]);
-	   }
-	   console.groupEnd();
-	};
+   self.log = function () {
+      if (self._options && 'sessionIdent' in self._options) {
+         console.group("WAMP Session '" + self._options.sessionIdent + "' [" + self._session_id + "]");
+      } else {
+         console.group("WAMP Session " + "[" + self._session_id + "]");
+      }
+      for (var i = 0; i < arguments.length; ++i) {
+         console.log(arguments[i]);
+      }
+      console.groupEnd();
+   };
 };
 
 
@@ -2958,6 +2953,7 @@ ab.Session.prototype.wsuri = function () {
 };
 
 
+<<<<<<< HEAD
 ab._createLogger = function (session) {
 	return function () {
 		console.log("this", session);
@@ -2976,6 +2972,8 @@ ab._createLogger = function (session) {
 };
 
 
+=======
+>>>>>>> b00b344c85ed1e01d6ef6d96e4bde6fa8e8e21c0
 ab.Session.prototype.shrink = function (uri, pass) {
 
    var self = this;
