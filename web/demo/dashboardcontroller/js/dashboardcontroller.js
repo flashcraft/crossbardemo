@@ -8,79 +8,7 @@
  *    websocket connection to appliance
  ***********/
 
-var wsuri = get_appliance_url("hub-websocket", "ws://localhost/ws");
-var sess = null;
-var retryCount = 0;
-var retryDelay = 2;
-
-function connect() {
-
-   ab._Deferred = jQuery.Deferred;
-
-   updateStatusline("Connecting ..");
-
-   ab.connect(wsuri,
-
-      function (session) {
-         sess = session;
-         onConnect0();
-      },
-
-      function (code, reason, detail) {
-
-         sess = null;
-         switch (code) {
-            case ab.CONNECTION_UNSUPPORTED:
-               window.location = "/webmq/unsupportedbrowser"; // FIXME
-               break;
-            case ab.CONNECTION_CLOSED:
-               window.location.reload();
-               break;
-            default:
-
-               retryCount = retryCount + 1;
-               updateStatusline("Connection lost. Reconnecting (" + retryCount + ") in " + retryDelay + " secs ..");
-
-               break;
-         }
-      },
-
-      {'maxRetries': 60, 'retryDelay': 2000}
-   );
-}
-
-
-function onConnect0() {
-   sess.authreq().then(function () {
-      sess.auth().then(onAuth, function (error) {
-         updateStatusline("Auth Request failed: " + error.desc);
-      });
-   }, function (error) {
-      updateStatusline("Auth failed: " + error.desc);
-   });
-}
-
-function onAuth(permissions) {
-
-   updateStatusline("Connected to " + wsuri);
-   retryCount = 0;
-
-   /** define session prefixes ***/
-   sess.prefix("sales", "http://autobahn.tavendo.de/public/demo/dashboard#");
-
-   /** subscribe to events ***/
-   sess.subscribe("sales:revenue", onEqTr);
-   sess.subscribe("sales:revenue-by-product", onEqRbp);
-   sess.subscribe("sales:revenue-by-region", onEqUbp);
-   sess.subscribe("sales:asp-by_region", onEqAbr);
-   sess.subscribe("sales:units-by-product", onEqRbr);
-
-};
-
-
-function updateStatusline(status) {
-   $(".statusline").text(status);
-};
+var session = null;
 
 $(document).ready(function()
 {
@@ -91,14 +19,61 @@ $(document).ready(function()
    connect();
 });
 
+function connect() {
+
+   // turn on WAMP debug output
+   // ab.debug(true, false, false);
+
+   // use jQuery deferreds
+   ab.Deferred = $.Deferred;
+
+   // Connect to Tavendo WebMQ ..
+   //
+   ab.launch(
+      // WAMP app configuration
+      {
+         // Tavendo WebMQ server URL
+         wsuri: ab.getServerUrl(),
+         // authentication info
+         appkey: null, // authenticate as anonymous
+         appsecret: null,
+         appextra: null,
+         // additional session configuration
+         sessionConfig: {maxRetries: 10,
+                         sessionIdent: "Vote"}
+      },
+      // session open handler
+      function (newSession) {
+         session = newSession;
+         updateStatusline("Connected to " + session.wsuri() + " in session " + session.sessionid());
+         retryCount = 0;
+
+         /** define session prefixes ***/
+         session.prefix("sales", "http://autobahn.tavendo.de/public/demo/dashboard#");
+
+         /** subscribe to events ***/
+         session.subscribe("sales:revenue", onEqTr);
+         session.subscribe("sales:revenue-by-product", onEqRbp);
+         session.subscribe("sales:revenue-by-region", onEqUbp);
+         session.subscribe("sales:asp-by_region", onEqAbr);
+         session.subscribe("sales:units-by-product", onEqRbr);
+      },
+      // session close handler
+      function (code, reason, detail) {
+         session = null;
+         updateStatusline(reason);
+      }
+   );
+}
+
+
+function updateStatusline(status) {
+   $(".statusline").text(status);
+};
 
 var channelBaseUri = "http://autobahn.tavendo.de/public/demo/sliders/";
-var newWindowLink = null;
-
 
 function setupDemo() {
-
-   newWindowLink = document.getElementById('new-window');
 
    // Total Revenue Sliders
 
@@ -116,8 +91,7 @@ function setupDemo() {
          orientation: "vertical",
 
          slide: function(event, ui) {
-            sess.publish("sales:revenue", { idx: k, val: ui.value });
-            //ab.log("event:eq_tr", {idx: k, val: ui.value})
+            session.publish("sales:revenue", { idx: k, val: ui.value });
          }
       });
       i += 1;
@@ -140,8 +114,7 @@ function setupDemo() {
          orientation: "vertical",
 
          slide: function(event, ui) {
-            sess.publish("sales:revenue-by-product", { idx: k, val: ui.value });
-            //ab.log("event:eq_rbp", {idx: k, val: ui.value})
+            session.publish("sales:revenue-by-product", { idx: k, val: ui.value });
          }
       });
       n += 1;
@@ -164,8 +137,7 @@ function setupDemo() {
          orientation: "vertical",
 
          slide: function(event, ui) {
-            sess.publish("sales:units-by-product", { idx: k, val: ui.value });
-            //ab.log("event:eq_rbp", {idx: k, val: ui.value})
+            session.publish("sales:units-by-product", { idx: k, val: ui.value });
          }
       });
       s += 1;
@@ -188,8 +160,7 @@ function setupDemo() {
          orientation: "vertical",
 
          slide: function(event, ui) {
-            sess.publish("sales:asp-by-region", { idx: k, val: ui.value });
-            //ab.log("event:eq_rbp", {idx: k, val: ui.value})
+            session.publish("sales:asp-by-region", { idx: k, val: ui.value });
          }
       });
       t += 1;
@@ -212,8 +183,7 @@ function setupDemo() {
          orientation: "vertical",
 
          slide: function(event, ui) {
-            sess.publish("sales:revenue-by-region", { idx: k, val: ui.value });
-            //ab.log("event:eq_rbp", {idx: k, val: ui.value})
+            session.publish("sales:revenue-by-region", { idx: k, val: ui.value });
          }
       });
       u += 1;
@@ -231,12 +201,11 @@ function send_activity() {
    data.region = document.getElementById("region_select").value;
    data.revenue = document.getElementById("revenue").value;
 
-   sess.publish("sales:sale", data);
+   session.publish("sales:sale", data);
 }
 
 function switch_dashboard(number) {
-   ab.log(number);
-   sess.publish("sales:switch-dashboard", number);
+   session.publish("sales:switch-dashboard", number);
 }
 
 
