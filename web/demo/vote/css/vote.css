@@ -13,45 +13,95 @@ body
 
 #voteContainer
 {
-   margin: 0 0 0 8em;
    
+   text-align: center;
 }
 #voteContainer > div
 {
    display: inline-block;
-   width: 10em;
+   width: 16em;
+}
+#voteContainer > div > img
+{
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.3);
 }
 
 #voteContainer > div > span
 {
     display: block;
 
-    margin: 1em;
+    margin: 1em 0 0;
+    font-size: 21px;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
 
-#voteContainer > div > input
+#voteContainer > div > div
 {
-    display: block;
+    display: inline-block;
 
-    width: 4em;
-    margin: 1em;
+    
 }
+#voteContainer > div > div > input
+{
+  
+    width: 4em;
+    text-align: center;
+    border: none;
+    background-color: inherit;
+    font-size: 4em;
+    padding: 20px 0 30px;
+
+    transition: all 0.3s ease;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
 
 #voteContainer > div > button
 {
-    margin: 0 0 3em 1.5em;
    
+}
+
+button
+{
+    background-color: #D4D0C8;
+  
+    border: 1px solid rgb(196, 191, 181);
+    padding: 0.5em 1em;
+    font-size: 20px;
+    font-weight: normal;
+    font-family: 'open_sansregular', sans-serif;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.3), -1px 0 1px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.3);
+}
+button:hover
+{
+    background-color: rgb(196, 188, 173);
+  
+    box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.4);
 }
 
 #resetVotesContainer
 {
     text-align: center;
    
+    margin: 3em 0 0 0;
 }
 
 #demo_body
 {
-   width: 650px;
+   width: 823px;
+   text-align: center;
+}
+
+#codeFrame
+{
+  width: 1210px;
+  height: 1200px;
+  margin: 0 auto;
+}
+#codeFrame > iframe
+{
+  border: none;
 }
 
 #codeContainer

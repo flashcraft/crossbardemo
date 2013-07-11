@@ -137,12 +137,25 @@ header {
    bottom: 17px;
 }
 
+.demo_links
+{
+   text-align: center;
+}
+.demo_links > div > a
+{
+   padding: 0 2em 0 0;
+   font-size: 19px;
+   text-decoration: none;
+   color: #f60;
+} 
 
-#demo_body
+
+#demo_body,
+.demo_links
 {
    width: 850px;
    height: 100%;
-   margin: 3em auto;
+   margin: 1em auto;
    position: relative;
 }
 
