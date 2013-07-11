@@ -3,7 +3,7 @@
    <head>        
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   
-      <script src="../../../../extjs/ext-all.js"></script>
+      <script src="../../../../extjs/ext-all-dev.js"></script>
       <link rel="stylesheet" type="text/css" href="../../../../extjs/ext-theme-neptune-all.css">
       <script src="../../../../extjs/ext-theme-neptune.js"></script>
 
@@ -28,10 +28,106 @@
             name:'ABexample',
 
             // the WAMP config
-            websocketURI: ab.getServerUrl(), // Tavendo WebMQ server URL
+            websocketURI: 'ws://192.168.0.108/ws', // Tavendo WebMQ server URL
 
             // this fires when WAMP session was established
             launch: function () {
+
+
+
+
+//----------- FORM ----------------
+             myform = Ext.create('Ext.form.Panel',
+               {   
+                      title: 'New Item',
+                      padding: '10 10 10 10',
+                      margins: '0 10 10 10',
+                      flex: 0,
+                      height: 300,
+                      width: 300,
+                      frame: true,
+                      monitorValid: true,
+                      api: {
+                              type: 'wamp',
+                              debug: true,
+                              //         // RPC URIs for Form operations
+                              submit: baseUri + 'upsert',
+                              load: baseUri + 'read'
+                          },
+
+                      items: [
+                      { xtype: 'numberfield',
+                        name:'id',
+                        hidden:true
+                      },
+                      {
+                          xtype: 'textfield',
+                          name: 'orderNumber',
+                          regex: new RegExp("^[A-Z]{3,3}-[0-9]{6,6}-[A-Z]{2,2}$"),
+                          maskRe: new RegExp("^[A-Z0-9-]$"),                          
+                          allowBlank: false,
+                          fieldLabel: 'Order Number'
+                      },
+                      {
+                          xtype: 'textfield',
+                          name: 'name',
+                          allowBlank: false,
+                          fieldLabel: 'Name'
+                      }, {
+                          xtype: 'numberfield',
+                          name: 'weight',
+                          fieldLabel: 'Weight'
+                      }, {
+                          xtype: 'numberfield',
+                          name: 'size',
+                          fieldLabel: 'Size'
+                      }, {
+                          xtype: 'numberfield',
+                          name: 'inStock',
+                          fieldLabel: 'In Stock'
+                      }, {
+                          xtype: 'numberfield',
+                          name: 'price',
+                          fieldLabel: 'Price'
+                      }],
+
+                      buttons: [{
+                          xtype: 'button',
+                          text: 'Save',
+                          action: 'Save',
+                          formBind: true,
+                          handler: function(){
+                           myform.getForm().submit({
+                              success: function(form,response){
+                                          var store = mygrid.getStore();
+                                          var rec = store.getById(response.result.id);
+                                          if (rec)
+                                          rec.set(response.result);
+                                          else {
+                                             rec = [new store.model(response.result)],
+                                             store.loadRecords(rec,{
+                                                      addRecords: true,
+                                                      start: 0
+                                                  });
+                                             myform.setTitle('Edit Item');
+                                             myform.getForm().setValues({'id':response.result.id});
+                                          }
+
+                                       }
+                              }
+                              );
+                        }
+                      },  {
+                          text: 'Cancel',
+                          handler: function(){
+                            myform.loadRecord(mygrid.getSelectionModel().getSelection()[0]);
+                            myform.setTitle('Edit Item');
+                         }
+                      }]
+                  });
+
+//----------- Record Model for Grid ----------------   
+
                // define ExtJS model for "Product"
                Ext.define('Product', {
                   extend: 'Ext.data.Model',
@@ -57,9 +153,58 @@
                               'weight',
                               'size',
                               'inStock',
-                              'price'],
+                              'price'
+                              ],
                      idProperty: "id"
                });
+
+            var mygrid = Ext.create('Ext.grid.Panel',{
+                     frame:true,
+                     height: 400,
+                     width: 800,
+                     title: 'WebMQ Edit Form Demo',
+                     store: Ext.create('Ext.data.Store', {
+                        autoLoad: true,
+                        autoSync: false,  // to prevent the store from firing crud RPCs when receiving crud events
+                        model: 'Product'
+                     }),
+                     columns: [
+                        { text: 'Order Number', dataIndex: 'orderNumber', flex: 1 },
+                        { text: 'Name',  dataIndex: 'name' },
+                        { text: 'Price', dataIndex: 'price'},
+                        { text: 'Weight', dataIndex: 'weight' },
+                        { text: 'Size', dataIndex: 'size' },
+                        { text: 'In Stock', dataIndex: 'inStock' }
+                     ],
+                     fbar:[
+                     {
+                        text: 'Add',
+                        handler: function(){
+                           myform.setTitle('New Item');
+                           myform.getForm().reset();
+                        }
+                     },
+                     {
+                        text: 'Remove',
+                        handler: function() {
+                              var sel = mygrid.getSelectionModel().getSelection();
+                              console.log('remove record ',sel[0].getData());
+                              mygrid.getStore().remove(sel);
+                              mygrid.getStore().sync();
+                        }
+                     }]
+
+                     });
+
+            //wireup grid with form
+            mygrid.getSelectionModel().on('selectionchange', function(model, records) {
+                                           if (records.length > 0){  
+                                           myform.loadRecord(records[0]);
+                                           myform.setTitle('Edit Item');
+                                        }
+                              })
+
+//----------- Main Viewport Layout ----------------
 
                // create ExtJS grid for "Product"
                var v = Ext.create('Ext.container.Viewport', {
@@ -69,23 +214,14 @@
                      align:'center'
                   },
                   items: [{
-                     xtype:'grid',
-                     height: 400,
-                     width: 800,
-                     title: 'WebMQ Edit Form Demo',
-                     store: Ext.create('Ext.data.Store', {
-                        autoLoad: true,
-                        model: 'Product'
-                     }),
-                     columns: [
-                        { text: 'Order Number', dataIndex: 'orderNumber', flex: 1 },
-                        { text: 'Name',  dataIndex: 'name' },
-                        { text: 'Price', dataIndex: 'price' },
-                        { text: 'Weight', dataIndex: 'weight' },
-                        { text: 'Size', dataIndex: 'size' },
-                        { text: 'In Stock', dataIndex: 'inStock' }
-                     ],
-                  }]
+                     xtype:'container',
+                     layout:'hbox',
+                     items:[ mygrid,
+                     myform   
+                  ]
+                  }
+                             
+                  ]
                  }
                );
             }
