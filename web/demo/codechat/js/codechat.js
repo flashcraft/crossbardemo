@@ -85,127 +85,36 @@ connect.connect = function() {
    );
 }
 
-connect.startConnect = function() {
-   console.log("startConnect called");
-   ab._Deferred = jQuery.Deferred;
-
-   ab.connect(connect.wsuri,
-
-      function (session) {
-         connect.sess = session;
-         ab.log("connected!");
-         connect.onConnect();
-      },
-
-      function (code, reason, detail) {
-
-         connect.sess = null;
-         switch (code) {
-            case ab.CONNECTION_UNSUPPORTED:
-               window.location = "https://webmq.tavendo.de:9090/help/browsers";
-               //alert("Browser does not support WebSocket");
-               break;
-            case ab.CONNECTION_CLOSED:
-               window.location.reload();
-               break;
-            default:
-               ab.log(code, reason, detail);
-
-               connect.subscribedChannel = null;
-
-               connect.retryCount = connect.retryCount + 1;
-
-               connect.connected = false;
-               housekeeping.statusline.statusText = "Connection lost. Reconnecting (" + connect.retryCount + ") in " + connect.retryDelay + " seconds ..";
-               housekeeping.updateStatusline();
-
-               break;
-         }
-      },
-
-      {'maxRetries': 60, 'connect.retryDelay': 2000}
-   );
-};
-connect.onConnect = function() {
-   connect.sess.authreq().then(function () {
-      connect.sess.auth().then(connect.onAuth, ab.log);
-   }, function() { console.log("autrequest failure"); });
-};
-connect.onAuth = function(permissions) {
-   ab.log("authenticated!", permissions);
-
-   connect.connected = true;
-   housekeeping.statusline.statusText = "Connected to " + connect.wsuri;
-   connect.retryCount = 0;
-
-   // check if channel or nick in URL
-   connect.urlData = connect.getDataFromUrl();
-   chat.nick = connect.urlData.nick; // may remain undefined
-
-   // get nick and channel on initial load if not both gotten from URL
-   if(!connect.urlData.nick || !connect.urlData.channel) {
-      getChannelAndNick.start();
-   }
-
-   // switch channel & update the URL if at least channel has been set already
-   if(connect.urlData.nick && connect.urlData.channel) {
-      connect.switchChannel(connect.urlData.channel);
-      housekeeping.checkForSavedState(connect.urlData.channel, connect.urlData.nick);
-   }
-   housekeeping.updateStatusline();
-   housekeeping.setNewWindowLinkAndUrl();
-
-
-
-   connect.sess.subscribe(connect.channelBaseUri + "#onpost", chat.onMessage); // CHECKME
-};
-
-connect.startTabConnect = function(id) {
-   ab._Deferred = jQuery.Deferred;
-
+connect.tabConnect = function(id) {
    var tabSession = tabs.tabs[id].connection;
 
-   ab.connect(connect.wsuri,
+   // Connect to Tavendo WebMQ ..
+   //
+   ab.launch(
+      // WAMP app configuration
+      {
+         // Tavendo WebMQ server URL
+         wsuri: ab.getServerUrl(),
+         // authentication info
+         appkey: null, // authenticate as anonymous
+         appsecret: null,
+         appextra: null,
+         // additional session configuration
+         sessionConfig: {maxRetries: 10,
+                         sessionIdent: tabs.tabs[id].tabTitle}
+      },
+      // session open handler
+      function (newSession) {
+         tabSession.session = newSession;
 
-      function (session) {
-         tabSession.session = session;
-         // globalTabSessions[id] = session; // for the eval scoping
          tabs.finishAddEvalInfrastructure(id);
          ab.log("connected!");
-         connect.onTabConnect(tabSession);
       },
-
+      // session close handler
       function (code, reason, detail) {
-
-         tabSession.session = null;
-         switch (code) {
-            case ab.CONNECTION_UNSUPPORTED:
-               console.log("Browser does not support WebSocket");
-               break;
-            case ab.CONNECTION_CLOSED:
-               console.log("Connection for tab X closed");
-               break;
-            default:
-               ab.log(code, reason, detail);
-
-               tabSession.retryCount = tabSession.retryCount + 1;
-
-               break;
-         }
-      },
-
-      {'maxRetries': 60, 'connect.retryDelay': 2000}
+         session = null;
+      }
    );
-};
-connect.onTabConnect = function(tabSession) {
-   tabSession.session.authreq().then(function () {
-      tabSession.session.auth().then(function(permissions) {connect.onTabAuth(permissions, tabSession)}, ab.log);
-   }, function() { console.log("autrequest failure"); });
-};
-connect.onTabAuth = function(permissions, tabSession) {
-   ab.log("authenticated 2", permissions);
-
-   tabSession.retryCount = 0;
 };
 connect.switchChannel = function(newChannelId) {
    // FIXME - BACKEND: currently the subscription is for messages on ANY channel
@@ -1112,7 +1021,7 @@ tabs.startAddEvalInfrastructure = function(id) {
    // the store location for the session
    tabs.tabs[id].connection = {};
    tabs.tabs[id].eval = true;
-   connect.startTabConnect(id);
+   connect.tabConnect(id);
 };
 tabs.finishAddEvalInfrastructure = function(id) {
    var evTab = tabs.tabs[id];
