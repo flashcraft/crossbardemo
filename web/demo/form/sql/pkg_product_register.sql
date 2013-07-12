@@ -12,6 +12,7 @@ BEGIN
    webmq.export('pkg_product', 'crud_read',   pkg_product.BASEURI || 'read');
    webmq.export('pkg_product', 'crud_update', pkg_product.BASEURI || 'update');
    webmq.export('pkg_product', 'crud_delete', pkg_product.BASEURI || 'delete');
+   webmq.export('pkg_product', 'crud_upsert', pkg_product.BASEURI || 'upsert');
    webmq.export('pkg_product', 'filter',      pkg_product.BASEURI || 'filter');
 END;
 /

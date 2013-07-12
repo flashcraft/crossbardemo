@@ -28,6 +28,11 @@ AS
    FUNCTION crud_update (p_obj JSON, p_sess WEBMQ_SESSION) RETURN JSON;
 
    /**
+    * Create or Update existing object.
+    */
+   FUNCTION crud_upsert (p_obj JSON, p_sess WEBMQ_SESSION) RETURN JSON;
+
+   /**
     * Delete an object given by ID.
     */
    PROCEDURE crud_delete (p_id NUMBER, p_sess WEBMQ_SESSION);

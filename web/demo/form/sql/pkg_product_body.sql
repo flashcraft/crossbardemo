@@ -295,6 +295,17 @@ AS
    END crud_update;
 
 
+   FUNCTION crud_upsert (p_obj JSON, p_sess WEBMQ_SESSION) RETURN JSON
+   IS
+   BEGIN
+      IF p_obj.exist('id') THEN
+         RETURN crud_update(p_obj, p_sess);
+      ELSE
+         RETURN crud_create(p_obj, p_sess);
+      END IF;
+   END crud_upsert;
+
+
    PROCEDURE crud_delete (p_id NUMBER, p_sess webmq_session)
    IS
       l_current         product%ROWTYPE;
