@@ -114,6 +114,7 @@ function main (session) {
 
 
 var subs = {};
+var pubs = {};
 
 function setupCustomFuns () {
 
@@ -157,4 +158,28 @@ function setupCustomFuns () {
    }, {minArg: 1, maxArg: 1});
 
    spread.addCustomFunction(sub);
+
+
+
+   var pub = $.ce.createFunction("PUBLISH", function (args) {
+
+      //console.log("PUBLISH", args);
+
+      var uri = args[0];
+      var evt = args[1];
+
+      if (pubs[uri] !== undefined && pubs[uri] === evt) {
+
+         //console.log("PUBLISH", "Value already published");
+
+      } else {
+
+         pubs[uri] = evt;
+         session.publish(uri, evt);
+         return evt;
+      }
+
+   }, {minArg: 2, maxArg: 2});
+
+   spread.addCustomFunction(pub);
 }
