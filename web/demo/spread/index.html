@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <link rel="shortcut icon" href="../../img/favicon.ico">
+      <title>Spread</title>
+      <link rel="stylesheet" href="../demo.css">
+      <link rel="stylesheet" href="css/spread.css">
+
+      <!--jQuery References-->
+      <script src="http://code.jquery.com/jquery-1.8.2.min.js" type="text/javascript"></script>
+      <script src="http://code.jquery.com/ui/1.9.1/jquery-ui.min.js" type="text/javascript"></script>
+
+      <!--Theme-->
+      <link href="http://cdn.wijmo.com/themes/aristo/jquery-wijmo.css" rel="stylesheet" type="text/css" />
+
+      <!--SpreadJS Widgets JavaScript-->
+      <script src="http://cdn.wijmo.com/spreadjs/jquery.wijmo.wijspread.all.1.20131.1.min.js" type="text/javascript"></script>
+
+      <!--SpreadJS Widgets CSS-->
+      <link href="http://cdn.wijmo.com/spreadjs/jquery.wijmo.wijspread.1.20131.1.css" rel="stylesheet" type="text/css" />
+
+      <!-- AutobahnJS -->
+      <script type="text/javascript" src="../../js/autobahn.min.js"></script>
+
+      <!-- Demo code -->
+      <script src="js/spread.js"></script>
+   </head>
+   <body>
+      <header>
+         <div id="header_inner">
+            <div id="demo_title">
+               <span>Spreadsheet</span>
+            </div>      
+            <a href="http://tavendo.de" target="_blank">
+               <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
+            </a>
+            <img id="webmq_logo" src="../../img/webmq_logo.png">
+         </div>
+      </header>
+      <div class="demo_links">
+         <p>
+            An Excel-like spreadsheet powered by <a href="http://wijmo.com/widgets/wijmo-enterprise/spreadjs/">Wijmo/SpreadJS</a> that gets a live data stream from Sliders demo.
+         </p>
+         <div>
+            <a href="/demo/sliders/index.html?channel=123456" target="_blank">Open Sliders Demo</a>
+            <a href="https://github.com/tavendo/WebMQDemo/tree/master/web/demo/spread">Source Code</a>
+         </div>
+      </div>
+      <div id="demo_body">
+         <div id="ss"></div>
+      </div>
+      <center>To enter a formula, navigate to a cell, press backspace, and then type your formula, e.g. <pre>=SUM(A5:A12)</pre></center>
+      <center>To subscribe to some topic, enter a formula <pre>=SUBSCRIBE("http://autobahn.tavendo.de/public/demo/sliders/123456#master")</pre></center>
+   </body>
+</html>
