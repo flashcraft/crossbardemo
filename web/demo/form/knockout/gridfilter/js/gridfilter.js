@@ -5,34 +5,73 @@
  ******************************************************************************/
 
 var channelBaseUri = "http://tavendo.de/webmq/demo/chat/";
-
-var wsuri = get_appliance_url("hub-websocket", "ws://localhost/ws");
-var sess = null;
-var retryCount = 0;
-var retryDelay = 2;
+var session = null;
 
 var rows = 20; // number of rows in the result set requested from the database
 var filterFields = {}; // mapping of field names to filter input fields
 
 var addedItemId;
 
-function isValueChar(e) {
 
-   //ab.log("valueChar", e);
-   var kc = e.keyCode;
-   if ((kc > 8 && kc < 46 && kc !== 32) || (kc > 90 && kc < 94) || (kc > 111 && kc < 186)) {
-      return false;
-   } else {
-      return true;
-   }
-}
+$(document).ready(function() {
+   updateStatusline("Not connected.");
+   
+   ko.applyBindings(vm);
 
-function updateStatusline(status) {
-   $(".statusline").text(status);
+   $("#helpButton").click(function() {
+      $(".info_bar").toggle();
+   });
+   
+   connect();
+});
+
+function connect() {
+
+   // use jQuery deferreds
+   ab.Deferred = $.Deferred;
+
+   // Connect to Tavendo WebMQ ..
+   //
+   ab.launch(
+      // WAMP app configuration
+      {
+         // Tavendo WebMQ server URL
+         wsuri: ab.getServerUrl(),
+         // authentication info
+         appkey: null, // authenticate as anonymous
+         appsecret: null,
+         appextra: null,
+         // additional session configuration
+         sessionConfig: {maxRetries: 10,
+                         sessionIdent: "Vote"}
+      },
+      // session open handler
+      function (newSession) {
+         session = newSession;
+         
+         updateStatusline("Connected to " + session.wsuri() + " in session " + session.sessionid());
+
+         session.prefix("api", "http://tavendo.de/webmq/demo/product#");
+
+         // send request for initial data cut from DB
+         session.call("api:filter", {}, rows).then(
+            gridfilter.refreshGridData,
+            onOraCallError);
+
+         // subscribe to data change events
+         session.subscribe("api:oncreate", onItemCreated);
+         session.subscribe("api:onupdate", onItemUpdated);
+         session.subscribe("api:ondelete", onItemDeleted);
+      },
+      // session close handler
+      function (code, reason, detail) {
+         session = null;
+         updateStatusline(reason);
+      }
+   );
 }
 
 gridfilter = {};
-
 
 gridfilter.displayEmptyRow = function() {
    var emptyRow = { "name": " ", "orderNumber": " ", "weight": " ", "size": " ", "inStock": " ", "price": " " };
@@ -59,97 +98,95 @@ gridfilter.isEmptyObject = function(obj) {
    return true;
 };
 
+gridfilter.refreshGridData = function(data) {
+   // clear previous data
+   vm.tableData([]);
+   vm.noEntries(false);
 
-function connect() {
+   // add new data
+   if (data.length !== 0) {
+      for (var i = 0; i < data.length; i++) {
+         vm.tableData.push(new product(data[i]));
+      }
+   }
+   else {
+      // display a 'no results for the current filter criteria' indicator
+      var emptyRow = { "name": " ", "orderNumber": " ", "weight": " ", "size": " ", "inStock": " ", "price": " " };
+      vm.tableData.push(new product(emptyRow));
+      vm.noEntries(true);
+   }
+};
 
-   ab._Deferred = jQuery.Deferred;
+/*
+   Highlights any of the 'currentyHighlighted' items that are found in the current grid
+*/
+// gridfilter.setCurrentHighlights = function() {
+//    console.log("setting highlights for ", gridfilter.currentlyHighlighted.toString());
+//    for(var i = 0; i < gridfilter.currentlyHighlighted.length; i++ ){
+//       var index = getIndexFromId(gridfilter.currentlyHighlighted[i]);
+//       if (index != "notFound") {
+//          vm.tableData()[index].itemState("hasBeenCreated");
+//       }
+//    }
+// };
 
-   ab.connect(wsuri,
-
-      function(session) {
-         sess = session;
-         ab.log("connected!");
-         onConnect0();
-      },
-
-      function(code, reason, detail) {
-
-         sess = null;
-         switch (code) {
-            case ab.CONNECTION_UNSUPPORTED:
-               window.location = "https://webmq.tavendo.de:9090/help/browsers";
-               //alert("Browser does not support WebSocket");
-               break;
-            case ab.CONNECTION_CLOSED:
-               window.location.reload();
-               break;
-            default:
-               ab.log(code, reason, detail);
-
-               retryCount = retryCount + 1;
-               updateStatusline("Connection lost. Reconnecting (" + retryCount + ") in " + retryDelay + " secs ..");
-
-               break;
+gridfilter.setCurrentHighlights = function() {
+   for( var i = 0; i < vm.tableData().length; i++ ) {
+      var id = vm.tableData()[i].id();
+      for( var c = 0; c < gridfilter.currentlyHighlighted.length; c++ ){
+         if(id === gridfilter.currentlyHighlighted[c]) {
+            vm.tableData()[i].itemState("hasBeenCreated");
          }
-      },
+      }
+   }
+};
 
-      { 'maxRetries': 60, 'retryDelay': 2000 }
-   );
-}
+/*
+   Removes the highlighting from a specific item, if found in the grid
+   + removes this from 'currentlyHighlighted'
+*/
+gridfilter.removeHighlight = function(id) {
+
+   var index = getIndexFromId(id);
+
+   if(index != "notFound") {
+      vm.tableData()[index].itemState("");
+   }
+
+   for(var i = 0; i < gridfilter.currentlyHighlighted.length; i++) {
+      if(gridfilter.currentlyHighlighted[i] === id) {
+         gridfilter.currentlyHighlighted.splice(i, 1);
+      }
+   }
+
+};
 
 
-function onConnect0() {
-   sess.authreq().then(function() {
-      sess.auth().then(onAuth, ab.log);
-   }, ab.log);
-}
-
-
-function onAuth(permissions) {
-   ab.log("authenticated!", permissions);
-
-   updateStatusline("Connected to " + wsuri);
-   retryCount = 0;
-
-   sess.prefix("api", "http://tavendo.de/webmq/demo/product#");
-
-   // send request for initial data cut from DB
-   sess.call("api:filter", {}, rows).then(
-      refreshGridData,
-      onOraCallError);
-
-   // subscribe to data change events
-   sess.subscribe("api:oncreate", onItemCreated);
-   sess.subscribe("api:onupdate", onItemUpdated);
-   sess.subscribe("api:ondelete", onItemDeleted);
+function onDataReceived(data) {
+   gridfilter.refreshGridData(data);
 }
 
 function onItemCreated(uri, obj){
-   console.log("item created", uri, obj);
 
    var addedItemId = obj.id;
 
    // re-request the set to display for the current filter settings
-   sess.call("api:filter", vm.filter(), rows).then(function(obj) {
-      // console.log("received set to check", obj.length);
+   session.call("api:filter", vm.filter(), rows).then(function(obj) {
 
       // check whether the added item is contained in the revised set
       // that should be the current display
-      console.log("results set has length " + obj.length);
       // resuls set does not always contain the item when it should
       var found = false;
       for(var i = 0; i < obj.length; i++) {
-         // console.log("i", i);
 
          if(obj[i].id === addedItemId) {
-            console.log("added item found in results set");
             found = true;
 
             // add the item id to 'currently highlighted' array
             gridfilter.currentlyHighlighted.push(obj[i].id);
 
             // refresh grid with new data
-            refreshGridData(obj);
+            gridfilter.refreshGridData(obj);
 
             // set the current highlights
             gridfilter.setCurrentHighlights();
@@ -163,104 +200,20 @@ function onItemCreated(uri, obj){
          }
       }
       if (found === false) {
-         console.log("item not in results set");
+         // console.log("item not in results set");
       }
-   }, ab.log);
+   }, session.log);
 
 }
 
-// function onItemCreated(uri, obj){
-//    // console.log("item created", uri, obj);
-
-//    var addedItemId = obj.id;
-
-//    // re-request the set to display for the current filter settings
-//    sess.call("api:filter", vm.filter(), rows).then(function(obj) {
-      
-//    for(var i = 0; i < obj.length; i++) {
-
-//       if(obj[i].id === addedItemId) {
-
-//          // check whether currently no entries, and delete the 'no entries' row
-//          if (vm.noEntries() === true) {
-//             vm.tableData.splice(0, 1);
-//             vm.noEntries(false);
-//          }
-
-//          // add item at the correct position
-//          var newRow = new product(obj[i]);
-//          vm.tableData.splice(i, 0, newRow);
-//          console.log("added item ", i, obj[i].id, vm.tableData());
-//          // vm.tableData()[i+1].itemState("hasBeenCreated"); // throws an error ca. 20% of the time
-//          // var id = obj[i].id; // i from iteration lost in timeout below without saving
-//          // window.setTimeout(function() {
-//          //    var index = getIndexFromId(id);
-//          //    vm.tableData()[index].itemState("");
-//          // }, 1400);
-
-//          // if grid length now exceeds 'rows', cut the last item in the grid
-//          if(vm.tableData().length > rows) {
-//             vm.tableData.splice(rows, 1);
-//          }
-
-
-//       }
-
-//    }     
-
-//    }, ab.log);
-
-// };
-
-// old onItemCreated code below
-
-//    // // old, dirty way: just refresh the grid with the current data for the 
-         //    // // filter settings + highlight the newly added item  
-         //    // refreshGridData(obj);
-         //    // vm.tableData()[i].itemState("hasBeenCreated");
-         //    // var index = i; // i from iteration lost in timeout below without saving
-         //    // window.setTimeout(function() {
-         //    //    vm.tableData()[index].itemState("");
-         //    // }, 1400);
-
-         //    // code below is unfinished way of handling multiple items creation
-         //    // which come at shorter intervals than the highlighting timeout
-         //    // with the above, the highlight states get reset on each re-draw
-         //    // of the grid when a new item comes in
-
-
-// --- starting here: worked most of the time - backend problem???         
-         // // check whether currently no entries, and delete the 'no entries' row
-         // if (vm.noEntries() === true) {
-         //    vm.tableData.splice(0, 1);
-         //    vm.noEntries(false);
-         // }
-
-         //    // add item at the correct position
-         //    var newRow = new product(obj[i]);
-         //    vm.tableData.splice(i + 1, 0, newRow);
-         //    console.log("added item ", i, obj[i].id, vm.tableData());
-         //    // vm.tableData()[i].itemState("hasBeenCreated"); // throws an error ca. 20% of the time
-         //    // var id = obj[i].id; // i from iteration lost in timeout below without saving
-         //    // window.setTimeout(function() {
-         //    //    var index = getIndexFromId(id);
-         //    //    vm.tableData()[index].itemState("");
-         //    // }, 1400);
-
-         //    // if grid length now exceeds 'rows', cut the last item in the grid
-         //    if(vm.tableData().length > rows) {
-         //       vm.tableData.splice(rows, 1);
-         //    }
-
 function onItemUpdated(uri, obj){
 
-   // console.log("item updated", obj.id);   
    var index = getIndexFromId(obj.id);
 
    // do nothing if the updated item is not part of the currently
    // displayed grid
    if (index === "notFound") {
-      console.log("modified item not in current grid");
+      // console.log("modified item not in current grid");
       return;
    }
    // temporary highlighting of the grid item
@@ -281,13 +234,12 @@ function onItemUpdated(uri, obj){
     one item remains undeleted - FIXME
 */
 function onItemDeleted(uri, obj){
-   console.log("item deleted", obj.id);
    var index = getIndexFromId(id);
 
    // do nothing if the updated item is not part of the currently
    // displayed grid
    if (index === "notFound") {
-      console.log("deleted item not in current grid");
+      // console.log("deleted item not in current grid");
       return;
    }
 
@@ -304,7 +256,7 @@ function onItemDeleted(uri, obj){
          vm.tableData.splice(index, 1); // delete the item
 
          // check whether there is an entry beyond what was previously displayed and add this
-         sess.call("api:filter", vm.filter(), rows).then(function(obj){
+         session.call("api:filter", vm.filter(), rows).then(function(obj){
             if(obj.length > vm.tableData().length){
                // we need to add an object
                // in the DB, at this point multiple items may have been deleted already
@@ -331,7 +283,6 @@ function onItemDeleted(uri, obj){
             }
             // check whether current list is empty
             if (vm.tableData().length === 0) {
-               console.log("grid now empty");
                gridfilter.displayEmptyRow();
             }
          });
@@ -355,15 +306,10 @@ function getIndexFromId(id) {
 }
 
 function onOraCallError(error) {
-   ab.log("oce", error);
    $("#error_overlay").show();
 }
 
-$(document).ready(function() {
-   updateStatusline("Not connected.");
-   setupDemo();
-   connect();
-});
+var vm = new ViewModel(); // instantiates the view model and makes its methods accessible 
 
 function ViewModel() {
 
@@ -396,10 +342,8 @@ function ViewModel() {
 
    this.inputs = { "filterByOrderNumber": "string", "filterByName": "string", "filterByPrice": "num", "filterByWeight": "num", "filterBySize": "num", "filterByInStock": "num" };
    this.mangleInputs = function(viewmodel, event) {
-      //ab.log("mangle");
       // filter out non-numeric inputs on numeric input fields
       if (self.inputs[event.target.id] === "num") {
-         //ab.log("evt", event.keyCode);
          if (event.keyCode > 57 && event.keyCode !== 190) {
             return false;
          }
@@ -430,20 +374,17 @@ function ViewModel() {
       if (self.price() !== "") {
          filterSet.price = { value: parseFloat(self.price(), 10), type: self.priceType() };
       }
-      ab.log("filterSet", filterSet);
       if (!gridfilter.isEmptyObject(filterSet)) {
          self.currentFilterValues(true);
       }
-      if (sess !== null) {
+      if (session !== null) {
          self.requestsSent(self.requestsSent() + 1);
-         // console.log("filter set ", filterSet);
-         sess.call("api:filter", filterSet, rows).then(onDataReceived, ab.log);
+         session.call("api:filter", filterSet, rows).then(onDataReceived, session.log);
       }
       return filterSet;
    }, this);
 
    this.resetFilter = function() {
-      console.log("clear filter clicked");
       // textual inputs
       this.name("");
       this.orderNumber("");
@@ -478,127 +419,10 @@ function product(data) {
    };
 }
 
-var vm = new ViewModel(); // instantiates the view model and makes its methods accessible 
 
-function setupDemo() {
 
-   ko.applyBindings(vm);
 
-   $("#helpButton").click(function() {
-      $(".info_bar").toggle();
-   });
+
+function updateStatusline(status) {
+   $(".statusline").text(status);
 }
-
-function onDataReceived(data) {
-   refreshGridData(data);
-   console.log("grid data received ", data);
-}
-
-function refreshGridData(data) {
-   // handle empty return set - IMPLEMENT ME
-   // should also display the error overlay, but with a different, tailored message
-
-   // clear previous data
-   vm.tableData([]);
-   vm.noEntries(false);
-
-   // add new data
-   if (data.length !== 0) {
-      for (var i = 0; i < data.length; i++) {
-         //ab.log("iterate", i);
-         vm.tableData.push(new product(data[i]));
-      }
-   }
-   else {
-      // display a 'no results for the current filter criteria' indicator
-      var emptyRow = { "name": " ", "orderNumber": " ", "weight": " ", "size": " ", "inStock": " ", "price": " " };
-      vm.tableData.push(new product(emptyRow));
-      vm.noEntries(true);
-   }
-}
-
-/*
-   Highlights any of the 'currentyHighlighted' items that are found in the current grid
-*/
-// gridfilter.setCurrentHighlights = function() {
-//    console.log("setting highlights for ", gridfilter.currentlyHighlighted.toString());
-//    for(var i = 0; i < gridfilter.currentlyHighlighted.length; i++ ){
-//       var index = getIndexFromId(gridfilter.currentlyHighlighted[i]);
-//       if (index != "notFound") {
-//          vm.tableData()[index].itemState("hasBeenCreated");
-//       }
-//    }
-// };
-
-gridfilter.setCurrentHighlights = function() {
-   // console.log("setting highlights for ", gridfilter.currentlyHighlighted.toString());
-   for( var i = 0; i < vm.tableData().length; i++ ) {
-      var id = vm.tableData()[i].id();
-      for( var c = 0; c < gridfilter.currentlyHighlighted.length; c++ ){
-         if(id === gridfilter.currentlyHighlighted[c]) {
-            vm.tableData()[i].itemState("hasBeenCreated");
-         }
-      }
-   }
-};
-
-/*
-   Removes the highlighting from a specific item, if found in the grid
-   + removes this from 'currentlyHighlighted'
-*/
-gridfilter.removeHighlight = function(id) {
-   // console.log("remove highlight from ", id);
-
-   var index = getIndexFromId(id);
-   // console.log("index to remove at ", index);
-   if(index != "notFound") {
-      vm.tableData()[index].itemState("");
-   }
-
-   for(var i = 0; i < gridfilter.currentlyHighlighted.length; i++) {
-      if(gridfilter.currentlyHighlighted[i] === id) {
-         gridfilter.currentlyHighlighted.splice(i, 1);
-      }
-   }
-
-};
-
-// just for testing from here on
-//function filterTable(filterData) {
-
-//   ab.log(filterData);
-
-//   var filteredData = [];
-//   var intermediateData = currentData;
-//   for (var i in filterData) {
-//      if (filterData.hasOwnProperty(i)) {
-//         //ab.log("i", i);
-//         // for a filter value, do this
-//         var filterKey = i;
-//         var filterValue = filterData[i];
-//         ab.log(filterKey, filterValue);
-
-//         var processingData = [];
-//         for (var i = 0; i < intermediateData.length; i++) {
-//            var current = intermediateData[i];
-
-//            // prefix filtering
-//            var currentString = current[filterKey];
-//            var currentSubString = currentString.slice(0, filterValue.length);
-//            if (currentSubString === filterValue) {
-//               processingData.push(current);
-//            }
-//         }
-
-//         ab.log(intermediateData, processingData);
-
-//         // set intermediateData = processingData for next loop --> progressive filtering
-//         intermediateData = processingData;
-
-//      }
-//   }
-//   filteredData = intermediateData;
-
-//   return filteredData;
-//}
-

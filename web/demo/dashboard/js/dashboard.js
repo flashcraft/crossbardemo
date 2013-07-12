@@ -4,17 +4,6 @@
  *
  ******************************************************************************/
 
-/***********
- *    websocket connection to appliance
- ***********/
-
-var wsuri = get_appliance_url("hub-websocket", "ws://localhost/ws");
-var sess = null;
-var retryCount = 0;
-var retryDelay = 2;
-var activity_icons = { "food":"glossy-black-icon-food-beverage-food-pizza.png", "call":"telephone_icon.png"};
-
-
 // highlight timer objects
 
 var highlight_timeout = 300;
@@ -51,144 +40,189 @@ activity_timer.timeout = highlight_timeout;
 
 
 // initial thresholds for display in the activity stream
-//onSale.revenue_threshold = 1000;
-//onSale.unit_threshold = 8;
 var revenue_threshold = 0;
 var unit_threshold = 0;
 
 
 // colors for the widgets
 
-// pie chart sections
-
 var themeColors = ["rgb(185, 96, 96)", "rgb(83, 38, 38)", "rgb(214, 165, 165)", "rgb(160, 18, 18)"];
 
-// var chartColor01 = "#444";
-// var chartColor02 = "#777";
-// var chartColor03 = "#aaa";
-// var chartColor04 = "#ddd";
+// pie chart sections
 var chartColor01 = themeColors[0];
 var chartColor02 = themeColors[1];
 var chartColor03 = themeColors[2];
 var chartColor04 = themeColors[3];
 
 // bar chart bars
-// var barColor01 = "#444";
-// var barColor02 = "#888";
-// var barColor03 = "#ccc";
 var barColor01 = themeColors[0];
 var barColor02 = themeColors[1];
 var barColor03 = themeColors[2];
 
 // hundred bar sections
-// var hundredColor01 = "#444";
-// var hundredColor02 = "#888";
-// var hundredColor03 = "#ccc";
 var hundredColor01 = themeColors[0];
 var hundredColor02 = themeColors[1];
 var hundredColor03 = themeColors[2];
 
 // bullet graph section
-// var bulletColor01= "#eee";
-// var bulletColor02= "#ccc";
-// var bulletColor03= "#aaa";
-// var bulletColor04= "#888";
 var bulletColor01 = themeColors[0];
 var bulletColor02 = themeColors[1];
 var bulletColor03 = themeColors[2];
 var bulletColor04 = themeColors[3];
 
-//var bar_chart_height = 105;
+var session = null;
+// makes the values within the DashboardViewModel accessible from outside the model
+var vm = new DashboardViewModel();
 
-function connect() {
+$(document).ready(function() {
+   updateStatusline("Not connected.");
 
-   ab._Deferred = jQuery.Deferred;
+   // set up knockout.js view model
+   ko.applyBindings(vm);
 
-   updateStatusline("Connecting ..");
+   // turn on WAMP debug output
+   // ab.debug(true, false, false);
 
-   ab.connect(wsuri,
+   // use jQuery deferreds
+   ab.Deferred = $.Deferred;
 
-      function (session) {
-         sess = session;
-         onConnect0();
+   // Connect to Tavendo WebMQ ..
+   //
+   ab.launch(
+      // WAMP app configuration
+      {
+         // Tavendo WebMQ server URL
+         wsuri: ab.getServerUrl(),
+         // authentication info
+         appkey: null, // authenticate as anonymous
+         appsecret: null,
+         appextra: null,
+         // additional session configuration
+         sessionConfig: {maxRetries: 10,
+                         sessionIdent: "Vote"}
       },
+      // session open handler
+      function (newSession) {
+         session = newSession;
+         // main(session);
+         updateStatusline("Connected to " + session.wsuri() + " in session " + session.sessionid());
 
+         ///** define session prefixes ***/
+         session.prefix("event", "http://autobahn.tavendo.de/public/demo/dashboard#");
+         session.prefix("sales", "http://autobahn.tavendo.de/public/demo/dashboard#");
+
+
+         // subscribe to events
+         session.subscribe("event:switch-dashboard", onDashboardSwitch)
+
+         // sales events
+         session.subscribe("sales:revenue", onRevenue);
+         session.subscribe("sales:revenue-by-product", onRevenueByProduct);
+         session.subscribe("sales:units-by-product", onUnitsByProduct);
+         session.subscribe("sales:revenue-by-region", onRevenueByRegion);
+         session.subscribe("sales:asp-by-region", onAspByRegion);
+         session.subscribe("sales:sale", onSale);
+
+         session.subscribe("sales:revenue-threshold", onRevenueThresholdChanged);
+         session.subscribe("sales:unit-threshold", onUnitThresholdChanged);
+
+         onDashboardSwitch(null, 1);
+
+
+         // Oracle Dashboard Demo
+         session.prefix("orasales", "http://tavendo.de/webmq/demo/dashboard#");
+
+         // sales events
+         session.subscribe("orasales:totalRevenue", onRevenue);
+         session.subscribe("orasales:revenueByProduct", onRevenueByProduct);
+         session.subscribe("orasales:unitsByProduct", onUnitsByProduct);
+         session.subscribe("orasales:revenueByRegion", onRevenueByRegion);
+         session.subscribe("orasales:aspByRegion", onAspByRegion);
+         session.subscribe("orasales:onSale", onSale);
+
+         session.subscribe("orasales:revenue-threshold", onRevenueThresholdChanged);
+         session.subscribe("orasales:unit-threshold", onUnitThresholdChanged);
+
+         initialize();
+      },
+      // session close handler
       function (code, reason, detail) {
-
-         sess = null;
-         switch (code) {
-            case ab.CONNECTION_UNSUPPORTED:
-               window.location = "https://webmq.tavendo.de:9090/help/browsers";
-               //alert("Browser does not support WebSocket");
-               break;
-            case ab.CONNECTION_CLOSED:
-               window.location.reload();
-               break;
-            default:
-
-               retryCount = retryCount + 1;
-               updateStatusline("Connection lost. Reconnecting (" + retryCount + ") in " + retryDelay + " secs ..");
-
-               break;
-         }
-      },
-
-      {'maxRetries': 60, 'retryDelay': 2000}
+         session = null;
+         updateStatusline(reason);
+      }
    );
-}
+})
 
-
-function onConnect0() {
-   sess.authreq().then(function () {
-      sess.auth().then(onAuth, function (error) {
-         updateStatusline("Auth Request failed: " + error.desc);
-      });
-   }, function (error) {
-      updateStatusline("Auth failed: " + error.desc);
+function initialize() {
+   // set up the sliders for the activity stream
+   $("#revenue_threshold").slider({
+      value: 0,
+      orientation: "horizontal",
+      range: "min",
+      animate: true
    });
+
+   $("#unit_threshold").slider({
+      value: 0,
+      orientation: "horizontal",
+      range: "min",
+      animate: true
+   });
+
+   $("#revenue_threshold").slider({
+      slide: function(event, ui) {
+         revenue_threshold = parseInt(ui.value * 100);
+         $(".revenue_threshold_value").text(thousand_formatted(revenue_threshold));
+         session.publish("sales:revenue-threshold-changed", revenue_threshold);
+      }
+   });
+
+   $("#unit_threshold").slider({
+      slide: function(event, ui) {
+         unit_threshold = parseInt(ui.value / 10);
+         $(".unit_threshold_value").text(unit_threshold);
+         session.publish("sales:unit-threshold-changed", unit_threshold);
+      }
+   });
+
+   $("#revenue_threshold_02").slider({
+      value: 0,
+      orientation: "horizontal",
+      range: "min",
+      animate: true
+   });
+
+   $("#unit_threshold_02").slider({
+      value: 0,
+      orientation: "horizontal",
+      range: "min",
+      animate: true
+   });
+
+   $("#revenue_threshold_02").slider({
+      slide: function(event, ui) {
+         revenue_threshold = parseInt(ui.value * 100);
+         $(".revenue_threshold_value").text(thousand_formatted(revenue_threshold));
+         session.publish("sales:revenue-threshold-changed", revenue_threshold);
+      }
+   });
+
+   $("#unit_threshold_02").slider({
+      slide: function(event, ui) {
+         unit_threshold = parseInt(ui.value / 10);
+         $(".unit_threshold_value").text(unit_threshold);
+         session.publish("sales:unit-threshold-changed", unit_threshold);
+      }
+   });
+
+   // generate SVG canvases for pie charts and draw charts with initial settings
+   document.getElementById("pie_chart_content_container").appendChild(SVG.makeCanvas("pieChart1", 350, 300, 350, 300));
+   document.getElementById("pie_chart_content_container_02").appendChild(SVG.makeCanvas("pieChart2", 350, 300, 350, 300));
+   drawPieChart();
+
+   $("#helpButton").click(function() { $(".info_bar").toggle() });
 }
 
-function onAuth(permissions) {
-
-   updateStatusline("Connected to " + wsuri);
-   retryCount = 0;
-
-   ///** define session prefixes ***/
-   sess.prefix("event", "http://autobahn.tavendo.de/public/demo/dashboard#");
-   sess.prefix("sales", "http://autobahn.tavendo.de/public/demo/dashboard#");
-
-
-   // subscribe to events
-   sess.subscribe("event:switch-dashboard", onDashboardSwitch)
-
-   // sales events
-   sess.subscribe("sales:revenue", onRevenue);
-   sess.subscribe("sales:revenue-by-product", onRevenueByProduct);
-   sess.subscribe("sales:units-by-product", onUnitsByProduct);
-   sess.subscribe("sales:revenue-by-region", onRevenueByRegion);
-   sess.subscribe("sales:asp-by-region", onAspByRegion);
-   sess.subscribe("sales:sale", onSale);
-
-   sess.subscribe("sales:revenue-threshold", onRevenueThresholdChanged);
-   sess.subscribe("sales:unit-threshold", onUnitThresholdChanged);
-
-   onDashboardSwitch(null, 1);
-
-
-   // Oracle Dashboard Demo
-   sess.prefix("orasales", "http://tavendo.de/webmq/demo/dashboard#");
-
-   // sales events
-   sess.subscribe("orasales:totalRevenue", onRevenue);
-   sess.subscribe("orasales:revenueByProduct", onRevenueByProduct);
-   sess.subscribe("orasales:unitsByProduct", onUnitsByProduct);
-   sess.subscribe("orasales:revenueByRegion", onRevenueByRegion);
-   sess.subscribe("orasales:aspByRegion", onAspByRegion);
-   sess.subscribe("orasales:onSale", onSale);
-
-   sess.subscribe("orasales:revenue-threshold", onRevenueThresholdChanged);
-   sess.subscribe("orasales:unit-threshold", onUnitThresholdChanged);
-};
 
 
 function updateStatusline(status) {
@@ -221,7 +255,7 @@ function DashboardViewModel () {
    self.simpleIndicatorComparisonValue = ko.observable(34);
    self.simpleIndicatorTrend = ko.computed(function() {
       //ab.log("simpleIndicatorTrend", parseInt((self.simpleIndicatorBigNumber() / self.simpleIndicatorComparisonValue() - 1) * 100));
-      //ab.log("the parts", self.simpleIndicatorBigNumber(), self.simpleIndicatorComparisonValue());
+      // ab.log("the parts", self.simpleIndicatorBigNumber(), self.simpleIndicatorComparisonValue());
       return (parseInt(( self.simpleIndicatorBigNumber() / self.simpleIndicatorComparisonValue() - 1 ) * 100));
    },self);
    self.simpleIndicatorTrendDisplay = ko.computed(function() {
@@ -398,12 +432,12 @@ function activity_stream_event (product, units, region, revenue, icon) {
 function hundred_bar_section (width, color, label) {
    this.hundred_width = ko.observable(width);
    this.width = ko.observable();
+   // this.section_color = color;
    this.section_color = color;
    this.legend_label = label;
 }
 
-function highlightTimer ( timer )
-{
+function highlightTimer ( timer ) {
 
    if (!timer.highlighted) {
       $(timer.targetClass).addClass("highlighted");
@@ -420,95 +454,6 @@ function highlightTimer ( timer )
    }, timer.timeout);
 
 }
-
-
-// makes the values within the DashboardViewModel accessible from outside the model
-var vm = new DashboardViewModel();
-
-$(document).ready(function()
-{
-   updateStatusline("Not connected.");
-
-   // set up knockout.js view model
-   ko.applyBindings(vm);
-
-   connect();
-
-   // set up the sliders for the activity stream
-   $("#revenue_threshold").slider({
-      value: 0,
-      orientation: "horizontal",
-      range: "min",
-      animate: true
-   });
-
-   $("#unit_threshold").slider({
-      value: 0,
-      orientation: "horizontal",
-      range: "min",
-      animate: true
-   });
-
-   $("#revenue_threshold").slider({
-      slide: function(event, ui) {
-         revenue_threshold = parseInt(ui.value * 100);
-         $(".revenue_threshold_value").text(thousand_formatted(revenue_threshold));
-         sess.publish("sales:revenue-threshold-changed", revenue_threshold);
-      }
-   });
-
-   $("#unit_threshold").slider({
-      slide: function(event, ui) {
-         unit_threshold = parseInt(ui.value / 10);
-         $(".unit_threshold_value").text(unit_threshold);
-         sess.publish("sales:unit-threshold-changed", unit_threshold);
-      }
-   });
-
-   $("#revenue_threshold_02").slider({
-      value: 0,
-      orientation: "horizontal",
-      range: "min",
-      animate: true
-   });
-
-   $("#unit_threshold_02").slider({
-      value: 0,
-      orientation: "horizontal",
-      range: "min",
-      animate: true
-   });
-
-   $("#revenue_threshold_02").slider({
-      slide: function(event, ui) {
-         revenue_threshold = parseInt(ui.value * 100);
-         $(".revenue_threshold_value").text(thousand_formatted(revenue_threshold));
-         sess.publish("sales:revenue-threshold-changed", revenue_threshold);
-      }
-   });
-
-   $("#unit_threshold_02").slider({
-      slide: function(event, ui) {
-         unit_threshold = parseInt(ui.value / 10);
-         $(".unit_threshold_value").text(unit_threshold);
-         sess.publish("sales:unit-threshold-changed", unit_threshold);
-      }
-   });
-
-   // generate SVG canvases for pie charts and draw charts with initial settings
-   document.getElementById("pie_chart_content_container").appendChild(SVG.makeCanvas("pieChart1", 350, 300, 350, 300));
-   document.getElementById("pie_chart_content_container_02").appendChild(SVG.makeCanvas("pieChart2", 350, 300, 350, 300));
-   drawPieChart();
-
-   // fill activity list with test data
-   vm.activity_stream_events.unshift(
-      new activity_stream_event("Produkt A", 14, "West", 24000),
-      new activity_stream_event("Produkt B", 2, "West", 2000)
-      );
-
-   $("#helpButton").click(function() { $(".info_bar").toggle() });
-
-});
 
 function drawPieChart () {
    // arguments:
@@ -538,7 +483,7 @@ function onDashboardSwitch ( topicuri, event ) {
 /*********************************
  *    DEMO EVENTS       *
  *********************************/
-
+// evetn with 'idx' is sent by the dashboard controller
 function onRevenue (topicURI, event) {
    //ab.log(topicURI, event);
    if (event["idx"]) {
@@ -555,13 +500,13 @@ function onRevenue (topicURI, event) {
       }
    }
    else {
-      vm.simpleIndicatorBigNumber(event[0][0]);
-      vm.simpleIndicatorComparisonValue(event[0][1]);
+      vm.simpleIndicatorBigNumber(event[0]);
+      vm.simpleIndicatorComparisonValue(event[1]);
    }
    highlightTimer(simple_timer);
 }
 function onRevenueByProduct (topicURI, event) {
-   //ab.log(topicURI, event);
+   // session.log(topicURI, event);
    if (event["idx"]) {
       switch (event["idx"]) {
          case 1:
@@ -579,14 +524,20 @@ function onRevenueByProduct (topicURI, event) {
       }
    }
    else {
-      vm.bar_01_value(event["Product A"][0]);
-      vm.bar_02_value(event["Product B"][0]);
-      vm.bar_03_value(event["Product C"][0]);
+      if(event["Product A"]) {
+         vm.bar_01_value(event["Product A"][0]);
+      }
+      if(event["Product B"]) {
+         vm.bar_02_value(event["Product B"][0]);
+      }
+      if(event["Product C"]) {
+         vm.bar_03_value(event["Product C"][0]);
+      }
    }
    highlightTimer( bars_timer );
 }
 function onUnitsByProduct (topicURI, event) {
-   //ab.log(topicURI, event);
+   // session.log(topicURI, event);
    if (event["idx"]) {
       switch (event["idx"]) {
          case 1:
@@ -604,14 +555,20 @@ function onUnitsByProduct (topicURI, event) {
       }
    }
    else {
-      vm.hundred_bar_sections()[0].hundred_width(event["Product A"][0]);
-      vm.hundred_bar_sections()[1].hundred_width(event["Product B"][0]);
-      vm.hundred_bar_sections()[2].hundred_width(event["Product C"][0]);
+      if(event["Product A"]) {
+         vm.hundred_bar_sections()[0].hundred_width(event["Product A"][0]);
+      }
+      if(event["Product B"]) {
+         vm.hundred_bar_sections()[1].hundred_width(event["Product B"][0]);
+      }
+      if(event["Product C"]) {
+         vm.hundred_bar_sections()[2].hundred_width(event["Product C"][0]);
+      }
    }
    highlightTimer ( hundred_timer );
 }
 function onRevenueByRegion (topicURI, event) {
-   //ab.log(topicURI, event);
+   // session.log(topicURI, event);
    if (event["idx"]) {
       switch (event["idx"]) {
          case 1:
@@ -632,16 +589,24 @@ function onRevenueByRegion (topicURI, event) {
       }
    }
    else {
-      vm.pieSection01(event["North"][0]);
-      vm.pieSection02(event["East"][0]);
-      vm.pieSection03(event["South"][0]);
-      vm.pieSection04(event["West"][0]);
+      if(event["North"]) {
+         vm.pieSection01(event["North"][0]);
+      }
+      if(event["East"]) {
+         vm.pieSection02(event["East"][0]);         
+      }
+      if(event["South"]) {
+         vm.pieSection03(event["South"][0]);         
+      }
+      if(event["West"]) {
+         vm.pieSection04(event["West"][0]);         
+      }
    }
    drawPieChart();
    highlightTimer ( pie_timer );
 }
 function onAspByRegion (topicURI, event) {
-   //ab.log(topicURI, event);
+   // session.log(topicURI, event);
    if (event["idx"]) {
       switch (event["idx"]) {
          case 1:
@@ -662,15 +627,22 @@ function onAspByRegion (topicURI, event) {
       }
    }
    else {
-      vm.bulletBar01(event["North"][0] * .2);
-      vm.bulletBar02(event["East"][0] * .2);
-      vm.bulletBar03(event["South"][0] * .2);
-      vm.bulletBar04(event["West"][0] * .2);
-
-      vm.bulletTarget01(event["North"][1] * .2);
-      vm.bulletTarget02(event["East"][1] * .2);
-      vm.bulletTarget03(event["South"][1] * .2);
-      vm.bulletTarget04(event["West"][1] * .2);
+      if(event["North"]) {
+         vm.bulletBar01(event["North"][0] * .2);
+         vm.bulletTarget01(event["North"][1] * .2);
+      }
+      if(event["East"]) {
+         vm.bulletBar02(event["East"][0] * .2);
+         vm.bulletTarget02(event["East"][1] * .2);      
+      }
+      if(event["South"]) {
+         vm.bulletBar03(event["South"][0] * .2);
+         vm.bulletTarget03(event["South"][1] * .2);           
+      }
+      if(event["West"]) {
+         vm.bulletBar04(event["West"][0] * .2);
+         vm.bulletTarget04(event["West"][1] * .2);     
+      }
    }
 
 
@@ -683,7 +655,7 @@ function onAspByRegion (topicURI, event) {
 
 }
 
-var onSaleTest = { "revenue": 2000, "units": 3, "product": "Hummer", "region": "moon"};
+// var onSaleTest = { "revenue": 2000, "units": 3, "product": "Hummer", "region": "moon"};
 
 function onSale(topicURI, event) {
    //ab.log(topicURI, event);
@@ -692,9 +664,13 @@ function onSale(topicURI, event) {
 
       var icon = "sale";
 
-      vm.activity_stream_events.unshift(new activity_stream_event(event["product"], event["units"], event["region"], event["revenue"]));
-      sess.publish("sales:activity-display-threshold-exceeded", event);
+      vm.activity_stream_events.push(new activity_stream_event(event["product"], event["units"], event["region"], event["revenue"]));
+      session.publish("sales:activity-display-threshold-exceeded", event);
       highlightTimer ( activity_timer );
+      $(".activity_stream_window").each(function() {
+         this.scrollTop = this.scrollHeight;
+      })
+      
    };
 
 };

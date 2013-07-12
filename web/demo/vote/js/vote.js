@@ -44,7 +44,6 @@ function start() {
       // session close handler
       function (code, reason, detail) {
          session = null;
-         updateStatusline(reason);
       }
    );
 }

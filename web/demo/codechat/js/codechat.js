@@ -16,14 +16,12 @@
 
 /// connect object
 var connect = {
-   wsuri: get_appliance_url("hub-websocket", "ws://localhost/ws"),
    sess: null,
-   retryCount: 0,
-   retryDelay: 2,
    subscribedChannel: null,
    urlData: null,
    channelBaseUri: "http://tavendo.de/webmq/demo/codechat",
-   connected: false
+   connected: false,
+   statusText: "Not connected"
 };
 
 connect.connect = function() {
@@ -53,7 +51,7 @@ connect.connect = function() {
          connect.sess = newSession;
 
          connect.connected = true;
-         housekeeping.statusline.statusText = "Connected to " + connect.wsuri;
+         connect.statusText = "Connected to " + connect.sess.wsuri() + " in session " + connect.sess.sessionid();
          connect.retryCount = 0;
 
          // check if channel or nick in URL
@@ -73,14 +71,13 @@ connect.connect = function() {
          housekeeping.updateStatusline();
          housekeeping.setNewWindowLinkAndUrl();
 
-
-
          connect.sess.subscribe(connect.channelBaseUri + "#onpost", chat.onMessage); // CHECKME
       },
       // session close handler
       function (code, reason, detail) {
-         session = null;
-         updateStatusline(reason);
+         connect.sess = null;
+         connect.statusText = reason;
+         housekeeping.updateStatusline();
       }
    );
 }
@@ -112,7 +109,7 @@ connect.tabConnect = function(id) {
       },
       // session close handler
       function (code, reason, detail) {
-         session = null;
+         tabSession.session = null;
       }
    );
 };
@@ -202,7 +199,7 @@ housekeeping.updateStatusline = function() {
       $(housekeeping.statusline.connected).removeClass("connected");
    }
    // update the statusText
-   housekeeping.statusline.statusText.textContent = statusText;
+   housekeeping.statusline.statusText.textContent = connect.statusText;
    // update the nick & channel
    housekeeping.statusline.nick.textContent = chat.nick;
    housekeeping.statusline.channel.textContent = connect.subscribedChannel;
@@ -220,7 +217,6 @@ housekeeping.changeFontSize = function(evt) {
 
 housekeeping.initialize = function() {
    
-   housekeeping.statusline.statusText = "Not connected.";
    housekeeping.updateStatusline();
 
    housekeeping.newWindowLink = document.getElementById('new-window');
@@ -1016,7 +1012,7 @@ tabs.addTab = function(language, content, ttitle, tabTitle) {
 };
 
 tabs.startAddEvalInfrastructure = function(id) {
-   console.log("addEval", id);
+   // console.log("addEval", id);
 
    // the store location for the session
    tabs.tabs[id].connection = {};
