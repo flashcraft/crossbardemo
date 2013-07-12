@@ -31,12 +31,7 @@ function start() {
          // Tavendo WebMQ server URL
          wsuri: ab.getServerUrl(),
          // authentication info
-         appkey: null, // authenticate as anonymous
-         appsecret: null,
-         appextra: null,
-         // additional session configuration
-         sessionConfig: {maxRetries: 10,
-                         sessionIdent: "Vote"}
+         appkey: null // authenticate as anonymous
       },
       // session open handler
       function (newSession) {
@@ -51,6 +46,8 @@ function start() {
 }
 
 function main (session) {
+   // create and configure gauges
+   //
    var gauges = [];
 
    gauges.push(new JustGage({
@@ -89,14 +86,8 @@ function main (session) {
       label: "oz"
    }));
 
-   if (false) {
-      setInterval(function () {
-         for (var j = 0; j < gauges.length; ++j) {
-            gauges[j].refresh(getRandomInt(0, 100));
-         }
-      }, 2500);
-   }
-
+   // wire up gauges for PubSub events
+   //
    var baseUri = "http://tavendo.de/webmq/demo/gauges#";
 
    for (var k = 0; k < gauges.length; ++k) {
@@ -105,5 +96,15 @@ function main (session) {
             gauges[p].refresh(event);
          });
       })(k);
+   }
+
+   // auto-animate gauges
+   //
+   if (false) {
+      setInterval(function () {
+         for (var j = 0; j < gauges.length; ++j) {
+            gauges[j].refresh(getRandomInt(0, 100));
+         }
+      }, 2500);
    }
 }

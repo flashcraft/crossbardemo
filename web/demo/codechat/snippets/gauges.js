@@ -1,9 +1,11 @@
-var baseUri = "http://tavendo.de/webmq/demo/gauges#";
+// publish a value to Gauge0
+//
+session.publish("http://tavendo.de/webmq/demo/gauges#0", 66);
 
-session.publish(baseUri + "0", Math.round(100 * Math.random()));
-
+// publish random values to Gauge0-3
+//
 for (var i = 0; i < 4; ++i) {
    var val = Math.round(100 * Math.random());
-   session.publish(baseUri + i, val);
+   session.publish("http://tavendo.de/webmq/demo/gauges#" + i, val);
    console.log(i, val);
 }

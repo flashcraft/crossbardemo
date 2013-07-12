@@ -735,8 +735,16 @@ tabs.snippets = [
       ]
    },
    {title: "Vote", image: "screenshot_vote.png", link: "vote/index.html", codeSnippets: [
-      {display: "JS", language: "jswebmq", ttitle: "JS snippets for Vote", code: "vote.js"}, 
+      {display: "JS", language: "jswebmq", ttitle: "JS snippets for Vote", code: "vote.js"},
       {display: "PL/SQL", language: "plsql", ttitle: "PL/SQL snippets for Vote", code: "vote.sql"}]
+   },
+   {title: "Gauges", image: "screenshot_gauges.png", link: "gauges/index.html", codeSnippets: [
+      {display: "JS", language: "jswebmq", ttitle: "JS snippets for Gauges", code: "gauges.js"},
+      {display: "PL/SQL", language: "plsql", ttitle: "PL/SQL snippets for Gauges", code: "gauges.sql"}]
+   },
+   {title: "Dashboard", image: "screenshot_dashboard.png", link: "dashboard/index.html", codeSnippets: [
+      {display: "JS", language: "jswebmq", ttitle: "JS snippets for Dashboard", code: "dashboard.js"},
+      {display: "PL/SQL", language: "plsql", ttitle: "PL/SQL snippets for Dashboard", code: "dashboard.sql"}]
    }
 ];
 
