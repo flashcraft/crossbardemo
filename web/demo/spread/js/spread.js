@@ -118,6 +118,7 @@ var pubs = {};
 
 function setupCustomFuns () {
 
+   // create custom SUBSCRIBE spreadsheet function
    var sub = $.ce.createFunction("SUBSCRIBE", function (args) {
 
       //console.log("SUBSCRIBE", args);
@@ -160,7 +161,7 @@ function setupCustomFuns () {
    spread.addCustomFunction(sub);
 
 
-
+   // create custom PUBLISH spreadsheet function
    var pub = $.ce.createFunction("PUBLISH", function (args) {
 
       //console.log("PUBLISH", args);
@@ -182,4 +183,17 @@ function setupCustomFuns () {
    }, {minArg: 2, maxArg: 2});
 
    spread.addCustomFunction(pub);
+
+
+   // this is how to listen on cell changes
+   if (false) {
+      spread.bind($.wijmo.wijspread.Events.CellChanged, function (event, data) {
+         console.log(data.col);
+         console.log(data.row);
+         console.log(data);
+         var cell = sheet.getCell(data.row, data.col);
+         console.log(cell);
+         console.log(cell.value());
+      });
+   }
 }
