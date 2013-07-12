@@ -1,0 +1,13 @@
+#g0 {
+  width: 400px;
+  height: 320px;
+  display: inline-block;
+  margin: 1em;
+}
+
+#g1, #g2, #g3 {
+  width: 100px;
+  height: 80px;
+  display: inline-block;
+  margin: 1em;
+}
