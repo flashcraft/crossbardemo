@@ -37,3 +37,7 @@ where
 	export WEBMQ_ORACLE=<Schema Name>/<Password>@<Oracle IP or Hostname>/<Oracle SID>
 
 on Unix, and via system configuration dialog on Windows.
+
+## TODO
+
+Implement a version based on [Slickgrid](https://github.com/mleibman/SlickGrid) and themed with [jQUIT](http://jquit.com/).
