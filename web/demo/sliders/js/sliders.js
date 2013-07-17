@@ -22,6 +22,7 @@ function setupDemo() {
    $("#master").slider({
       slide: function(event, ui) {
          sess.publish("event:master", ui.value);
+         sess.publish("http://tavendo.de/webmq/demo/gauges#0", ui.value);
       }
    });
 
