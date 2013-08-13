@@ -1,5 +1,5 @@
 {
-   "version": 10,
+   "version": 11,
    "demos": {
 
       "Votes": {"sqlInstall": ["vote/sql/votes.sql",
@@ -27,6 +27,12 @@
                 "sqlUninstall": ["form/sql/uninstall.sql"]},
 
       "Dashboard": {"sqlInstall": ["dashboard/sql/sales.sql"],
-                    "sqlUninstall": ["dashboard/sql/uninstall.sql"]}
+                    "sqlUninstall": ["dashboard/sql/uninstall.sql"]},
+
+      "Testee": {"sqlInstall": ["testee/sql/testee1.sql",
+                                "testee/sql/pkg_testee1_spec.sql",
+                                "testee/sql/pkg_testee1_body.sql",
+                                "testee/sql/pkg_testee1_register.sql"],
+                "sqlUninstall": ["testee/sql/uninstall.sql"]},
     }
 }

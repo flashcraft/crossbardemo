@@ -1,0 +1,31 @@
+CREATE TABLE testee1
+(
+   subject     VARCHAR2(100)     NOT NULL,
+   votes       NUMBER(10)        NOT NULL,
+   PRIMARY KEY (subject)
+)
+/
+
+/*
+VARCHAR2
+NVARCHAR2
+CHAR
+NCHAR
+NUMBER
+BINARY_FLOAT
+BINARY_DOUBLE
+DATE
+TIMESTAMP
+TIMESTAMP WITH TIME ZONE
+TIMESTAMP WITH LOCAL TIME ZONE
+INTERVAL DAY TO SECOND
+
+
+BEGIN
+   INSERT INTO votes (subject, votes) VALUES ('Banana', 0);
+   INSERT INTO votes (subject, votes) VALUES ('Lemon', 0);
+   INSERT INTO votes (subject, votes) VALUES ('Chocolate', 0);
+   COMMIT;
+END;
+/
+*/

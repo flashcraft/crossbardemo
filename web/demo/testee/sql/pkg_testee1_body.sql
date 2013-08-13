@@ -1,0 +1,11 @@
+CREATE OR REPLACE PACKAGE BODY pkg_testee1
+AS
+
+   FUNCTION add2 (x NUMBER, y NUMBER) RETURN NUMBER
+   AS
+   BEGIN
+      RETURN x + y;
+   END add2;
+
+END;
+/
