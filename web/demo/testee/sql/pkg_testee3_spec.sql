@@ -6,41 +6,22 @@ AS
     * Testee package for use with AutobahnTestsuite: Exceptions.
     */
 
-   /**
-    * Raises an Oracle triggered ("internal") exception iff val == 0.
-    * Else, success with no return value.
-    */
+   PROCEDURE raise_internal (x NUMBER);
 
+   PROCEDURE raise_custom_u (x NUMBER);
+   PROCEDURE raise_custom_ud (x NUMBER);
+   PROCEDURE raise_custom_udd_s (x NUMBER);
+   PROCEDURE raise_custom_udd_o (x NUMBER);
+   PROCEDURE raise_custom_udd_a (x NUMBER);
 
-   /**
-    * Raises a custome exception iff val == 0.
-    * Else, success with no return value.
-    * The exception has URI =
-    * 
-    * Depending on x and y, returns nothing, raises
-    * or raises and drops.
-    *
-    * session.call("http://api.testsuite.wamp.ws/case/1.8.2", 0).then(session.log, session.log);
-    */
+   PROCEDURE raise_drop_custom_u (x NUMBER);
+   PROCEDURE raise_drop_custom_ud (x NUMBER);
+   PROCEDURE raise_drop_custom_udd_s (x NUMBER);
+   PROCEDURE raise_drop_custom_udd_o (x NUMBER);
+   PROCEDURE raise_drop_custom_udd_a (x NUMBER);
 
-
-   PROCEDURE raise_internal1 (x NUMBER);
-
-   PROCEDURE raise_internal2 (x NUMBER);
-   PROCEDURE raise_internal3 (x NUMBER);
-   PROCEDURE raise_internal4 (x NUMBER);
-   PROCEDURE raise_internal5 (x NUMBER);
-   PROCEDURE raise_internal6 (x NUMBER);
-
-   PROCEDURE raise_internal2drop (x NUMBER);
-   PROCEDURE raise_internal3drop (x NUMBER);
-   PROCEDURE raise_internal4drop (x NUMBER);
-   PROCEDURE raise_internal5drop (x NUMBER);
-   PROCEDURE raise_internal6drop (x NUMBER);
-
-   -- different scalar details type
-   -- echo uri, desc, details
-   -- drop connection
+   PROCEDURE raise_echo (x NUMBER, uri VARCHAR2, descr VARCHAR2, details JSON_VALUE);
+   PROCEDURE raise_drop_echo (x NUMBER, uri VARCHAR2, descr VARCHAR2, details JSON_VALUE);
 
 END;
 /
