@@ -6,11 +6,6 @@ AS
     * Testee package for use with AutobahnTestsuite: Scalar Types.
     */
 
-   /**
-    * RPC/Event URI prefix
-    */
-   BASEURI CONSTANT VARCHAR2(200) := 'http://testsuite.wamp.ws#';
-
    FUNCTION get_tables (maxrows NUMBER) RETURN SYS_REFCURSOR;
 
    -- returns list of objects

@@ -4,30 +4,7 @@ AS
     * Copyright (c) 2013 Tavendo GmbH. Licensed under the Apache 2.0 license.
     *
     * Testee package for use with AutobahnTestsuite: Scalar Types.
-    *
-    *
-    * WebMQ for Oracle supports the following scalar data types for
-    * procedure parameters and return types.
-    *
-    * VARCHAR2
-    * NVARCHAR2
-    * CHAR
-    * NCHAR
-    * NUMBER
-    * BINARY_FLOAT
-    * BINARY_DOUBLE
-    * DATE
-    * TIMESTAMP
-    * TIMESTAMP WITH TIME ZONE
-    * TIMESTAMP WITH LOCAL TIME ZONE
-    * INTERVAL DAY TO SECOND
     */
-
-   /**
-    * RPC/Event URI prefix
-    */
-   BASEURI CONSTANT VARCHAR2(200) := 'http://testsuite.wamp.ws#';
-
 
    FUNCTION echo_string1 (s VARCHAR2) RETURN VARCHAR2;
 

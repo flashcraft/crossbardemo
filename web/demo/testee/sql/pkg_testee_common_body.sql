@@ -1,0 +1,5 @@
+CREATE OR REPLACE PACKAGE BODY pkg_testee_common
+AS
+
+END;
+/

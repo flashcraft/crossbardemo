@@ -9,6 +9,6 @@ BEGIN
    --
    webmq.remove_exports('pkg_testee2');
 
---   webmq.export('pkg_testee2', 'echo_string1',  pkg_testee2.BASEURI || 'case1_1_1');
+--   webmq.export('pkg_testee2', 'echo_string1',  pkg_testee_common.URI_CASE || '1.1.1');
 END;
 /
