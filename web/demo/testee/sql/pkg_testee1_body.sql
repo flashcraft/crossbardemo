@@ -50,6 +50,11 @@ AS
       RETURN n;
    END echo_number3;
 
+   FUNCTION echo_number4 (n JSON_VALUE) RETURN JSON_VALUE
+   IS
+   BEGIN
+      RETURN n;
+   END echo_number4;
 
    FUNCTION echo_bool1 (b BOOLEAN) RETURN BOOLEAN
    IS
