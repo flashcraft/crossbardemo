@@ -4,6 +4,8 @@ AS
     * Copyright (c) 2013 Tavendo GmbH. Licensed under the Apache 2.0 license.
     *
     * Testee package for use with AutobahnTestsuite: Exceptions.
+    *
+    * Cases: 3.6.*, 3.7.*
     */
 
    PROCEDURE raise_internal (x NUMBER);
