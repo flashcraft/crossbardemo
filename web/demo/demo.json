@@ -31,6 +31,9 @@
 
       "Testee": {"sqlInstall": ["testee/sql/testee1.sql",
 
+                                "testee/sql/pkg_testee_common_spec.sql",
+                                "testee/sql/pkg_testee_common_body.sql",
+
                                 "testee/sql/pkg_testee1_spec.sql",
                                 "testee/sql/pkg_testee1_body.sql",
                                 "testee/sql/pkg_testee1_register.sql",
@@ -43,6 +46,6 @@
                                 "testee/sql/pkg_testee3_body.sql",
                                 "testee/sql/pkg_testee3_register.sql"
                                 ],
-                "sqlUninstall": ["testee/sql/uninstall.sql"]},
+                "sqlUninstall": ["testee/sql/uninstall.sql"]}
     }
 }
