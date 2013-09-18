@@ -14,3 +14,7 @@
 @pkg_testee3_spec.sql
 @pkg_testee3_body.sql
 @pkg_testee3_register.sql
+
+@pkg_testee4_spec.sql
+@pkg_testee4_body.sql
+@pkg_testee4_register.sql
