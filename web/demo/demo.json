@@ -1,5 +1,5 @@
 {
-   "version": 12,
+   "version": 13,
    "demos": {
 
       "Votes": {"sqlInstall": ["vote/sql/votes.sql",
@@ -44,7 +44,11 @@
 
                                 "testee/sql/pkg_testee3_spec.sql",
                                 "testee/sql/pkg_testee3_body.sql",
-                                "testee/sql/pkg_testee3_register.sql"
+                                "testee/sql/pkg_testee3_register.sql",
+
+                                "testee/sql/pkg_testee4_spec.sql",
+                                "testee/sql/pkg_testee4_body.sql",
+                                "testee/sql/pkg_testee4_register.sql"
                                 ],
                 "sqlUninstall": ["testee/sql/uninstall.sql"]}
     }
