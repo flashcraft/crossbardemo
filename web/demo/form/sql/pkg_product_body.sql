@@ -326,7 +326,7 @@ AS
    END crud_upsert;
 
 
-   PROCEDURE crud_delete (p_id NUMBER, p_sess webmq_session)
+   FUNCTION crud_delete (p_id NUMBER, p_sess webmq_session) RETURN JSON
    IS
       l_current         product%ROWTYPE;
       l_res             JSON := JSON();
@@ -352,6 +352,8 @@ AS
 
       -- for debugging only
       l_res.put('_eventId', l_event_id);
+
+      RETURN l_res;
 
    END crud_delete;
 

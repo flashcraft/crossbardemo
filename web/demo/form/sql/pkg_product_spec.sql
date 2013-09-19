@@ -35,7 +35,7 @@ AS
    /**
     * Delete an object given by ID.
     */
-   PROCEDURE crud_delete (p_id NUMBER, p_sess WEBMQ_SESSION);
+   FUNCTION crud_delete (p_id NUMBER, p_sess WEBMQ_SESSION) RETURN JSON;
 
    /**
     * Get objects by filter.

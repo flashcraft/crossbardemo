@@ -403,6 +403,9 @@ function ViewModel () {
          session.call("form:create", saveSet).then(
             function(res) {
 
+               console.log("created", res);
+               delete res['_eventId'];
+
                //// use return from DB for this
                for (var i in res) {
                   self.detailsCurrent[i](res[i]);
@@ -578,7 +581,6 @@ function listItem (data) {
       size: ko.observable(data["size"]),
       inStock: ko.observable(data["inStock"]),
       id: ko.observable(data["id"]),
-      //id: ko.observable(data["_eventId"]),
       itemState: ko.observable()
    };
 }
