@@ -6,7 +6,7 @@ AS
       l_exclude   webmq_sessionids := webmq_sessionids();
       l_eligible  webmq_sessionids := NULL;
       l_ids       JSON_LIST;
-      l_event_id  NUMBER;
+      l_event_id  NUMBER2;
    BEGIN
 
       -- the standard test suite WAMP testee only registers these URIs for pubsub:
@@ -62,4 +62,7 @@ AS
    END initiate_dispatch;
 
 END;
+/
+
+SHOW ERRORS
 /
