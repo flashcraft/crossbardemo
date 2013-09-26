@@ -1,0 +1,7 @@
+.sconsign.dblite
+build
+dist
+*.pyc
+webmqdemo/web
+*.egg-info
+*.sublime-workspace
