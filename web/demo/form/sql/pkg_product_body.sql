@@ -49,6 +49,7 @@ AS
       l_res             JSON := JSON();
 
       l_exclude         webmq_sessionids := webmq_sessionids();
+      l_event_id        NUMBER;
    BEGIN
 
       -- read/sanitize requested object attributes
@@ -128,6 +129,8 @@ AS
 
       INSERT INTO product (id, name, order_number, weight, item_size, in_stock, price)
          VALUES (l_id, l_name, l_order_number, l_weight, l_item_size, l_in_stock, l_price);
+
+      -- See comments on COMMIT in procedure crud_update().
       COMMIT;
 
       -- provide sanitized object attributes in RPC result and event
@@ -142,7 +145,10 @@ AS
 
       l_exclude.extend();
       l_exclude(1) := p_sess.sessionid;
-      webmq.publish(BASEURI || 'oncreate', l_res, p_exclude => l_exclude);
+      l_event_id := webmq.publish(BASEURI || 'oncreate', l_res, p_exclude => l_exclude);
+
+         -- for debugging only
+         l_res.put('_eventId', l_event_id);
 
       RETURN l_res;
 
@@ -165,6 +171,7 @@ AS
       l_is_modified     BOOLEAN := FALSE;
 
       l_exclude         webmq_sessionids := webmq_sessionids();
+      l_event_id        NUMBER;
    BEGIN
       -- get existing object
       --
@@ -282,11 +289,24 @@ AS
                price = l_price
                WHERE id = l_id;
 
+         /*
+          * Pushing an event from WebMQ happens in an autonomous
+          * transaction. Nevertheless, we commit before pushing
+          * the event, since the event might be received by
+          * subscribers earlier than this procedure can return
+          * and an subscriber might immediately issue a read
+          * that would then receive the before data.
+          */
+         COMMIT;
+
          l_res.put('id', l_id);
 
          l_exclude.extend();
          l_exclude(1) := p_sess.sessionid;
-         webmq.publish(BASEURI || 'onupdate', l_res, p_exclude => l_exclude);
+         l_event_id := webmq.publish(BASEURI || 'onupdate', l_res, p_exclude => l_exclude);
+
+         -- for debugging only
+         l_res.put('_eventId', l_event_id);
 
       END IF;
 
@@ -306,11 +326,12 @@ AS
    END crud_upsert;
 
 
-   PROCEDURE crud_delete (p_id NUMBER, p_sess webmq_session)
+   FUNCTION crud_delete (p_id NUMBER, p_sess webmq_session) RETURN JSON
    IS
       l_current         product%ROWTYPE;
       l_res             JSON := JSON();
       l_exclude         webmq_sessionids := webmq_sessionids();
+      l_event_id        NUMBER;
    BEGIN
       BEGIN
          SELECT * INTO l_current FROM product WHERE id = p_id;
@@ -319,13 +340,20 @@ AS
       END;
 
       DELETE FROM product WHERE id = p_id;
+
+      -- See comments on COMMIT in procedure crud_update().
       COMMIT;
 
       l_res.put('id', p_id);
 
       l_exclude.extend();
       l_exclude(1) := p_sess.sessionid;
-      webmq.publish(BASEURI || 'ondelete', l_res, p_exclude => l_exclude);
+      l_event_id := webmq.publish(BASEURI || 'ondelete', l_res, p_exclude => l_exclude);
+
+      -- for debugging only
+      l_res.put('_eventId', l_event_id);
+
+      RETURN l_res;
 
    END crud_delete;
 

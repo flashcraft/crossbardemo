@@ -91,6 +91,7 @@ function fillList (res) {
 
 
 function onItemCreated (uri, obj) {
+   console.log("onItemCreated", obj);
    vm.listData.push(new listItem(obj));
 
    // highlight this for a short while
@@ -101,6 +102,7 @@ function onItemCreated (uri, obj) {
 
 
 function onItemUpdated (uri, obj) {
+   console.log("onItemUpdated", obj);
    var index = getIndexFromId(obj.id);
 
    // update locally stored values that habe been updated remotely
@@ -136,6 +138,7 @@ function onItemUpdated (uri, obj) {
 
 
 function onItemDeleted (uri, obj) {
+   console.log("onItemDeleted", obj);
    // highlight item, then delete
    var index = getIndexFromId(obj.id);
    vm.listData()[index].itemState("isBeingDeleted");
@@ -400,6 +403,9 @@ function ViewModel () {
          session.call("form:create", saveSet).then(
             function(res) {
 
+               console.log("created", res);
+               delete res['_eventId'];
+
                //// use return from DB for this
                for (var i in res) {
                   self.detailsCurrent[i](res[i]);
@@ -433,6 +439,8 @@ function ViewModel () {
 
          session.call("form:update", updateSet).then(
             function(res) {
+               console.log("updated", res);
+               delete res['_eventId'];
 
                for (var i in res) {
                   self.detailsCurrent[i](res[i]);
@@ -496,6 +504,7 @@ function ViewModel () {
    this.deleteListItem = function( listItem, event ) {
       session.call("form:delete", listItem.id()).then(
          function(res) {
+            console.log("deleted", res);
             var index = listItem.index();
             // delete the item
             onItemDeleted("localDelete", {id: listItem.id()});
@@ -583,7 +592,7 @@ function addTestItems (numberOfItemsToAdd) {
       var saveSet = { inStock: i, name: "Test Item " + i, orderNumber: "TT-" + i, price: i*3.5, size: i +4, weight: i*1.3+40 };
       session.call("form:create", saveSet).then(
          function(res) {
-            // session.log("saved", res);
+            session.log("saved", res);
          },
          session.log
       );
@@ -600,7 +609,12 @@ oracleForm.testEvents = function(evt, rep) {
             console.log("constructing", i);
             var saveSet = { inStock: i, name: "Test Item " + i, orderNumber: "TT-" + i, price: i*3.5, size: i +4, weight: i*1.3+40 };
             vm.normalizeSet(saveSet);
-            session.call("form:create", saveSet).then(session.log, session.log);
+            session.call("form:create", saveSet).then(
+               function (res) {
+                  session.log("created", res);
+               },
+               session.log
+            );
          }
          break;
       case "delete":
@@ -613,6 +627,7 @@ oracleForm.testEvents = function(evt, rep) {
                   console.log("id ", obj[i].id);
                   session.call("form:delete", obj[i].id).then(
                      function(res) {
+                        session.log("deleted", res);
                         // delete the item
                         onItemDeleted("localDelete", obj[i].id);
                      },

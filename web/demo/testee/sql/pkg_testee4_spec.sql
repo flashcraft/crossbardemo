@@ -25,3 +25,6 @@ AS
    FUNCTION initiate_dispatch (topic VARCHAR2, event JSON_VALUE, options JSON) RETURN NUMBER;
 END;
 /
+
+SHOW ERRORS
+/
