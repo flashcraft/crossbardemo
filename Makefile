@@ -3,11 +3,11 @@ all: clean install
 bundle:
 	scons
 
-install: bundle
-	python setup.py install
-
 build: bundle
 	python setup.py bdist_egg
+
+install: bundle
+	python setup.py install
 
 clean:
 	rm -rf webmqdemo/web
@@ -16,8 +16,8 @@ clean:
 	rm -rf webmqdemo.egg-info
 	scons -uc
 
-upload_test: clean build
+eggs_upload_test:
 	scp dist/*.egg www.tavendo.de:/usr/local/www/tavendo_download/webmq/test/eggs
 
-upload_release: clean build
+eggs_upload_release:
 	scp dist/*.egg www.tavendo.de:/usr/local/www/tavendo_download/webmq/release/eggs
