@@ -28,7 +28,7 @@ setup (
    author = 'Tavendo GmbH',
    url = 'http://www.tavendo.de/webmq',
    platforms = ('Any'),
-   install_requires = ['webmq>=0.6.32'],
+   install_requires = [],
    packages = find_packages(),
    include_package_data = True,
    zip_safe = True
