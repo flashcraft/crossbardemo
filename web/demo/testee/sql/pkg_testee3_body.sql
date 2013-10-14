@@ -13,7 +13,7 @@ AS
    IS
    BEGIN
       IF x = 0 THEN
-         webmq.raise(pkg_testee_common.URI_ERROR || 'DivisionByZero',
+         crossbar.raise(pkg_testee_common.URI_ERROR || 'DivisionByZero',
                      NULL,
                      p_kill_session => p_kill);
       END IF;
@@ -24,7 +24,7 @@ AS
    IS
    BEGIN
       IF x = 0 THEN
-         webmq.raise(pkg_testee_common.URI_ERROR || 'DivisionByZero',
+         crossbar.raise(pkg_testee_common.URI_ERROR || 'DivisionByZero',
                      'Arithmetic error: division by zero',
                      p_kill_session => p_kill);
       END IF;
@@ -38,7 +38,7 @@ AS
       IF x = 0 THEN
          l_error_details := json_value(23);
 
-         webmq.raise(pkg_testee_common.URI_ERROR || 'DivisionByZero',
+         crossbar.raise(pkg_testee_common.URI_ERROR || 'DivisionByZero',
                      'Arithmetic error: division by zero',
                      l_error_details,
                      p_kill);
@@ -56,7 +56,7 @@ AS
          l_error_details.put('severity', 6);
          l_error_details.put('bad', true);
 
-         webmq.raise(pkg_testee_common.URI_ERROR || 'DivisionByZero',
+         crossbar.raise(pkg_testee_common.URI_ERROR || 'DivisionByZero',
                      'Arithmetic error: division by zero',
                      l_error_details,
                      p_kill);
@@ -75,7 +75,7 @@ AS
             l_error_details.append(i);
          END LOOP;
 
-         webmq.raise(pkg_testee_common.URI_ERROR || 'DivisionByZero',
+         crossbar.raise(pkg_testee_common.URI_ERROR || 'DivisionByZero',
                      'Arithmetic error: division by zero',
                      l_error_details,
                      p_kill);
@@ -157,7 +157,7 @@ AS
    IS
    BEGIN
       IF x = 0 THEN
-         webmq.raise(uri, descr, details, p_kill);
+         crossbar.raise(uri, descr, details, p_kill);
       END IF;
    END do_raise_echo;
 

@@ -1,6 +1,6 @@
 BEGIN
    BEGIN
-      EXECUTE IMMEDIATE 'webmq.remove_exports(''pkg_product'')';
+      EXECUTE IMMEDIATE 'crossbar.remove_exports(''pkg_product'')';
    EXCEPTION
       WHEN OTHERS THEN
          NULL;

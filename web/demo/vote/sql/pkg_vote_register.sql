@@ -1,15 +1,15 @@
 BEGIN
    --
-   -- WebMQ needs execute rights on package
+   -- Crossbar.io needs execute rights on package
    --
-   EXECUTE IMMEDIATE 'GRANT EXECUTE ON pkg_vote TO ' || webmq.REPOUSER;
+   EXECUTE IMMEDIATE 'GRANT EXECUTE ON pkg_vote TO ' || crossbar.REPOUSER;
 
    --
-   -- Register package procedures as RPC endpoints with WebMQ
+   -- Register package procedures as RPC endpoints with Crossbar.io
    --
-   webmq.remove_exports('pkg_vote');
-   webmq.export('pkg_vote', 'vote',  pkg_vote.BASEURI || 'vote');
-   webmq.export('pkg_vote', 'get',   pkg_vote.BASEURI || 'get');
-   webmq.export('pkg_vote', 'reset', pkg_vote.BASEURI || 'reset');
+   crossbar.remove_exports('pkg_vote');
+   crossbar.export('pkg_vote', 'vote',  pkg_vote.BASEURI || 'vote');
+   crossbar.export('pkg_vote', 'get',   pkg_vote.BASEURI || 'get');
+   crossbar.export('pkg_vote', 'reset', pkg_vote.BASEURI || 'reset');
 END;
 /

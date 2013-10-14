@@ -1,10 +1,12 @@
-###############################################################################
+######################################################################
 ##
-##  Copyright 2013 Tavendo GmbH. All rights reserved
+##   Copyright (C) 2013 Tavendo GmbH.
+##   Licensed under Apache 2.0 license
+##   See: http://www.apache.org/licenses/LICENSE-2.0.html
 ##
-###############################################################################
+######################################################################
 
-BUILDNAME = 'webmqdemo'
+BUILDNAME = 'crossbardemo'
 
 #OPTLEVEL = "NONE"
 #OPTLEVEL = "WHITESPACE_ONLY"

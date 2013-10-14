@@ -10,10 +10,10 @@ install: bundle
 	python setup.py install
 
 clean:
-	rm -rf webmqdemo/web
+	rm -rf crossbardemo/web
 	rm -rf build
 	rm -rf dist
-	rm -rf webmqdemo.egg-info
+	rm -rf crossbardemo.egg-info
 	scons -uc
 
 eggs_upload_test:

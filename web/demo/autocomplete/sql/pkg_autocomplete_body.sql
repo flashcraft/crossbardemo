@@ -11,7 +11,7 @@ AS
       -- extract query parameters
       --
       IF p_params.exist('after') AND p_params.exist('before') THEN
-         webmq.raise(BASEURI || 'invalid_argument', 'Conflicting search parameters specified - only one of "after" or "before" may be given');
+         crossbar.raise(BASEURI || 'invalid_argument', 'Conflicting search parameters specified - only one of "after" or "before" may be given');
       END IF;
 
       IF p_params.exist('after') THEN
@@ -19,7 +19,7 @@ AS
             l_id := p_params.get('after').get_number;
             l_forward := TRUE;
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Search parameter "after" is of wrong type ' || p_params.get('after').get_type() || ' - expected a number.');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Search parameter "after" is of wrong type ' || p_params.get('after').get_type() || ' - expected a number.');
          END IF;
       END IF;
 
@@ -28,7 +28,7 @@ AS
             l_id := p_params.get('before').get_number;
             l_forward := FALSE;
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Search parameter "before" is of wrong type ' || p_params.get('before').get_type() || ' - expected a number.');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Search parameter "before" is of wrong type ' || p_params.get('before').get_type() || ' - expected a number.');
          END IF;
       END IF;
 
@@ -36,10 +36,10 @@ AS
          IF p_params.get('limit').is_number THEN
             l_limit := p_params.get('limit').get_number;
             IF l_limit < 1 THEN
-               webmq.raise(BASEURI || 'invalid_argument', 'Search parameter "limit" must be >= 1.');
+               crossbar.raise(BASEURI || 'invalid_argument', 'Search parameter "limit" must be >= 1.');
             END IF;
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Search parameter "limit" is of wrong type ' || p_params.get('limit').get_type() || ' - expected a number.');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Search parameter "limit" is of wrong type ' || p_params.get('limit').get_type() || ' - expected a number.');
          END IF;
       END IF;
 
@@ -80,25 +80,25 @@ AS
    AS
       l_count  NUMBER;
    BEGIN
-   
+
       IF p_name IS NULL THEN
          --
          -- return total number of persons in database
          --
-         SELECT COUNT(*) INTO l_count FROM person;         
+         SELECT COUNT(*) INTO l_count FROM person;
       ELSE
          --
          -- return number of persons with names having given search prefix
          --
          SELECT COUNT(*) INTO l_count FROM person
-            WHERE sname LIKE LOWER(p_name || '%');                   
+            WHERE sname LIKE LOWER(p_name || '%');
       END IF;
-      
+
       RETURN l_count;
 
    END count;
-   
-   
+
+
    FUNCTION get (p_id NUMBER) RETURN JSON
    IS
       l_person    person%ROWTYPE;
@@ -111,9 +111,9 @@ AS
          --
          SELECT * INTO l_person FROM person WHERE id = p_id;
       EXCEPTION WHEN NO_DATA_FOUND THEN
-         webmq.raise(BASEURI || 'object_not_exists', 'Person with given ID does not exist.');
+         crossbar.raise(BASEURI || 'object_not_exists', 'Person with given ID does not exist.');
       END;
-      
+
       l_res := new JSON();
       l_res.put('id', l_person.id);
       l_res.put('uri', l_person.uri);
@@ -125,7 +125,7 @@ AS
       l_res.put('deathdate', l_person.deathdate);
       l_res.put('deathplace', l_person.deathplace);
       l_res.put('descr', l_person.descr);
-      
+
       RETURN l_res;
    END get;
 

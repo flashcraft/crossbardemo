@@ -36,7 +36,7 @@ AS
    END crud_read;
 
 
-   FUNCTION crud_create (p_obj JSON, p_sess WEBMQ_SESSION) RETURN JSON
+   FUNCTION crud_create (p_obj JSON, p_sess CROSSBAR_SESSION) RETURN JSON
    IS
       l_id              product.id%TYPE;
       l_name            product.name%TYPE;
@@ -48,7 +48,7 @@ AS
 
       l_res             JSON := JSON();
 
-      l_exclude         webmq_sessionids := webmq_sessionids();
+      l_exclude         crossbar_sessionids := crossbar_sessionids();
       l_event_id        NUMBER;
    BEGIN
 
@@ -61,13 +61,13 @@ AS
          IF p_obj.get('name').is_string THEN
             l_name := p_obj.get('name').get_string;
             IF l_name IS NULL THEN
-               webmq.raise(BASEURI || 'invalid_argument', 'Invalid value "' || l_name || '" for object property "name".');
+               crossbar.raise(BASEURI || 'invalid_argument', 'Invalid value "' || l_name || '" for object property "name".');
             END IF;
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid type "' || p_obj.get('name').get_type() || '" for object property "name". Expected a string.');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid type "' || p_obj.get('name').get_type() || '" for object property "name". Expected a string.');
          END IF;
       ELSE
-         webmq.raise(BASEURI || 'invalid_argument', 'Missing object property "name".');
+         crossbar.raise(BASEURI || 'invalid_argument', 'Missing object property "name".');
       END IF;
 
       -- mandatory attribute "orderNumber" of type "string"
@@ -76,13 +76,13 @@ AS
          IF p_obj.get('orderNumber').is_string THEN
             l_order_number := p_obj.get('orderNumber').get_string;
             IF l_order_number IS NULL OR NOT REGEXP_LIKE(l_order_number, '^[A-Z]{3,3}-[0-9]{6,6}-[A-Z]{2,2}$') THEN
-               webmq.raise(BASEURI || 'invalid_argument', 'Invalid value "' || l_order_number || '" for object property "orderNumber". Must match the regular expression ^[A-Z]{3,3}-[0-9]{6,6}-[A-Z]{2,2}$.');
+               crossbar.raise(BASEURI || 'invalid_argument', 'Invalid value "' || l_order_number || '" for object property "orderNumber". Must match the regular expression ^[A-Z]{3,3}-[0-9]{6,6}-[A-Z]{2,2}$.');
             END IF;
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid type "' || p_obj.get('orderNumber').get_type() || '" for object property "orderNumber". Expected a string.');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid type "' || p_obj.get('orderNumber').get_type() || '" for object property "orderNumber". Expected a string.');
          END IF;
       ELSE
-         webmq.raise(BASEURI || 'invalid_argument', 'Missing object property "orderNumber".');
+         crossbar.raise(BASEURI || 'invalid_argument', 'Missing object property "orderNumber".');
       END IF;
 
       -- optional attribute "weight" of type "number"
@@ -91,7 +91,7 @@ AS
          IF p_obj.get('weight').is_number THEN
             l_weight := p_obj.get('weight').get_number;
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid type "' || p_obj.get('weight').get_type() || '" for object property "weight". Expected a number.');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid type "' || p_obj.get('weight').get_type() || '" for object property "weight". Expected a number.');
          END IF;
       END IF;
 
@@ -101,7 +101,7 @@ AS
          IF p_obj.get('size').is_number THEN
             l_item_size := p_obj.get('size').get_number;
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid type "' || p_obj.get('size').get_type() || '" for object property "size". Expected a number.');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid type "' || p_obj.get('size').get_type() || '" for object property "size". Expected a number.');
          END IF;
       END IF;
 
@@ -111,7 +111,7 @@ AS
          IF p_obj.get('inStock').is_number THEN
             l_in_stock := p_obj.get('inStock').get_number;
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid type "' || p_obj.get('inStock').get_type() || '" for object property "inStock". Expected a number.');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid type "' || p_obj.get('inStock').get_type() || '" for object property "inStock". Expected a number.');
          END IF;
       END IF;
 
@@ -121,7 +121,7 @@ AS
          IF p_obj.get('price').is_number THEN
             l_price := p_obj.get('price').get_number;
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid type "' || p_obj.get('price').get_type() || '" for object property "price". Expected a number.');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid type "' || p_obj.get('price').get_type() || '" for object property "price". Expected a number.');
          END IF;
       END IF;
 
@@ -145,7 +145,7 @@ AS
 
       l_exclude.extend();
       l_exclude(1) := p_sess.sessionid;
-      l_event_id := webmq.publish(BASEURI || 'oncreate', l_res, p_exclude => l_exclude);
+      l_event_id := crossbar.publish(BASEURI || 'oncreate', l_res, p_exclude => l_exclude);
 
          -- for debugging only
          l_res.put('_eventId', l_event_id);
@@ -155,7 +155,7 @@ AS
    END crud_create;
 
 
-   FUNCTION crud_update (p_obj JSON, p_sess WEBMQ_SESSION) RETURN JSON
+   FUNCTION crud_update (p_obj JSON, p_sess CROSSBAR_SESSION) RETURN JSON
    IS
       l_current         product%ROWTYPE;
 
@@ -170,7 +170,7 @@ AS
       l_res             JSON := JSON();
       l_is_modified     BOOLEAN := FALSE;
 
-      l_exclude         webmq_sessionids := webmq_sessionids();
+      l_exclude         crossbar_sessionids := crossbar_sessionids();
       l_event_id        NUMBER;
    BEGIN
       -- get existing object
@@ -178,13 +178,13 @@ AS
       IF p_obj.exist('id') AND p_obj.get('id').is_number THEN
          l_id := p_obj.get('id').get_number;
       ELSE
-         webmq.raise(BASEURI || 'invalid_argument', 'Missing object ID property or wrong type.');
+         crossbar.raise(BASEURI || 'invalid_argument', 'Missing object ID property or wrong type.');
       END IF;
 
       BEGIN
          SELECT * INTO l_current FROM product WHERE id = l_id;
       EXCEPTION WHEN NO_DATA_FOUND THEN
-         webmq.raise(BASEURI || 'object_not_exists', 'Object to update does not exist.');
+         crossbar.raise(BASEURI || 'object_not_exists', 'Object to update does not exist.');
       END;
 
       -- sanitize request attribute values
@@ -290,7 +290,7 @@ AS
                WHERE id = l_id;
 
          /*
-          * Pushing an event from WebMQ happens in an autonomous
+          * Pushing an event from Crossbar.io happens in an autonomous
           * transaction. Nevertheless, we commit before pushing
           * the event, since the event might be received by
           * subscribers earlier than this procedure can return
@@ -303,7 +303,7 @@ AS
 
          l_exclude.extend();
          l_exclude(1) := p_sess.sessionid;
-         l_event_id := webmq.publish(BASEURI || 'onupdate', l_res, p_exclude => l_exclude);
+         l_event_id := crossbar.publish(BASEURI || 'onupdate', l_res, p_exclude => l_exclude);
 
          -- for debugging only
          l_res.put('_eventId', l_event_id);
@@ -315,7 +315,7 @@ AS
    END crud_update;
 
 
-   FUNCTION crud_upsert (p_obj JSON, p_sess WEBMQ_SESSION) RETURN JSON
+   FUNCTION crud_upsert (p_obj JSON, p_sess CROSSBAR_SESSION) RETURN JSON
    IS
    BEGIN
       IF p_obj.exist('id') THEN
@@ -326,17 +326,17 @@ AS
    END crud_upsert;
 
 
-   FUNCTION crud_delete (p_id NUMBER, p_sess webmq_session) RETURN JSON
+   FUNCTION crud_delete (p_id NUMBER, p_sess crossbar_session) RETURN JSON
    IS
       l_current         product%ROWTYPE;
       l_res             JSON := JSON();
-      l_exclude         webmq_sessionids := webmq_sessionids();
+      l_exclude         crossbar_sessionids := crossbar_sessionids();
       l_event_id        NUMBER;
    BEGIN
       BEGIN
          SELECT * INTO l_current FROM product WHERE id = p_id;
       EXCEPTION WHEN NO_DATA_FOUND THEN
-         webmq.raise(BASEURI || 'object_not_exists', 'Object to delete does not exist.');
+         crossbar.raise(BASEURI || 'object_not_exists', 'Object to delete does not exist.');
       END;
 
       DELETE FROM product WHERE id = p_id;
@@ -348,7 +348,7 @@ AS
 
       l_exclude.extend();
       l_exclude(1) := p_sess.sessionid;
-      l_event_id := webmq.publish(BASEURI || 'ondelete', l_res, p_exclude => l_exclude);
+      l_event_id := crossbar.publish(BASEURI || 'ondelete', l_res, p_exclude => l_exclude);
 
       -- for debugging only
       l_res.put('_eventId', l_event_id);
@@ -402,7 +402,7 @@ AS
       IF p_filter.exist('name') THEN
          l_name := json_ext.get_string(p_filter, 'name.value');
          IF l_name IS NULL THEN
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid or missing filter value "name" filter');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid or missing filter value "name" filter');
          END IF;
 
          l_name_type := json_ext.get_string(p_filter, 'name.type');
@@ -411,7 +411,7 @@ AS
          ELSIF l_name_type = 'includes' THEN
             l_name := '%' || l_name || '%';
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid filter type "' || l_name_type || '" for "name" filter');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid filter type "' || l_name_type || '" for "name" filter');
          END IF;
       ELSE
          l_name := '%';
@@ -423,7 +423,7 @@ AS
       IF p_filter.exist('orderNumber') THEN
          l_order_number := json_ext.get_string(p_filter, 'orderNumber.value');
          IF l_order_number IS NULL THEN
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid or missing filter value "orderNumber" filter');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid or missing filter value "orderNumber" filter');
          END IF;
 
          l_order_number_type := json_ext.get_string(p_filter, 'orderNumber.type');
@@ -432,7 +432,7 @@ AS
          ELSIF l_order_number_type = 'includes' THEN
             l_order_number := '%' || l_order_number || '%';
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid filter type "' || l_order_number_type || '" for "orderNumber" filter');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid filter type "' || l_order_number_type || '" for "orderNumber" filter');
          END IF;
       ELSE
          l_order_number := '%';
@@ -444,7 +444,7 @@ AS
       IF p_filter.exist('price') THEN
          l_price := json_ext.get_number(p_filter, 'price.value');
          IF l_price IS NULL THEN
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid or missing filter value "price" filter');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid or missing filter value "price" filter');
          END IF;
 
          l_price_type := json_ext.get_string(p_filter, 'price.type');
@@ -453,7 +453,7 @@ AS
          ELSIF l_price_type = 'lte' THEN
             l_price_sign := -1;
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid filter type "' || l_price_type || '" for "price" filter');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid filter type "' || l_price_type || '" for "price" filter');
          END IF;
       ELSE
          l_price := -1e10;
@@ -466,7 +466,7 @@ AS
       IF p_filter.exist('weight') THEN
          l_weight := json_ext.get_number(p_filter, 'weight.value');
          IF l_weight IS NULL THEN
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid or missing filter value "weight" filter');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid or missing filter value "weight" filter');
          END IF;
 
          l_weight_type := json_ext.get_string(p_filter, 'weight.type');
@@ -475,7 +475,7 @@ AS
          ELSIF l_weight_type = 'lte' THEN
             l_weight_sign := -1;
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid filter type "' || l_weight_type || '" for "weight" filter');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid filter type "' || l_weight_type || '" for "weight" filter');
          END IF;
       ELSE
          l_weight := -1e10;
@@ -488,7 +488,7 @@ AS
       IF p_filter.exist('size') THEN
          l_size := json_ext.get_number(p_filter, 'size.value');
          IF l_size IS NULL THEN
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid or missing filter value "size" filter');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid or missing filter value "size" filter');
          END IF;
 
          l_size_type := json_ext.get_string(p_filter, 'size.type');
@@ -497,7 +497,7 @@ AS
          ELSIF l_size_type = 'lte' THEN
             l_size_sign := -1;
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid filter type "' || l_size_type || '" for "size" filter');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid filter type "' || l_size_type || '" for "size" filter');
          END IF;
       ELSE
          l_size := -1e10;
@@ -510,7 +510,7 @@ AS
       IF p_filter.exist('instock') THEN
          l_instock := json_ext.get_number(p_filter, 'instock.value');
          IF l_instock IS NULL THEN
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid or missing filter value "instock" filter');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid or missing filter value "instock" filter');
          END IF;
 
          l_instock_type := json_ext.get_string(p_filter, 'instock.type');
@@ -519,7 +519,7 @@ AS
          ELSIF l_instock_type = 'lte' THEN
             l_instock_sign := -1;
          ELSE
-            webmq.raise(BASEURI || 'invalid_argument', 'Invalid filter type "' || l_instock_type || '" for "instock" filter');
+            crossbar.raise(BASEURI || 'invalid_argument', 'Invalid filter type "' || l_instock_type || '" for "instock" filter');
          END IF;
       ELSE
          l_instock := -1e10;

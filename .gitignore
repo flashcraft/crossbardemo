@@ -2,6 +2,6 @@
 build
 dist
 *.pyc
-webmqdemo/web
+crossbardemo/web
 *.egg-info
 *.sublime-workspace

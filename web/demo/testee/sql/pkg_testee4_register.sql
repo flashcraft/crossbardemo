@@ -1,14 +1,14 @@
 BEGIN
    --
-   -- WebMQ needs execute rights on package
+   -- Crossbar.io needs execute rights on package
    --
-   EXECUTE IMMEDIATE 'GRANT EXECUTE ON pkg_testee4 TO ' || webmq.REPOUSER;
+   EXECUTE IMMEDIATE 'GRANT EXECUTE ON pkg_testee4 TO ' || crossbar.REPOUSER;
 
    --
-   -- Register package procedures as RPC endpoints with WebMQ
+   -- Register package procedures as RPC endpoints with Crossbar.io
    --
-   webmq.remove_exports('pkg_testee4');
+   crossbar.remove_exports('pkg_testee4');
 
-   webmq.export('pkg_testee4', 'initiate_dispatch',  'http://api.testsuite.wamp.ws/testee/control#dispatch');
+   crossbar.export('pkg_testee4', 'initiate_dispatch',  'http://api.testsuite.wamp.ws/testee/control#dispatch');
 END;
 /

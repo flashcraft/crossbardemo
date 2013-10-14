@@ -32,7 +32,7 @@ BEGIN
    l_event.put('region', :new.region);
    l_event.put('units', :new.units);
    l_event.put('price', :new.price);
-   webmq.publish('http://tavendo.de/webmq/demo/dashboard#onSale', l_event);
+   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#onSale', l_event);
 END;
 /
 
@@ -43,7 +43,7 @@ DECLARE
    l_units_total    JSON_LIST := JSON_LIST();
    l_asp_total      JSON_LIST := JSON_LIST();
    l_revenue_total  JSON_LIST := JSON_LIST();
-   
+
    l_current_u TIMESTAMP := SYSTIMESTAMP AT TIME ZONE 'utc';
    l_current_l TIMESTAMP := l_current_u - INTERVAL '60' SECOND;
    l_last_u    TIMESTAMP := l_current_l;
@@ -96,11 +96,11 @@ BEGIN
       l_revenue_total.append(r.c_revenue);
       l_revenue_total.append(r.l_revenue);
    END LOOP;
-   
+
    -- publish prepared events
-   webmq.publish('http://tavendo.de/webmq/demo/dashboard#totalUnits', l_units_total);
-   webmq.publish('http://tavendo.de/webmq/demo/dashboard#totalAsp', l_asp_total);
-   webmq.publish('http://tavendo.de/webmq/demo/dashboard#totalRevenue', l_revenue_total);
+   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#totalUnits', l_units_total);
+   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#totalAsp', l_asp_total);
+   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#totalRevenue', l_revenue_total);
 END;
 /
 
@@ -112,7 +112,7 @@ DECLARE
    l_asp_by_product     JSON := JSON();
    l_revenue_by_product JSON := JSON();
    l_vals               JSON_LIST;
-   
+
    l_current_u TIMESTAMP := SYSTIMESTAMP AT TIME ZONE 'utc';
    l_current_l TIMESTAMP := l_current_u - INTERVAL '60' SECOND;
    l_last_u    TIMESTAMP := l_current_l;
@@ -177,9 +177,9 @@ BEGIN
    END LOOP;
 
    -- publish prepared events
-   webmq.publish('http://tavendo.de/webmq/demo/dashboard#unitsByProduct', l_units_by_product);
-   webmq.publish('http://tavendo.de/webmq/demo/dashboard#aspByProduct', l_asp_by_product);
-   webmq.publish('http://tavendo.de/webmq/demo/dashboard#revenueByProduct', l_revenue_by_product);
+   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#unitsByProduct', l_units_by_product);
+   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#aspByProduct', l_asp_by_product);
+   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#revenueByProduct', l_revenue_by_product);
 END;
 /
 
@@ -191,7 +191,7 @@ DECLARE
    l_asp_by_region      JSON := JSON();
    l_revenue_by_region  JSON := JSON();
    l_vals               JSON_LIST;
-   
+
    l_current_u TIMESTAMP := SYSTIMESTAMP AT TIME ZONE 'utc';
    l_current_l TIMESTAMP := l_current_u - INTERVAL '60' SECOND;
    l_last_u    TIMESTAMP := l_current_l;
@@ -254,10 +254,10 @@ BEGIN
       l_vals.append(r.l_revenue);
       l_revenue_by_region.put(r.region, l_vals);
    END LOOP;
-   
+
    -- publish prepared events
-   webmq.publish('http://tavendo.de/webmq/demo/dashboard#unitsByRegion', l_units_by_region);
-   webmq.publish('http://tavendo.de/webmq/demo/dashboard#aspByRegion', l_asp_by_region);
-   webmq.publish('http://tavendo.de/webmq/demo/dashboard#revenueByRegion', l_revenue_by_region);
+   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#unitsByRegion', l_units_by_region);
+   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#aspByRegion', l_asp_by_region);
+   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#revenueByRegion', l_revenue_by_region);
 END;
 /

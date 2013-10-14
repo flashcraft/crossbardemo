@@ -1,6 +1,6 @@
 BEGIN
    BEGIN
-      EXECUTE IMMEDIATE 'webmq.remove_exports(''pkg_vote'')';
+      EXECUTE IMMEDIATE 'crossbar.remove_exports(''pkg_vote'')';
    EXCEPTION
       WHEN OTHERS THEN
          NULL;

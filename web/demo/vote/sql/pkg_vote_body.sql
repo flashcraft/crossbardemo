@@ -29,7 +29,7 @@ AS
          -- raise custom exception, this gets transformed into
          -- a proper RPC error return
          --
-         webmq.raise(BASEURI || 'invalid_argument',
+         crossbar.raise(BASEURI || 'invalid_argument',
                      'No subject "' || p_subject || '" to vote on.');
       END IF;
 
@@ -44,7 +44,7 @@ AS
       --
       l_res.put('subject', p_subject);
       l_res.put('votes', l_votes);
-      webmq.publish(BASEURI || 'onvote', l_res);
+      crossbar.publish(BASEURI || 'onvote', l_res);
 
       RETURN l_votes;
    END vote;
@@ -60,7 +60,7 @@ AS
 
       -- publish event with no payload
       --
-      webmq.publish(BASEURI || 'onreset');
+      crossbar.publish(BASEURI || 'onreset');
    END reset;
 
 END;

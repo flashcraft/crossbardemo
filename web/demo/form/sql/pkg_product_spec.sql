@@ -20,22 +20,22 @@ AS
    /**
     * Create a new object.
     */
-   FUNCTION crud_create (p_obj JSON, p_sess WEBMQ_SESSION) RETURN JSON;
+   FUNCTION crud_create (p_obj JSON, p_sess CROSSBAR_SESSION) RETURN JSON;
 
    /**
     * Update existing object.
     */
-   FUNCTION crud_update (p_obj JSON, p_sess WEBMQ_SESSION) RETURN JSON;
+   FUNCTION crud_update (p_obj JSON, p_sess CROSSBAR_SESSION) RETURN JSON;
 
    /**
     * Create or Update existing object.
     */
-   FUNCTION crud_upsert (p_obj JSON, p_sess WEBMQ_SESSION) RETURN JSON;
+   FUNCTION crud_upsert (p_obj JSON, p_sess CROSSBAR_SESSION) RETURN JSON;
 
    /**
     * Delete an object given by ID.
     */
-   FUNCTION crud_delete (p_id NUMBER, p_sess WEBMQ_SESSION) RETURN JSON;
+   FUNCTION crud_delete (p_id NUMBER, p_sess CROSSBAR_SESSION) RETURN JSON;
 
    /**
     * Get objects by filter.

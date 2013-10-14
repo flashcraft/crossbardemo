@@ -1,4 +1,4 @@
-WebMQDemo
-=========
+Crossbar.io Demo
+================
 
-Demos for Tavendo WebMQ
+Demos for Crossbar.io

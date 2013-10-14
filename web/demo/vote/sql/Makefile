@@ -7,7 +7,7 @@ endif
 all: uninstall install
 
 install:
-	exit | sqlplus -L -S ${WEBMQ_ORACLE} @install.sql
+	exit | sqlplus -L -S ${CROSSBAR_ORACLE} @install.sql
 
 uninstall:
-	exit | sqlplus -L -S ${WEBMQ_ORACLE} @uninstall.sql
+	exit | sqlplus -L -S ${CROSSBAR_ORACLE} @uninstall.sql

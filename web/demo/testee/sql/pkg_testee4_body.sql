@@ -3,8 +3,8 @@ AS
 
    FUNCTION initiate_dispatch (topic VARCHAR2, event JSON_VALUE, options JSON) RETURN NUMBER
    IS
-      l_exclude   webmq_sessionids := webmq_sessionids();
-      l_eligible  webmq_sessionids := NULL;
+      l_exclude   crossbar_sessionids := crossbar_sessionids();
+      l_eligible  crossbar_sessionids := NULL;
       l_ids       JSON_LIST;
       l_event_id  NUMBER2;
    BEGIN
@@ -42,7 +42,7 @@ AS
             NOT options.get('eligible').is_null AND
             options.get('eligible').get_type = 'array' THEN
 
-            l_eligible := webmq_sessionids();
+            l_eligible := crossbar_sessionids();
 
             l_ids := json_list(options.get('eligible'));
             FOR i IN 1..l_ids.COUNT
@@ -53,7 +53,7 @@ AS
 
          END IF;
 
-         l_event_id := webmq.publish(topic, event, p_exclude => l_exclude, p_eligible => l_eligible);
+         l_event_id := crossbar.publish(topic, event, p_exclude => l_exclude, p_eligible => l_eligible);
 
       END IF;
 

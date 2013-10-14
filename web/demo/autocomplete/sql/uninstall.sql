@@ -1,6 +1,6 @@
 BEGIN
    BEGIN
-      EXECUTE IMMEDIATE 'webmq.remove_exports(''pkg_autcomplete'')';
+      EXECUTE IMMEDIATE 'crossbar.remove_exports(''pkg_autcomplete'')';
    EXCEPTION
       WHEN OTHERS THEN
          NULL;
@@ -26,6 +26,6 @@ BEGIN
       WHEN OTHERS THEN
          NULL;
    END;
-*/   
+*/
 END;
 /
