@@ -1,4 +1,11 @@
-all: clean install
+all:
+	@echo "Targets:"
+	@echo ""
+	@echo "   clean            Cleanup"
+	@echo "   install          Local install"
+	@echo "   build            Clean build"
+	@echo "   publish          Clean build and publish to PyPI"
+	@echo ""
 
 bundle:
 	scons
@@ -16,8 +23,8 @@ clean:
 	rm -rf crossbardemo.egg-info
 	scons -uc
 
-eggs_upload_test:
-	scp dist/*.egg www.tavendo.de:/usr/local/www/tavendo_download/webmq/test/eggs
-
-eggs_upload_release:
-	scp dist/*.egg www.tavendo.de:/usr/local/www/tavendo_download/webmq/release/eggs
+publish: clean bundle
+	python setup.py register
+	python setup.py sdist upload
+	python setup.py bdist_egg upload
+	python setup.py bdist_wininst upload
