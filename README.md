@@ -1,10 +1,10 @@
 # Crossbar.io Demos
 
-**Crossbar.io** comes with over a *dozen ready-to-run demos* that show different features.
+**Crossbar.io** comes with over a *dozen ready-to-run demos* that show off different features of [Crossbar.io](http://crossbar.io/) - the multi-protocol application router.
 
-The complete source-code for the demos can be found in this [repository](https://github.com/crossbario/crossbardemo) and are available as a [Python package](https://pypi.python.org/pypi/crossbardemo) that you can install into your existing **Crossbar.io**.
+The complete demo bundle is available as a [Python package](https://pypi.python.org/pypi/crossbardemo) which you can install into your existing **Crossbar.io** installation (see below).
 
-The demos are [open-source licensed](https://github.com/crossbario/crossbardemo/blob/master/LICENSE) under the Apache 2.0 license which allows you to reuse the code even in commercial projects for use as starting points in your development.
+The source-code for the demos can be found in the repository [here](https://github.com/crossbario/crossbardemo/web) and is [open-source licensed](https://github.com/crossbario/crossbardemo/blob/master/LICENSE) under the Apache 2.0 license. This allows you to *reuse the code even in commercial projects* for use as starting points in your development.
 
 ## Get it
 
