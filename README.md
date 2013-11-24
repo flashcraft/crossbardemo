@@ -5,11 +5,19 @@ Demos for **Crossbar.io**
 
 1. Install
 
+	To install from PyPI:
+
         easy_install crossbardemo
 
-	To upgrade an existing package
+	To upgrade an existing package from PyPI:
 	
 		easy_install -U crossbardemo
+
+	To install from sources
+
+		git clone git@github.com:crossbario/crossbardemo.git
+		cd crossbardemo
+		python setup.py install
 
 2. Restart the server
 
@@ -23,4 +31,6 @@ Demos for **Crossbar.io**
 		Scratching Web directory ..
 		Scratched Web directory and copied 918 files (22450455 bytes).
 
+	> **Warning**: This will scratch any existing content under your Web directory!
+	> 
 4. Open demos at `http://127.0.0.1:8080` in your browser.
