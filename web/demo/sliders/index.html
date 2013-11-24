@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -19,7 +19,7 @@
    <![endif]-->
 
    <link href="../demo.css" rel="stylesheet">
-   
+
    <link rel="stylesheet" href="css/sliders.css">
    <link rel="stylesheet" href="../../jqueryui/css/ui-lightness/jquery-ui-1.8.23.custom.css">
 
@@ -40,14 +40,16 @@
          <div id="demo_title">
             <span>UI Sync<span>
          </div>
-         <a href="http://tavendo.de" target="_blank">
-            <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
+         <a class="navbar-brand" href="#">
+            <img src="../../img/crossbar_icon_inverted.png" alt="crossbar logo inverted" width="60" height="60">
+            <span class="fontFace">
+               <span>Crossbar</span><span>.io</span>
+            </span>
          </a>
-         <img id="webmq_logo" src="../../img/webmq_logo.png">
       </div>
       <center>
          <a href="https://github.com/tavendo/WebMQDemo/tree/master/web/demo/sliders">Source Code</a>
-      </center>      
+      </center>
    </header>
 
    <section id="demo_body">
@@ -100,7 +102,7 @@
                   Status: <span class="statusline"></span>
                </div>
 
-               <button id="helpButton" class="button">?</button> 
+               <button id="helpButton" class="button">?</button>
 
          </div>
       </div>
@@ -108,7 +110,7 @@
       <div class="info_bar"  style="display: none;">
 
          <p class="info_bar_heading">
-            This is a demonstration of using Tavendo WebMQ
+            This is a demonstration of using Crossbar.io
             to enable live syncing of jQuery UI elements across browsers.
          </p>
          <ul>
@@ -117,9 +119,8 @@
                channel in all instances.
             </li>
             <li>
-               All interactions on this demo occur in response to messages routed through an instance of Tavendo WebMQ.
-               Information on which instance is used is displayed in the status line at the bottom of the demo box. 
-              
+               All interactions on this demo occur in response to messages routed through the instance of Crossbar.io displayed in the status line at the bottom of the demo box.
+
             </li>
          </ul>
       </div>

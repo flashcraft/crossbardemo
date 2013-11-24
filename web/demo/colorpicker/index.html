@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -39,14 +39,16 @@
          <div id="demo_title">
             <span>&nbsp &nbsp Collaborative Colorpicker</span>
          </div>
-         <a href="http://tavendo.de" target="_blank">
-            <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
+         <a class="navbar-brand" href="#">
+            <img src="../../img/crossbar_icon_inverted.png" alt="crossbar logo inverted" width="60" height="60">
+            <span class="fontFace">
+               <span>Crossbar</span><span>.io</span>
+            </span>
          </a>
-         <img id="webmq_logo" src="../../img/webmq_logo.png">
       </div>
       <center>
          <a href="https://github.com/tavendo/WebMQDemo/tree/master/web/demo/colorpicker">Source Code</a>
-      </center>      
+      </center>
    </header>
 
    <div id="demo_body">
@@ -129,13 +131,13 @@
                Status: <span class="statusline"></span>
             </div>
 
-            <button id="helpButton" class="button">?</button> 
+            <button id="helpButton" class="button">?</button>
          </div>
       </div>
 
       <div class="info_bar info_bar_colorpicker" style="display: none">
          <p class="info_bar_heading">
-            This is a demonstration of using Tavendo WebMQ to enable live synching of UI elements for collaboration.
+            This is a demonstration of using Crossbar.io to enable live synching of UI elements for collaboration.
          </p>
          <ul>
             <li>
@@ -143,8 +145,7 @@
                channel in all instances.
             </li>
             <li>
-               All interactions on this demo occur in response to messages routed through an instance of Tavendo WebMQ. 
-               Information the instance used is displayed in the status line at the bottom of the demo box. 
+               All interactions on this demo occur in response to messages routed through the instance of Crossbar.io displayed in the status line at the bottom of the demo box.
             </li>
             <li>
                The demo uses <a href="http://www.acko.net/dev/farbtastic">Farbtastic</a> color picker

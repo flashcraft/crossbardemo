@@ -1,15 +1,135 @@
 /********** web fonts locally *******/
 
-
-/********** web fonts locally *******/
-
+/* Open Sans */
+/* not currently used on the Tavendo website, but can be left in
+since the browser only downloads the resources on encountering
+the font in use */
 
 @font-face {
    font-family: 'Open Sans';
-   font-style: normal;
-   font-weight: normal;
    src: url('../fonts/OpenSans-Regular.ttf');
 }
+@font-face {
+   font-family: 'Open Sans';
+   src: url('../fonts/OpenSans-Bold.ttf');
+   font-weight: bold;
+}
+@font-face {
+   font-family: 'Open Sans';
+   src: url('../fonts/OpenSans-Italic.ttf');
+   font-style: italic;
+}
+@font-face {
+   font-family: 'Open Sans';
+   src: url('../fonts/OpenSans-BoldItalic.ttf');
+   font-style: italic;
+   font-weight: bold;
+}
+
+
+/* Play */
+@font-face {
+   font-family: 'Play';
+   src: url('../fonts/Play-Regular.ttf');
+}
+@font-face {
+   font-family: 'Play';
+
+   src: url('../fonts/Play-Bold.ttf');
+   font-weight: bold;
+}
+
+
+/* Source Sans Pro */
+
+@font-face {
+   font-family: 'Source Sans Pro';
+   src: url('../fonts/SourceSansPro-Regular.ttf');
+   font-weight: normal;
+}
+
+@font-face {
+   font-family: 'Source Sans Pro';
+   src: url('../fonts/SourceSansPro-Italic.ttf');
+   font-weight: normal;
+   font-style: italic;
+}
+
+@font-face {
+   font-family: 'Source Sans Pro';
+   src: url('../fonts/SourceSansPro-Bold.ttf');
+   font-weight: bold;
+}
+@font-face {
+   font-family: 'Source Sans Pro';
+   src: url('../fonts/SourceSansPro-BoldItalic.ttf');
+   font-weight: bold;
+   font-style: italic;
+}
+
+@font-face {
+   font-family: 'Source Sans Pro';
+   src: url('../fonts/SourceSansPro-Light.ttf');
+   font-weight: 300;
+}
+@font-face {
+   font-family: 'Source Sans Pro';
+   src: url('../fonts/SourceSansPro-LightItalic.ttf');
+   font-weight: 300;
+   font-style: italic;
+}
+
+
+/* Segoe UI */
+/* define here for used weights & styles so that
+font-weight & style declarations work for this + the fallback
+web font */
+
+@font-face {
+   font-family: 'Segoe UI';
+   src: local('Segoe UI');
+   font-weight: normal;
+}
+
+@font-face {
+   font-family: 'Segoe UI';
+   src: local('Segoe UI Italic');
+   font-weight: normal;
+   font-style: italic;
+}
+
+@font-face {
+   font-family: 'Segoe UI';
+   src: local('Segoe UI Bold');
+   font-weight: bold;
+}
+@font-face {
+   font-family: 'Segoe UI';
+   src: local('Segoe UI Bold Italic');
+   font-weight: bold;
+   font-style: italic;
+}
+
+@font-face {
+   font-family: 'Segoe UI';
+   src: local('Segoe UI Light');
+   font-weight: 300;
+}
+
+/* Montserrat */
+
+@font-face {
+   font-family: 'Montserrat';
+   src: url('../fonts/Montserrat-Regular.ttf');
+   font-weight: normal;
+}
+
+@font-face {
+   font-family: 'Montserrat';
+   src: url('../fonts/Montserrat-Bold.ttf');
+   font-weight: bold;
+}
+
 
 html {
    overflow-y: scroll;
@@ -23,8 +143,9 @@ body {
    margin: 0;
    font-size: 14px;
    background-color: #fafafa;
-   background-color: #333;
-   
+   background-color: #ececec;
+
+   width: auto;
 }
 body.wide
 {
@@ -56,7 +177,7 @@ header {
    position: relative;
    width: 100%;
    height: 103px;
-   background-color: #1b1b1b;
+   background-color: #222;
 }
 
 #header_inner
@@ -90,22 +211,43 @@ header {
    line-height: 38px;
 }
 
-#tavendo_logo {
-   position: absolute;
-   right: 81px;
-   bottom: 17px;
-}
-
-#webmq_logo
+#crossbar_logo
 {
    position: absolute;
    left: 20px;
    bottom: 17px;
 }
 
+.navbar-brand {
+    position: absolute;
+
+    top: 21px;
+    left: 0px;
+    text-decoration: none;
+}
+
+.navbar-brand > span {
+   font-size: 52px;
+   position: relative;
+   top: -13px;
+   text-decoration: none;
+   border: none;
+}
+
+.navbar-brand > span > span:first-of-type {
+  font-family: 'Play', sans-serif;
+  font-weight: bold;
+  color: rgb(162, 162, 162);
+  padding: 0 0 0 6px;
+}
+.navbar-brand > span > span:last-of-type {
+  font-family: 'Play', sans-serif;
+  color: rgb(240, 240, 240);
+}
+
 #demos_cta
 {
-   color: #fff;
+   color: #444;
 
    text-align: center;
    font-size: 22px;
@@ -117,6 +259,7 @@ header {
 #demos_cta  a:visited {
    text-decoration: none;
    color: #fff;
+   color: #BEA600;
 }
 #demos_cta  a:hover {
    text-decoration: underline;
@@ -124,7 +267,8 @@ header {
 #demos_cta .orange a
 {
    color: #f60;
-   
+
+   color: #BEA600;
 }
 
 #demo_body
@@ -138,7 +282,7 @@ header {
 .wide #demo_body
 {
    width: 1280px;
-   
+
 }
 
 .demos_list
@@ -152,13 +296,13 @@ header {
    float: left;
    width: 280px;
    height: 280px;
-/*   
+/*
    width: 33%;
    height: 290px;
    */
    margin: 8px;
    position: relative;
-   color: #fff;
+   color: #444;
    margin-bottom: 16px;
 }
 
@@ -180,22 +324,22 @@ header {
    background-color: #f0f0f0;
    color: #333;
 
-   background-color: #000;
+   background-color: #444;
    color: #fff;
 
    border-radius: 3px;
    border: solid 1px #000;
-   
+
    padding: 10px 0;
    width: 280px;
    height: 250px;
    margin: 0 auto;
-      
-   
+
+
    font-size: 20px;
    text-align: center;
    vertical-align: middle;
-   text-decoration: none; 
+   text-decoration: none;
    /*filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorstr='#cccccc', endColorstr='#aaaaaa');*/
    /*box-shadow: 0 0 12px 2px rgba(255,255,255, 0.6);*/
 }
@@ -220,7 +364,7 @@ header {
    margin: 1em auto;
    width: 280px;
    height: auto;
-   box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, 0.5); 
+   box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, 0.5);
 }
 
 .demos_list > li > img.noresize
@@ -246,10 +390,11 @@ header {
 
 
 /* sticky footer rules */
-html, 
+html,
 body
 {
    height: 100%;
+   min-width: 1580px;
 }
 
 .page-wrap
@@ -265,7 +410,7 @@ body
 }
 
 .site-footer
-{  
+{
    position: relative;
    margin-top: -150px;
    height: 150px;

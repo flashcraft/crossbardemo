@@ -46,7 +46,8 @@ var unit_threshold = 0;
 
 // colors for the widgets
 
-var themeColors = ["rgb(185, 96, 96)", "rgb(83, 38, 38)", "rgb(214, 165, 165)", "rgb(160, 18, 18)"];
+// var themeColors = ["rgb(185, 96, 96)", "rgb(83, 38, 38)", "rgb(214, 165, 165)", "rgb(160, 18, 18)"];
+var themeColors = ["rgb(120, 120, 120)", "rgb(100, 100, 100)", "rgb(80, 80, 80)", "rgb(60, 60, 60)"];
 
 // pie chart sections
 var chartColor01 = themeColors[0];
@@ -329,7 +330,7 @@ function DashboardViewModel () {
          e.width(Math.floor((self.hundred_bar_width - 5) * e.hundred_width() / total));
          // Math.floor since otherwise rounding errors in Firefox could mean that
          // the total allowed bar length was exceeded by a small fraction of a pixel
-         
+
          // (self.hundred_bar_width - 5) is an attempt at giving a little play,
          // since the sequential adjustment of the sub-bar-widths means that
          // during the update cycle the total length can exceed that allowed may lenght,
@@ -593,13 +594,13 @@ function onRevenueByRegion (topicURI, event) {
          vm.pieSection01(event["North"][0]);
       }
       if(event["East"]) {
-         vm.pieSection02(event["East"][0]);         
+         vm.pieSection02(event["East"][0]);
       }
       if(event["South"]) {
-         vm.pieSection03(event["South"][0]);         
+         vm.pieSection03(event["South"][0]);
       }
       if(event["West"]) {
-         vm.pieSection04(event["West"][0]);         
+         vm.pieSection04(event["West"][0]);
       }
    }
    drawPieChart();
@@ -633,15 +634,15 @@ function onAspByRegion (topicURI, event) {
       }
       if(event["East"]) {
          vm.bulletBar02(event["East"][0] * .2);
-         vm.bulletTarget02(event["East"][1] * .2);      
+         vm.bulletTarget02(event["East"][1] * .2);
       }
       if(event["South"]) {
          vm.bulletBar03(event["South"][0] * .2);
-         vm.bulletTarget03(event["South"][1] * .2);           
+         vm.bulletTarget03(event["South"][1] * .2);
       }
       if(event["West"]) {
          vm.bulletBar04(event["West"][0] * .2);
-         vm.bulletTarget04(event["West"][1] * .2);     
+         vm.bulletTarget04(event["West"][1] * .2);
       }
    }
 
@@ -670,7 +671,7 @@ function onSale(topicURI, event) {
       $(".activity_stream_window").each(function() {
          this.scrollTop = this.scrollHeight;
       })
-      
+
    };
 
 };

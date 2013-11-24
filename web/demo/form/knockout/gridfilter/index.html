@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
    <head>
       <meta charset="utf-8" />
@@ -38,10 +38,12 @@
                <span>with Oracle Datbase</span>
             </div>
 
-            <a href="http://tavendo.de" target="_blank">
-               <img id="tavendo_logo" src="../../../../img/tavendo_logo_simple.png">
+            <a class="navbar-brand" href="#">
+               <img src="../../../../img/crossbar_icon_inverted.png" alt="crossbar logo inverted" width="60" height="60">
+               <span class="fontFace">
+                  <span>Crossbar</span><span>.io</span>
+               </span>
             </a>
-            <img id="webmq_logo" src="../../../../img/webmq_logo.png">
 
          </div>
       </header>
@@ -59,41 +61,41 @@
                <thead>
                   <tr>
                      <th>
-                        Name                     
+                        Name
                      </th>
                      <th>
-                        Order Number                     
+                        Order Number
                      </th>
                      <th>
-                        Weight                     
+                        Weight
                      </th>
                      <th>
-                        Size                     
+                        Size
                      </th>
                      <th>
-                        In Stock                     
+                        In Stock
                      </th>
                      <th>
                         Price
                         <div class="relativeContainer"><!--needed since FF doesn't do absolute positioning from TDs-->
-                           <div class="clearFilterButton" data-bind="click: resetFilter, visible: currentFilterValues">Reset Filter</div>   
-                        </div>                                        
+                           <div class="clearFilterButton" data-bind="click: resetFilter, visible: currentFilterValues">Reset Filter</div>
+                        </div>
                      </th>
                   </tr>
                   <tr>
-                     <th>                     
+                     <th>
                         <input id="filterByName" type="text" data-bind="event: { keydown: mangleInputs }, value: name, valueUpdate: 'afterkeydown'"/>
                      </th>
-                     <th>                     
+                     <th>
                         <input id="filterByOrderNumber" type="text" data-bind="event: { keydown: mangleInputs }, value: orderNumber, valueUpdate: 'afterkeydown'"/>
                      </th>
-                     <th>                     
+                     <th>
                         <input id="filterByWeight" type="text" data-bind="event: { keydown: mangleInputs }, value: weight, valueUpdate: 'afterkeydown'"/>
                      </th>
-                     <th>                     
+                     <th>
                         <input id="filterBySize" type="text" data-bind="event: { keydown: mangleInputs }, value: size, valueUpdate: 'afterkeydown'"/>
                      </th>
-                     <th>                     
+                     <th>
                         <input id="filterByInStock" type="text" data-bind="event: { keydown: mangleInputs }, value: inStock, valueUpdate: 'afterkeydown'"/>
                      </th>
                      <th>
@@ -101,23 +103,23 @@
                      </th>
                   </tr>
                   <tr>
-                     <th>                     
+                     <th>
                         <input type="radio" name="filterByName" value="prefix" data-bind="checked: nameType"/>Prefix
                         <input type="radio" name="filterByName" value="includes" data-bind="checked: nameType"/>Includes
                      </th>
-                     <th> 
+                     <th>
                         <input type="radio" name="filterByOrderNumber" value="prefix" data-bind="checked: orderNumberType"/>Prefix
                         <input type="radio" name="filterByOrderNumber" value="includes" data-bind="checked: orderNumberType"/>Includes
                      </th>
-                     <th>                     
+                     <th>
                         <input type="radio" name="filterByWeight" value="lte" data-bind="checked: weightType"/><=
                         <input type="radio" name="filterByWeight" value="gte" data-bind="checked: weightType"/>>=
                      </th>
-                     <th>                     
+                     <th>
                         <input type="radio" name="filterBySize" value="lte" data-bind="checked: sizeType"/><=
                         <input type="radio" name="filterBySize" value="gte" data-bind="checked: sizeType"/>>=
                      </th>
-                     <th>                     
+                     <th>
                         <input type="radio" name="filterByInStock" value="lte" data-bind="checked: inStockType"/><=
                         <input type="radio" name="filterByInStock" value="gte" data-bind="checked: inStockType"/>>=
                      </th>
@@ -128,8 +130,8 @@
                   </tr>
                </thead>
                <tbody id="gridbody" data-bind="foreach: tableData">
-                  <tr data-bind="css: { 
-                  isBeingDeleted: itemState() === 'isBeingDeleted', 
+                  <tr data-bind="css: {
+                  isBeingDeleted: itemState() === 'isBeingDeleted',
                   hasBeenEdited: itemState() === 'hasBeenEdited',
                   hasBeenCreated: itemState() === 'hasBeenCreated'}">
                      <td data-bind="text: name"></td>
@@ -152,8 +154,8 @@
 
          <!--<div data-bind="text: filterSet"></div>-->
 
-         <button id="helpButton" class="webmq_demo_button button">?</button> 
-      
+         <button id="helpButton" class="webmq_demo_button button">?</button>
+
 
          <div class="status_line statusline_outside">
             Status: <span class="statusline"></span>
@@ -166,14 +168,14 @@
             </p>
             <ul>
                <li>
-                  The demo is connected to the Oracle database via Tavendo WebMQ.
+                  The demo is connected to the Oracle database via Crossbar.io.
                </li>
                <li>
-                  All client logic is local to the browser, all business logic is in the database. Tavendo WebMQ  manages only the messaging interaction between the two.
+                  All client logic is local to the browser, all business logic is in the database. Crossbar.io  manages only the messaging interaction between the two.
                </li>
                <li>
                   Filtering is done within the Oracle database, with a simple display of the result set in the browser.
-               </li>           
+               </li>
             </ul>
 
          </div>
@@ -198,11 +200,11 @@
                      the Oracle database is reachable
                   </li>
                   <li>
-                     the repository schema and the demo schema have been installed 
+                     the repository schema and the demo schema have been installed
                   </li>
                </ul>
                <p>
-                  Whether the Oracle database is reachable and the necessary schemas have been installed 
+                  Whether the Oracle database is reachable and the necessary schemas have been installed
                   can easily be checked by using the 'Test' buttons next to the respective schema login data
                   on the Oracle Connects tab.
                </p>
@@ -212,11 +214,12 @@
             </div>
 
             <div id="working_version" class="error_overlay_content_block">
-               To view a working version of this demo, please go to 
+<!--                To view a working version of this demo, please go to
                <a href="http://webmq.tavendo.de/demo/gridfilter/gridfilter.html">
                   the online demo
                </a>
-               on the Tavendo website.
+               on the Tavendo website. -->
+               Insert link to hosted demo on Crossbar website once this is up and running
             </div>
          </div>
       </div>

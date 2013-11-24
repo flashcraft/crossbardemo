@@ -10,7 +10,8 @@
    font-size: 14px;
    padding: 16px 0 16px 32px;
    background-color: #E96A15;
-   color: #fff;
+   background-color: #F5D500;
+   color: #444;
 
    transition: all 0.5s ease-in-out;
    -ms-transition: all 0.5s ease-in-out;
@@ -26,12 +27,12 @@
 
 .arrowLeft
 {
-    background-image: url('slide_in_left_arrow.png');
+    background-image: url('slide_in_left_arrow_d.png');
 }
 
 .arrowRight
 {
-    background-image: url('slide_in_right_arrow.png');
+    background-image: url('slide_in_right_arrow_d.png');
 }
 
 #webmqad a {

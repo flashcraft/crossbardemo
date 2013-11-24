@@ -36,7 +36,7 @@ function abChangeFavicon() {
    //      console.log("1", links[i]);
    //      console.log("2", links[i].href);
    //      console.log("3", links[i].getAttribute("href"));
-   //   };      
+   //   };
    //}
 
    var currentIcon = $("#favicon").attr("href");
@@ -165,7 +165,7 @@ function toggle(event, newNotification) {
       ad_countdown.style.visibility = 'hidden';
       // switch arrow to pointing left
       window.setTimeout(function() {
-         ad.style.backgroundImage = "url('img/slide_in_left_arrow.png')";
+         ad.style.backgroundImage = "url('img/slide_in_left_arrow_d.png')";
       }, 500);
 
    } else {
@@ -173,11 +173,11 @@ function toggle(event, newNotification) {
       ad_shown = true;
       // switch arrow to pointing right
       window.setTimeout(function() {
-         ad.style.backgroundImage = "url('img/slide_in_right_arrow.png')";
+         ad.style.backgroundImage = "url('img/slide_in_right_arrow_d.png')";
       }, 500);
    }
 
-   // if triggered based on a new notification, 
+   // if triggered based on a new notification,
    // start the countdown and hide after this
    if (newNotification) {
       ab.log("new", ad_shown);

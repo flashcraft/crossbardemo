@@ -1,14 +1,14 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
    <meta charset="utf-8" />
 
-   
-   
+
+
    <!--<link rel="icon" href="record.ico" type="image/png" />--> <!--not for IE-->
    <link rel="shortcut icon" href="../../img/favicon.ico">
-   
+
    <title>Notifications</title>
 
    <link rel="stylesheet" href="../demo.css">
@@ -33,12 +33,12 @@
             height: 1600px;
          }
       </style>
-     
+
    <![endif]-->
 
    <script type="text/javascript" src="../../js/jquery.min.js"></script>
    <script type="text/javascript" src="../../js/autobahn.min.js"></script>
-   
+
    <script type="text/javascript" src="../../js/tinycon.js"></script>
    <script type="text/javascript" src="../../js/notificon.js"></script>
 
@@ -54,19 +54,21 @@
          <div id="demo_title">
             <span>Notifications</span>
          </div>
-         <a href="http://tavendo.de" target="_blank">
-            <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
+         <a class="navbar-brand" href="#">
+            <img src="../../img/crossbar_icon_inverted.png" alt="crossbar logo inverted" width="60" height="60">
+            <span class="fontFace">
+               <span>Crossbar</span><span>.io</span>
+            </span>
          </a>
-         <img id="webmq_logo" src="../../img/webmq_logo.png">
       </div>
       <center>
          <a href="https://github.com/tavendo/WebMQDemo/tree/master/web/demo/notification">Source Code</a>
-      </center>      
+      </center>
    </header>
-   
+
    <!--<button onclick="abChangeFavicon()">Change Favicon</button>-->
    <div id="demo_body">
-		
+
       <div class="box box_left">
 
          <div class="box_heading">Publication Topic</div>
@@ -79,14 +81,14 @@
             </p>
             <textarea id="notification_message" spellcheck="false" class="webmq_demo_textbox_active" cols="38" rows="4" style="resize: none;"></textarea>
             <button id="send_notification" class="button">Send notification</button>
-         
+
             <div class="status_line">
                Status: <span class="statusline"></span>
             </div>
 
          </div>
 
-         
+
 
       </div>
 
@@ -122,7 +124,7 @@
 
          </div>
 
-         <button id="helpButton" class="button">?</button> 
+         <button id="helpButton" class="button">?</button>
 
       </div>
 
@@ -132,8 +134,8 @@
          </p>
          <ul>
             <li>
-               All interactions on this demo occur in response to messages routed through an instance of Tavendo WebMQ. 
-               Information the instance used is displayed in the status line at the bottom of the demo box. 
+               All interactions on this demo occur in response to messages routed through an the instance of Crossbar.io 
+               displayed in the status line at the bottom of the demo box.
             </li>
             <li>
                Channels for sending and receiving messages are independent.

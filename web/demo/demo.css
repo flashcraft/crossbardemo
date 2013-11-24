@@ -1,6 +1,6 @@
 /********** web fonts locally *******/
 
-@font-face {
+/*@font-face {
     font-family: 'open_sansregular';
     src: url('../../fonts/opensans-regular-webfont.eot');
     src: url('../../fonts/opensans-regular-webfont.eot?#iefix') format('embedded-opentype'),
@@ -10,6 +10,139 @@
     font-weight: normal;
     font-style: normal;
 
+}
+*/
+
+/********** web fonts locally *******/
+
+/* Open Sans */
+/* not currently used on the Tavendo website, but can be left in
+since the browser only downloads the resources on encountering
+the font in use */
+
+@font-face {
+   font-family: 'Open Sans';
+   src: url('../fonts/OpenSans-Regular.ttf');
+}
+/*@font-face {
+   font-family: 'Open Sans';
+   src: url('../fonts/OpenSans-Bold.ttf');
+   font-weight: bold;
+}*/
+@font-face {
+   font-family: 'Open Sans';
+   src: url('../fonts/OpenSans-Italic.ttf');
+   font-style: italic;
+}
+@font-face {
+   font-family: 'Open Sans';
+   src: url('../fonts/OpenSans-BoldItalic.ttf');
+   font-style: italic;
+   font-weight: bold;
+}
+
+
+/* Play */
+@font-face {
+   font-family: 'Play';
+   src: url('../fonts/Play-Regular.ttf');
+}
+@font-face {
+   font-family: 'Play';
+
+   src: url('../fonts/Play-Bold.ttf');
+   font-weight: bold;
+}
+
+
+/* Source Sans Pro */
+
+@font-face {
+   font-family: 'Source Sans Pro';
+   src: url('../fonts/SourceSansPro-Regular.ttf');
+   font-weight: normal;
+}
+
+@font-face {
+   font-family: 'Source Sans Pro';
+   src: url('../fonts/SourceSansPro-Italic.ttf');
+   font-weight: normal;
+   font-style: italic;
+}
+
+@font-face {
+   font-family: 'Source Sans Pro';
+   src: url('../fonts/SourceSansPro-Bold.ttf');
+   font-weight: bold;
+}
+@font-face {
+   font-family: 'Source Sans Pro';
+   src: url('../fonts/SourceSansPro-BoldItalic.ttf');
+   font-weight: bold;
+   font-style: italic;
+}
+
+@font-face {
+   font-family: 'Source Sans Pro';
+   src: url('../fonts/SourceSansPro-Light.ttf');
+   font-weight: 300;
+}
+@font-face {
+   font-family: 'Source Sans Pro';
+   src: url('../fonts/SourceSansPro-LightItalic.ttf');
+   font-weight: 300;
+   font-style: italic;
+}
+
+
+/* Segoe UI */
+/* define here for used weights & styles so that
+font-weight & style declarations work for this + the fallback
+web font */
+
+@font-face {
+   font-family: 'Segoe UI';
+   src: local('Segoe UI');
+   font-weight: normal;
+}
+
+@font-face {
+   font-family: 'Segoe UI';
+   src: local('Segoe UI Italic');
+   font-weight: normal;
+   font-style: italic;
+}
+
+@font-face {
+   font-family: 'Segoe UI';
+   src: local('Segoe UI Bold');
+   font-weight: bold;
+}
+@font-face {
+   font-family: 'Segoe UI';
+   src: local('Segoe UI Bold Italic');
+   font-weight: bold;
+   font-style: italic;
+}
+
+@font-face {
+   font-family: 'Segoe UI';
+   src: local('Segoe UI Light');
+   font-weight: 300;
+}
+
+/* Montserrat */
+
+@font-face {
+   font-family: 'Montserrat';
+   src: url('../fonts/Montserrat-Regular.ttf');
+   font-weight: normal;
+}
+
+@font-face {
+   font-family: 'Montserrat';
+   src: url('../fonts/Montserrat-Bold.ttf');
+   font-weight: bold;
 }
 
 html {
@@ -31,13 +164,13 @@ body {
    background-repeat: no-repeat;
    background-attachment: fixed;
 
-   
-   font-family: 'open_sansregular', sans-serif;
+
+   font-family: 'Open Sans', sans-serif;
    /*font-family: Arial;*/
-   
+
    font-size: 14px;
    background-color: #fafafa;
-   
+
    /*background-image: -webkit-linear-gradient(top right, #7F2F09, #F54D00);
    background-image:    -moz-linear-gradient(top right, #7F2F09, #F54D00);
    background-image:     -ms-linear-gradient(top right, #7F2F09, #F54D00);
@@ -45,7 +178,7 @@ body {
    background-image:         linear-gradient(top right, #7F2F09, #F54D00);
    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorstr='#F54D00', endColorstr='#7F2F09');*/
 
-   
+
 
 }
 
@@ -56,6 +189,7 @@ a
 a:hover
 {
    color: #f60;
+   color: #D0B800;
 }
 
 a > img
@@ -101,7 +235,7 @@ header {
    margin:auto;
    padding: 0;
    color: #666;
-   text-align: center;
+   text-align: right;
 }
 
 #demo_title
@@ -122,6 +256,33 @@ header {
 {
    font-size: 45px;
    line-height: 38px;
+}
+
+.navbar-brand {
+    position: absolute;
+
+    top: 21px;
+    left: 0px;
+    text-decoration: none;
+}
+
+.navbar-brand > span {
+   font-size: 52px;
+   position: relative;
+   top: -13px;
+   text-decoration: none;
+   border: none;
+}
+
+.navbar-brand > span > span:first-of-type {
+  font-family: 'Play', sans-serif;
+  font-weight: bold;
+  color: rgb(162, 162, 162);
+  padding: 0 0 0 6px;
+}
+.navbar-brand > span > span:last-of-type {
+  font-family: 'Play', sans-serif;
+  color: rgb(240, 240, 240);
 }
 
 #tavendo_logo {
@@ -147,7 +308,8 @@ header {
    font-size: 19px;
    text-decoration: none;
    color: #f60;
-} 
+   color: #d0b800;
+}
 
 
 #demo_body,
@@ -155,7 +317,7 @@ header {
 {
    width: 850px;
    height: 100%;
-   margin: 1em auto;
+   margin: 3em auto;
    position: relative;
 }
 
@@ -222,8 +384,7 @@ header {
    /*border: 1px solid #7C95A4;*/
    border-style: solid;
    border-width: 1px;
-   border-color: #A0A0A0 #A0A0A0 #ff6600;
-   border-bottom: solid 2px #ff6600;
+   border-bottom: solid 2px #ffde00;
    /*border-bottom: 1px solid #839CAB;*/
    border-radius: 3px 3px 0 0;
    -webkit-border-radius: 3px 3px 0 0;
@@ -292,7 +453,7 @@ header {
    border: none;
    -webkit-border-radius: 4px;
    border-radius: 4px;
-   
+
 
    border: 1px solid rgb(121, 121, 121);
 
@@ -407,11 +568,11 @@ header {
 .flatButton
 {
    background-color: #694545;
-   
+
 
    font-weight: 600;
    text-align: center;
-   
+
    padding: 5px 9px;
    margin: 2px;
 
@@ -419,12 +580,12 @@ header {
    border: none;
    -webkit-border-radius: 4px;
    border-radius: 4px;
-   
+
    -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px 0px;
    -moz-box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px 0px;
    box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px 0px;
 
-   
+
    background-image: -webkit-linear-gradient(top right, #F0F0F0, #CACACA);
    background-image:    -moz-linear-gradient(top right, #F0F0F0, #CACACA);
    background-image:     -ms-linear-gradient(top right, #F0F0F0, #CACACA);
@@ -446,12 +607,12 @@ flatButton:hover
 .oracle_demo .error_overlay
 {
    width: 100%;
-   
+
    position: absolute;
    top: 10%;
- 
+
    background-color: rgba(0, 0, 0, 0.8);
-   color: #fff;  
+   color: #fff;
 
    padding: 2em 0;
 }

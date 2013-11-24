@@ -29,7 +29,7 @@
       <script type="text/javascript" src="../../js/knockout.min.js"></script>
 
       <script type="text/javascript" src="js/dashboard.js"></script>
-      
+
    </head>
    <body>
       <div id="container" class="background_gradient">
@@ -38,14 +38,20 @@
                <div id="demo_title">
                   <span>Dashboard</span>
                </div>
-               <a href="http://tavendo.de" target="_blank">
+               <!-- <a href="http://tavendo.de" target="_blank">
                   <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
                </a>
-               <img id="webmq_logo" src="../../img/webmq_logo.png">
+               <img id="webmq_logo" src="../../img/webmq_logo.png"> -->
+               <a class="navbar-brand" href="#">
+               <img src="../../img/crossbar_icon_inverted.png" alt="crossbar logo inverted" width="60" height="60">
+               <span class="fontFace">
+                  <span>Crossbar</span><span>.io</span>
+               </span>
+            </a>
             </div>
             <center class="githubwrapper">
                <a class="github" href="https://github.com/tavendo/WebMQDemo/tree/master/web/demo/dashboard">Source Code</a>
-            </center>      
+            </center>
          </header>
          <div id="dashboard_01"  data-bind="style: { display: dashboard_01_display }">
 
@@ -525,7 +531,7 @@
             Status: <span class="statusline"></span>
          </div>
 
-         <button id="helpButton" class="button">?</button> 
+         <button id="helpButton" class="button">?</button>
 
          <div class="info_bar" style="display: none;">
 
@@ -533,11 +539,11 @@
          </p>
          <ul>
             <li>
-               All changes in the dashboard occur in response to messages routed through an instance of Tavendo WebMQ. 
-               Information the instance used is displayed in the status line at the bottom of the demo box. 
+               All changes in the dashboard occur in response to messages routed through the instance of Crossbar.io
+               displayed in the status line at the bottom of the demo box.
             </li>
             <li>
-               The dashboard can receive data from the Dashboard Demo Controls (next item on the demo overview page).
+               The dashboard can receive data from the Dashboard Controls (next item on the demo overview page).
             </li>
          </ul>
 
