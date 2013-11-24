@@ -149,7 +149,8 @@ function onPadButtonDown(topicUri, event) {
       }
 
       buttons[event.b].pressed = true;
-      buttons[event.b].btn.style.background = "#ff6600";
+      // buttons[event.b].btn.style.background = "#ff6600";
+      buttons[event.b].btn.style.background = "#d0b800";
    }
 }
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
    <meta charset="utf-8" />
@@ -36,10 +36,12 @@
             <span>Autocomplete</span><br>
             <span>with Oracle Database</span>
          </div>
-         <a href="http://tavendo.de" target="_blank">
-            <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
+         <a class="navbar-brand" href="#">
+            <img src="../../img/crossbar_icon_inverted.png" alt="crossbar logo inverted" width="60" height="60">
+            <span class="fontFace">
+               <span>Crossbar</span><span>.io</span>
+            </span>
          </a>
-         <img id="webmq_logo" src="../../img/webmq_logo.png">
       </div>
       <center>
          <a href="https://github.com/tavendo/WebMQDemo/tree/master/web/demo/autocomplete">Source Code</a>
@@ -49,32 +51,32 @@
    <div id="demo_body" class="oracle_demo">
 
       <div id="autocompleteSelect">
-         
-      
+
+
          <div id="autocompleteInterface" class="autcompleteBox">
             <span>Enter Name</span>
             <br />
             <span>e.g. 'Gauss, Johann'</span>
             <br />
             <input id="enteredName" type="text" data-bind="value: enteredName, valueUpdate: 'afterkeydown', event: { keydown: handleCursor, keyup: handleCursor }"/>
-         
+
             <div id="autocompleteBox">
-            
+
                <div id="moreAbove" class="moreIndicator">
                   <img src="img/triangle_up_40_grey.png" width="15" height="15"/>
                </div>
-            
+
                <ul id="suggestionsList" data-bind="foreach: autocompleteSuggestions">
                   <li data-bind="text: name, attr: { id: id }, click: $parent.suggestionClicked "></li>
                </ul>
 
-            
+
                <div id="moreBelow" class="moreIndicator">
                   <img src="img/triangle_down_40_grey.png" width="15" height="15" />
                </div>
-            
+
             </div>
-            
+
          </div>
 
          <div id="searchWithin">
@@ -96,8 +98,8 @@
                Items cached: <span data-bind="text: currentCacheSize"></span>
             </div>
          </div>
-                   
-      
+
+
       </div>
 
       <div id="dataDisplay" class="autcompleteBox">
@@ -129,7 +131,7 @@
          </div>
 
          <div id="requestedDetailsStatic" class="requestedDetails backgroundInfo">
-               Requests sent: 
+               Requests sent:
                <span  data-bind="text: requestedDetailsStatic"></span>
          </div>
 
@@ -137,9 +139,9 @@
       </div>
 
 
-      <button id="helpButton" class="button webmq_demo_button">?</button> 
-      
-      
+      <button id="helpButton" class="button webmq_demo_button">?</button>
+
+
 
 
       <div class="status_line">
@@ -153,10 +155,10 @@
          </p>
          <ul>
             <li>
-               The demo is connected to the Oracle database via Tavendo WebMQ.
+               The demo is connected to the Oracle database via Crossbar.io.
             </li>
             <li>
-               All client logic is local to the browser, all business logic is in the database. Tavendo WebMQ  manages only the messaging interaction between the two.
+               All client logic is local to the browser, all business logic is in the database. Crossbar.io  manages only the messaging interaction between the two.
             </li>
             <li>
                Each change of the search string in the autocomplete box results in a call to the Oracle database.
@@ -174,7 +176,7 @@
                      Import the data into your Oracle database:
                      <br />
                      <pre>
-      sqlldr webmqdemo/webmqdemo@192.168.1.100:1521/orcl 
+      sqlldr webmqdemo/webmqdemo@192.168.1.100:1521/orcl
                      control=persondata.ctl data=persondata_en.csv
                      </pre>
                      (single line, change to the IP of you instance of WebMQ, adjust file paths if necessary)
@@ -189,13 +191,13 @@
                   </li>
 
                </ol>
-            </li>            
-            
+            </li>
+
          </ul>
 
 
    </div>
-      
+
       <div id="error_overlay" class="error_overlay" style="display:none;">
 
          <div id="non_specific_error" class="error_overlay_content_block">
@@ -216,11 +218,11 @@
                   the Oracle database is reachable
                </li>
                <li>
-                  the repository schema and the demo schema have been installed 
+                  the repository schema and the demo schema have been installed
                </li>
             </ul>
             <p>
-               Whether the Oracle database is reachable and the necessary schemas have been installed 
+               Whether the Oracle database is reachable and the necessary schemas have been installed
                can easily be checked by using the 'Test' buttons next to the respective schema login data
                on the Oracle Connects tab.
             </p>
@@ -230,16 +232,17 @@
          </div>
 
          <div id="working_version" class="error_overlay_content_block">
-            To view a working version of this demo, please go to 
+<!--             To view a working version of this demo, please go to
             <a href="http://webmq.tavendo.de/demo/gridfilter/gridfilter.html">
                the online demo
             </a>
-            on the Tavendo website.
+            on the Tavendo website. -->
+            Insert link to hostd demo on the Crossbar website once this is up.
          </div>
       </div>
-   
-      
+
+
    </div>
-   
+
 </body>
 </html>

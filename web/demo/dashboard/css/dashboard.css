@@ -39,16 +39,22 @@ a > img
    /*min-height: 1200px;*/
    position: relative;
    /*width: 100%;*/
-   min-width: 1200px; 
+   min-width: 1200px;
 }
 
 .background_gradient
 {
-   background-image: -moz-linear-gradient(top right, #7F2F09, #F54D00);
+   /*background-image: -moz-linear-gradient(top right, #7F2F09, #F54D00);
    background-image: -webkit-linear-gradient(top right, #7F2F09, #F54D00);
    background-image: -o-linear-gradient(top right, #7F2F09, #F54D00);
    background-image: linear-gradient(top right, #7F2F09, #F54D00);
-   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f54d00', endColorstr='#7f2f09',GradientType=1 );
+   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f54d00', endColorstr='#7f2f09',GradientType=1 );*/
+
+
+   background-image: -moz-linear-gradient(top right, #CACACA, #5E5E5E);
+   background-image: -webkit-linear-gradient(top right, #CACACA, #5E5E5E);
+   background-image: -o-linear-gradient(top right, #CACACA, #5E5E5E);
+   background-image: linear-gradient(to top right, #CACACA, #5E5E5E);
 }
 
 
@@ -114,7 +120,7 @@ header {
    margin: 3em auto;
    border-collapse: separate;
    border-spacing: 10px;
-   
+
 }
 
 .widget
@@ -143,7 +149,7 @@ header {
    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.65);
    width: 100%;
    color: rgba(248, 248, 248, 0.88);
-   border-bottom: 1px solid #f60;
+   border-bottom: 1px solid #d0b800;
    margin: 0 0 1em 0;
    padding: 0 0 0.2em 0.1em;
 }
@@ -767,5 +773,5 @@ arduino_button.arduin_button_active:hover
 {
    position: relative;
    left: 90%;
-   margin-bottom: 5em; 
+   margin-bottom: 5em;
 }

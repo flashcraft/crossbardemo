@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
    <meta charset="utf-8" />
@@ -37,14 +37,16 @@
          <div id="demo_title">
             <span>BeatBox</span>
          </div>
-         <a href="http://tavendo.de" target="_blank">
-            <img id="tavendo_logo" src="../../img/tavendo_logo_simple.png">
+         <a class="navbar-brand" href="#">
+            <img src="../../img/crossbar_icon_inverted.png" alt="crossbar logo inverted" width="60" height="60">
+            <span class="fontFace">
+               <span>Crossbar</span><span>.io</span>
+            </span>
          </a>
-         <img id="webmq_logo" src="../../img/webmq_logo.png">
       </div>
       <center>
          <a href="https://github.com/tavendo/WebMQDemo/tree/master/web/demo/beatbox">Source Code</a>
-      </center>      
+      </center>
    </header>
 
    <div id="demo_body">
@@ -103,22 +105,22 @@
 
       <div class="info_bar" style="display: none">
 
-         <p class="info_bar_heading">This demo gives a good demonstration of the latencies involved in using Tavendo WebMQ</p>
+         <p class="info_bar_heading">This demo gives a good demonstration of the latencies involved in using Crossbar.io</p>
          <ul>
             <li>
                Control the playback of four different audio samples using the four controller pads (A - D). Pads can be controlled via keyboard ('A', 'B', 'C', 'D') as well. Audio playback requires browser support for HTML5 audio.
             </li>
             <li>
-               All interactions on this demo occur in response to messages routed through a hosted instance of Tavendo WebMQ. Information on where this is hosted is displayed in the status line at the bottom of the demo box.
+               All interactions on this demo occur in response to messages routed through the instance of Crossbar.io displayed in the status line at the bottom of the demo box.
             </li>
             <li>
                Works across several tabs or browsers by setting a common controller channel number in all instances.
             </li>
             <li>
-               'Publish Event' toggles whether pad presses are routed through our hosted demo instance of  Tavendo WebMQ.
+               'Publish Event' toggles whether pad presses are routed through our hosted demo instance of Crossbar.io.
             </li>
             <li>
-               In 'Direct Mode', samples are triggered directly instead of on receiving an event from the hosted demo instance of Tavendo WebMQ.
+               In 'Direct Mode', samples are triggered directly instead of on receiving an event from the hosted demo instance of Crossbar.io.
             </li>
             <li>
                When testing in several browsers or tabs in parallel locally, enabling audio in only one browser avoids flanging due to slight cross-browser/tab delays in playback.
@@ -129,8 +131,8 @@
 
          </ul>
 
-      </div>    
-         
+      </div>
+
    </div>
 
 </body>
