@@ -183,12 +183,37 @@ header {
 #header_inner
 {
    position: relative;
-   width: 1303px;
+   width: 90%;
    height: 100%;
    margin:auto;
    padding: 0;
    color: #666;
    text-align: center;
+}
+
+@media (max-width: 1100px) {
+   #header_inner {
+      text-align: right;
+   }
+}
+
+@media (max-width: 610px) {
+   .page-wrap .navbar-brand,
+   #demo_title {
+      float: left;
+      position: relative;
+   }
+
+   header {
+      height: auto;
+   }
+
+   .page-wrap #demo_title {
+    padding-bottom: 1em;
+
+
+    text-align: center;
+}
 }
 
 #demo_title
@@ -211,18 +236,17 @@ header {
    line-height: 38px;
 }
 
-#crossbar_logo
+/*#crossbar_logo
 {
    position: absolute;
    left: 20px;
    bottom: 17px;
-}
+}*/
 
 .navbar-brand {
     position: absolute;
-
     top: 21px;
-    left: 0px;
+    left: 0;
     text-decoration: none;
 }
 
@@ -251,6 +275,7 @@ header {
 
    text-align: center;
    font-size: 22px;
+   margin-bottom: 1em;
 }
 #demos_cta  a {
    text-decoration: none;
@@ -273,11 +298,8 @@ header {
 
 #demo_body
 {
-   width: 1580px;
-   /*width: 120%;*/
-   margin: 1em auto;
-   -webkit-transform: scale(0.9);
-   transform: scale(0.8);
+   width: 100%;
+   margin: 2em auto;
 }
 .wide #demo_body
 {
@@ -288,7 +310,8 @@ header {
 .demos_list
 {
    list-style: none;
-   margin: 2em 0 0 -2em;
+   margin: 0 auto;
+   min-height: 100px;
 }
 
 .demos_list > li
@@ -394,7 +417,6 @@ html,
 body
 {
    height: 100%;
-   min-width: 1580px;
 }
 
 .page-wrap
@@ -417,4 +439,9 @@ body
    clear: both;
 
    background-color: #000;
+}
+
+.clearboth {
+   float: none;
+   clear: both;
 }

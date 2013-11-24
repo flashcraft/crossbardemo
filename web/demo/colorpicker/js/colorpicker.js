@@ -19,7 +19,7 @@ function setupDemo() {
 }
 
 function afterAuth() {
-   $.farbtastic('#picker0').setColor("#f60");
+   $.farbtastic('#picker0').setColor("#d0b800");
    $.farbtastic('#picker1').setColor("#555");
    $.farbtastic('#picker2').setColor("#fff");
 };
