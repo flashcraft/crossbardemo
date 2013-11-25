@@ -78,7 +78,7 @@ function main (session) {
       sheet.getCell(0, 0).value(ticks);
    }, 1000);
 
-   var slidersbaseUri = "http://autobahn.tavendo.de/public/demo/sliders/123456#";
+   var slidersbaseUri = "http://crossbar.io/crossbar/demo/sliders/123456#";
 
    // Master volume
    sheet.getCell(2, 0).value(0);

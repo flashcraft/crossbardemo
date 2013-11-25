@@ -1,10 +1,13 @@
 /******************************************************************************
  *
- *  Copyright 2012 Tavendo GmbH. All rights reserved.
+ *  Copyright 2012-2013 Tavendo GmbH.
+ *
+ *  Licensed under the Apache 2.0 license
+ *  http://www.apache.org/licenses/LICENSE-2.0.html
  *
  ******************************************************************************/
 
-var channelBaseUri = "http://tavendo.de/webmq/demo/notifications/";
+var channelBaseUri = "http://crossbar.io/crossbar/demo/notifications/";
 
 var notificationCount = null;
 

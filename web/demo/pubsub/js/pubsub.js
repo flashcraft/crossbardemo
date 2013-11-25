@@ -1,11 +1,14 @@
 /******************************************************************************
  *
- *  Copyright 2012 Tavendo GmbH. All rights reserved.
+ *  Copyright 2012-2013 Tavendo GmbH.
+ *
+ *  Licensed under the Apache 2.0 license
+ *  http://www.apache.org/licenses/LICENSE-2.0.html
  *
  ******************************************************************************/
 
 var hubRestApi = get_appliance_url("hub-web", "http://localhost:8080");
-var channelBaseUri = "http://tavendo.de/webmq/demo/pubsub/";
+var channelBaseUri = "http://crossbar.io/crossbar/demo/pubsub/";
 
 var sendTime = null;
 var recvTime = null;
@@ -59,7 +62,7 @@ function setupDemo() {
    }
    pubMessageBtn.disabled = false;
 
- 
+
    // using jQuery because IE8 handles .onkeyup differently
    $(pubTopic).keyup(function(e) {
 

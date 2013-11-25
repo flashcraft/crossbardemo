@@ -13,7 +13,7 @@ There is no backend for this demo. All messaging is mediated by Tavendo WebMQ, a
 You can however also trigger notifications from Oracle. Open the demo in your browser and then issue the following PL/SQL block from Oracle:
 
 	BEGIN
-	   webmq.publish('http://tavendo.de/webmq/demo/notifications/368001', 'Hello from Oracle!!!');
+	   webmq.publish('http://crossbar.io/crossbar/demo/notifications/368001', 'Hello from Oracle!!!');
 	END;
 	/
 

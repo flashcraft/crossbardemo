@@ -1,14 +1,17 @@
 /******************************************************************************
  *
- *  Copyright 2012 Tavendo GmbH. All rights reserved.
+ *  Copyright 2012-2013 Tavendo GmbH.
+ *
+ *  Licensed under the Apache 2.0 license
+ *  http://www.apache.org/licenses/LICENSE-2.0.html
  *
  ******************************************************************************/
 
-/* 
+/*
    Requires the following elements to be present in the HTML:
       - .statusline - displays the connection state
       - #controller-channel - to display the currently used channel
-      - #controller-channel-switch - button to start switch to another channel 
+      - #controller-channel-switch - button to start switch to another channel
       - #controller-channel-cancel - button to cancel changing to another channel
 */
 /*
@@ -38,7 +41,7 @@ function checkChannelId(id) {
 }
 
 function isValueChar(e) {
-   
+
    //alert(evt);
    var kc = e.keyCode;
    if ((kc > 8 && kc < 46 && kc !== 32) || (kc > 90 && kc < 94) || (kc > 111 && kc < 186) ) {
@@ -159,14 +162,14 @@ $(document).ready(function()
    if (windowUrl.indexOf('?') !== -1) {
       var setupInfoRaw = windowUrl.split('?')[1];
       var setupInfoSeparated = setupInfoRaw.split('&');
-      
+
       for (var i = 0; i < setupInfoSeparated.length; i++) {
          var pair = setupInfoSeparated[i].split('=');
          var key = pair[0];
          var value = pair[1];
          setupInfoDictionary[key] = value;
       }
-      
+
    }
    if ("channel" in setupInfoDictionary) {
       controllerChannel.value = setupInfoDictionary.channel;
@@ -205,5 +208,5 @@ $(document).ready(function()
    setupDemo();
 
    connect();
-   
+
 });

@@ -52,7 +52,7 @@ $(document).ready(function () {
          updateStatusline("Connected to " + session.wsuri() + " in session " + session.sessionid());
 
          // set an URI prefix
-         session.prefix("form", "http://tavendo.de/webmq/demo/product#");
+         session.prefix("form", "http://crossbar.io/crossbar/demo/product#");
 
          // request full data set initially and fill grid
          session.call("form:read", {start: 0, limit: 100}).then(fillList, session.log);
@@ -518,7 +518,7 @@ function ViewModel () {
       var changeFocus = true;
 
       if ( !locallyDeleted  ) {
-         // check whether any other element is in focus or if we need to focus a new element         
+         // check whether any other element is in focus or if we need to focus a new element
          var focussedElementExists = false;
          for (var i = 0; i < self.listData().length; i++ ) {
             if (self.listData()[i].itemState() === "isBeingDisplayed") {

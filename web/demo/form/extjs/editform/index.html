@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
-   <head>        
+   <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  
+
       <script src="../../../../extjs/ext-all-dev.js"></script>
       <link rel="stylesheet" type="text/css" href="../../../../extjs/ext-theme-neptune-all.css">
       <script src="../../../../extjs/ext-theme-neptune.js"></script>
 
       <script src="../../../../js/jquery.min.js"></script>
-      <script src="../../../../js/autobahn.min.js"></script>  
+      <script src="../../../../js/autobahn.min.js"></script>
       <script src="../../../../js/autobahnextjs-dev.js"></script>
 
       <title>WebMQ Form Demo</title>
    </head>
-   <body> 
+   <body>
       <script>
          // turn on WAMP debug output
          ab.debug(true, false, false);
@@ -21,7 +21,7 @@
          // use jQuery deferreds
          ab.Deferred = $.Deferred;
 
-         var baseUri = "http://tavendo.de/webmq/demo/product#";
+         var baseUri = "http://crossbar.io/crossbar/demo/product#";
 
          Ext.application({
             extend: 'AB.app.WampApplication',
@@ -38,7 +38,7 @@
 
 //----------- FORM ----------------
              myform = Ext.create('Ext.form.Panel',
-               {   
+               {
                       title: 'New Item',
                       padding: '10 10 10 10',
                       margins: '0 10 10 10',
@@ -64,7 +64,7 @@
                           xtype: 'textfield',
                           name: 'orderNumber',
                           regex: new RegExp("^[A-Z]{3,3}-[0-9]{6,6}-[A-Z]{2,2}$"),
-                          maskRe: new RegExp("^[A-Z0-9-]$"),                          
+                          maskRe: new RegExp("^[A-Z0-9-]$"),
                           allowBlank: false,
                           fieldLabel: 'Order Number'
                       },
@@ -126,7 +126,7 @@
                       }]
                   });
 
-//----------- Record Model for Grid ----------------   
+//----------- Record Model for Grid ----------------
 
                // define ExtJS model for "Product"
                Ext.define('Product', {
@@ -198,7 +198,7 @@
 
             //wireup grid with form
             mygrid.getSelectionModel().on('selectionchange', function(model, records) {
-                                           if (records.length > 0){  
+                                           if (records.length > 0){
                                            myform.loadRecord(records[0]);
                                            myform.setTitle('Edit Item');
                                         }
@@ -217,10 +217,10 @@
                      xtype:'container',
                      layout:'hbox',
                      items:[ mygrid,
-                     myform   
+                     myform
                   ]
                   }
-                             
+
                   ]
                  }
                );

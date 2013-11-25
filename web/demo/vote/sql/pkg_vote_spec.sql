@@ -9,7 +9,7 @@ AS
    /**
     * RPC/Event URI prefix
     */
-   BASEURI CONSTANT VARCHAR2(200) := 'http://tavendo.de/webmq/demo/vote#';
+   BASEURI CONSTANT VARCHAR2(200) := 'http://crossbar.io/crossbar/demo/vote#';
 
    /**
     * Get votes.

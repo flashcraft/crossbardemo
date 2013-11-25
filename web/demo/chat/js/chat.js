@@ -1,11 +1,14 @@
 
 /******************************************************************************
  *
- *  Copyright 2012 Tavendo GmbH. All rights reserved.
+ *  Copyright 2012-2013 Tavendo GmbH.
+ *
+ *  Licensed under the Apache 2.0 license
+ *  http://www.apache.org/licenses/LICENSE-2.0.html
  *
  ******************************************************************************/
 
-var channelBaseUri = "http://tavendo.de/webmq/demo/chat/";
+var channelBaseUri = "http://crossbar.io/crossbar/demo/chat/";
 
 var initialChannel = null;
 var presetNicks = ["Nick", "Knatterton", "Micky", "Maus", "Donald", "Bruce", "Wayne", "Clark", "Kent", "Sarah", "Connor", "Mary", "Shelley", "Rosemary", "Wilma", "Louis", "Selina", "Barbara", "Gordon", "Herbert", "The Count"];
@@ -41,14 +44,14 @@ var chatWindow = null;
 
 function switchChannel(oldChannelID, newChannelID) {
    // either oldChannelID or newChannelID could be null = start page with no demo selected
-   if (oldChannelID) {     
+   if (oldChannelID) {
       sess.unsubscribe("event:" + oldChannelID);
-   }   
+   }
 
    sess.prefix("event", channelBaseUri);
 
    sess.subscribe("event:" + newChannelID, onMessage);
-   
+
 
    // clear messages box
    $("#messages_box").html('');
@@ -119,7 +122,7 @@ function onAuth(permissions) {
    location.hash = ""; // reset in case of reload with hash "#1"
    location.hash = "#1";
 
-   
+
 };
 
 
@@ -143,7 +146,7 @@ $(document).ready(function() {
 
 function onHashChanged(evt) {
    //examineMe = evt;
-   
+
    //var newUrl = evt.newURL; // IE event does not contain this value
    //var oldUrl = evt.oldURL; // IE event does not contain this value
 
@@ -171,17 +174,17 @@ function onHashChanged(evt) {
 
    // indicate presently picked channel via highlighting
    var channelSelectors = $(".chat_channel_selector");
- 
+
    for (var i = 0; i < channelSelectors.length; i++) {
- 
+
       if (i + 1 == newChannelID) {
- 
+
          $(channelSelectors[i]).addClass("channel_selected");
          //channelSelectors[i].classList.add("channel_selected");
       }
-      
+
       else if ($(channelSelectors[i]).hasClass("channel_selected")) {
- 
+
          $(channelSelectors[i]).removeClass("channel_selected");
          //channelSelectors[i].classList.remove("channel_selected");
       }
@@ -190,7 +193,7 @@ function onHashChanged(evt) {
    // set the channel title on the chat window
    $("#channel_title").text("Channel " + newChannelID);
 
-   
+
 }
 
 
@@ -202,7 +205,7 @@ function setupDemo() {
 
    // add 'onhashchange' event to trigger the channel change + chat window display
    window.onhashchange = onHashChanged;
-   
+
    //// initial hide of chat window
    //$("#chat_window").toggle()
 
@@ -272,7 +275,7 @@ function sendMessage(messageInput) {
    payload.nick = currentNick;
    sess.publish("event:" + channel, payload, true);
 
-   // clear the message input 
+   // clear the message input
    messageInput.value = '';
    messageInput.placeholder = '';
 
@@ -291,16 +294,16 @@ function changeOwnNick(currentNick) {
 
 
 function getNickColor(nickString) {
-   
+
    // check if nickstring has color assigned, and return this
    if (!(nickString in assignedNicks)) {
-      
+
       // count the nicks
       var nickCounter = 0;
       for (var i in assignedNicks) {
          if (assignedNicks.hasOwnProperty(i)) {
             nickCounter += 1;
-            
+
          }
       }
 

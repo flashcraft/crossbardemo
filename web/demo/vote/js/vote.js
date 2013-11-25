@@ -50,14 +50,14 @@ function start() {
 
 function main (session) {
    // subscribe to future vote event
-   session.subscribe("http://tavendo.de/webmq/demo/vote#onvote",
+   session.subscribe("http://crossbar.io/crossbar/demo/vote#onvote",
       function(topicUri, event) {
          document.getElementById("votes" + event.subject).value =
             event.votes;
       });
 
    // get the current vote count
-   session.call("http://tavendo.de/webmq/demo/vote#get").then(
+   session.call("http://crossbar.io/crossbar/demo/vote#get").then(
       function(res){
          for(var i = 0; i < res.length; i++) {
             document.getElementById("votes" + res[i].subject).value =
@@ -70,13 +70,13 @@ function main (session) {
       getElementsByTagName("button");
    for (var i = 0; i < voteButtons.length; i++) {
       voteButtons[i].onclick = function(evt) {
-         session.call("http://tavendo.de/webmq/demo/vote#vote",
+         session.call("http://crossbar.io/crossbar/demo/vote#vote",
                evt.target.id).then(session.log, session.log);
       };
    }
 
    // subscribe to vote reset event
-   session.subscribe("http://tavendo.de/webmq/demo/vote#onreset",
+   session.subscribe("http://crossbar.io/crossbar/demo/vote#onreset",
       function() {
          var voteCounters = document.getElementById("voteContainer").
             getElementsByTagName("input");
@@ -85,9 +85,9 @@ function main (session) {
          }
       });
 
-   // wire up reset button   
+   // wire up reset button
    document.getElementById("resetVotes").onclick = function() {
-      session.call("http://tavendo.de/webmq/demo/vote#reset").
+      session.call("http://crossbar.io/crossbar/demo/vote#reset").
          then(session.log, session.log);
    };
 }
