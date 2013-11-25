@@ -7,7 +7,7 @@
  *
  ******************************************************************************/
 
-var hubRestApi = get_appliance_url("hub-web", "http://localhost:8080");
+var hubRestApi = get_appliance_url("hub-web", "http://127.0.0.1:8090");
 var channelBaseUri = "http://crossbar.io/crossbar/demo/pubsub/";
 
 var sendTime = null;
@@ -24,8 +24,9 @@ var pubMessageBtn = null;
 
 
 function updateCurl() {
-   var cbody = encodeURI('"' + $("#pub_message").val() + '"');
-   curlLine.value = 'curl -d "topicuri=' + channelBaseUri + $("#pub_topic").val() + '&body=' + cbody + '" "' + hubRestApi + '"';
+   //var cbody = encodeURI('"' + $("#pub_message").val() + '"');
+   var cbody = $("#pub_message").val();
+   curlLine.value = "curl -d 'topic=" + channelBaseUri + $("#pub_topic").val() + "&event=\"" + cbody + "\"' " + hubRestApi;
 }
 
 

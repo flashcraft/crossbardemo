@@ -17,7 +17,7 @@ var oldNick;
 var assignedNicks = {};
 var nickColors = ["black", "orange", "green", "blue", "red"];
 
-var wsuri = get_appliance_url("hub-websocket", "ws://localhost/ws");
+var wsuri = get_appliance_url("hub-websocket", "ws://127.0.0.1:8080/ws");
 var sess = null;
 var retryCount = 0;
 var retryDelay = 2;

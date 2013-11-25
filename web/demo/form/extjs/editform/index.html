@@ -11,7 +11,7 @@
       <script src="../../../../js/autobahn.min.js"></script>
       <script src="../../../../js/autobahnextjs-dev.js"></script>
 
-      <title>WebMQ Form Demo</title>
+      <title>Crossbar.io Form Demo</title>
    </head>
    <body>
       <script>
@@ -27,14 +27,11 @@
             extend: 'AB.app.WampApplication',
             name:'ABexample',
 
-            // Tavendo WebMQ server URL
-            websocketURI: ab.getServerUrl(),
+            // Crossbar.io server URL
+            websocketURI: ab.getServerUrl("ws", "ws://127.0.0.1:8080/ws"),
 
             // this fires when WAMP session was established
             launch: function () {
-
-
-
 
 //----------- FORM ----------------
              myform = Ext.create('Ext.form.Panel',
@@ -162,7 +159,7 @@
                      frame:true,
                      height: 400,
                      width: 800,
-                     title: 'WebMQ Edit Form Demo',
+                     title: 'Crossbar.io Edit Form Demo',
                      store: Ext.create('Ext.data.Store', {
                         autoLoad: true,
                         autoSync: false,  // to prevent the store from firing crud RPCs when receiving crud events

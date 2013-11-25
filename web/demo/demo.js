@@ -18,7 +18,7 @@
    Checks for channel information encoded in the URL to automatically switch to that channel
 */
 
-var wsuri = get_appliance_url("hub-websocket", "ws://localhost/ws");
+var wsuri = get_appliance_url("hub-websocket", "ws://127.0.0.1:8080/ws");
 var sess = null;
 var retryCount = 0;
 var retryDelay = 2;

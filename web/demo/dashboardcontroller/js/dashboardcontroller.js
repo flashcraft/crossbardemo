@@ -7,10 +7,6 @@
  *
  ******************************************************************************/
 
-/***********
- *    websocket connection to appliance
- ***********/
-
 var session = null;
 
 $(document).ready(function()
@@ -30,13 +26,13 @@ function connect() {
    // use jQuery deferreds
    ab.Deferred = $.Deferred;
 
-   // Connect to Tavendo WebMQ ..
+   // Connect to Crossbar.io ..
    //
    ab.launch(
       // WAMP app configuration
       {
-         // Tavendo WebMQ server URL
-         wsuri: ab.getServerUrl(),
+         // Crossbar.io server URL
+         wsuri: ab.getServerUrl("ws", "ws://127.0.0.1:8080/ws"),
          // authentication info
          appkey: null, // authenticate as anonymous
          appsecret: null,
