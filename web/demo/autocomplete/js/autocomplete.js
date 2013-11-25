@@ -1,11 +1,14 @@
 /******************************************************************************
  *
- *  Copyright 2012-2013 Tavendo GmbH. All rights reserved.
+ *  Copyright 2012-2013 Tavendo GmbH.
+ *
+ *  Licensed under the Apache 2.0 license
+ *  http://www.apache.org/licenses/LICENSE-2.0.html
  *
  ******************************************************************************/
 
 var examineMe,
-    channelBaseUri = "http://tavendo.de/webmq/demo/autocomplete#",
+    channelBaseUri = "http://crossbar.io/crossbar/demo/autocomplete#",
     session = null;
 
 // works
@@ -47,7 +50,7 @@ function connect() {
 
          session.prefix("api", channelBaseUri);
 
-         // make call to establish whether necessary oracle connection is available   
+         // make call to establish whether necessary oracle connection is available
          session.call("api:search", "a", { "after": 0, "limit": 10 }).then(ab.log, onOraCallError);
 
          session.call("api:count", "").then(function(count) {
@@ -62,7 +65,7 @@ function connect() {
       }
    );
 
-   
+
 }
 
 function setupDemo() {
@@ -82,7 +85,7 @@ function setupDemo() {
 
 }
 
-var vm = new ViewModel(); // instantiates the view model and makes its methods accessible 
+var vm = new ViewModel(); // instantiates the view model and makes its methods accessible
 
 function ViewModel() {
 
@@ -114,8 +117,8 @@ function ViewModel() {
             break;
          case 38:
             // keydown events are processed to move the selection in the suggestions box
-            // keyup events are used to determine when the user has stopped moving the 
-            // cursor, and the request for the item details is only sent then, based on the 
+            // keyup events are used to determine when the user has stopped moving the
+            // cursor, and the request for the item details is only sent then, based on the
             // global 'currentItemId' variable that was set by the keydown handler
             if (event.type === "keydown") {
                cursorMove("up");
@@ -184,7 +187,7 @@ function onOraCallError(error) {
 
 // global state variables
 var suggestionsArrays = []; // contains the one or more arrays with autocomplete suggestions
-var maxSuggestionsArraysLength = 3; // maximum length of arrays to keep stored locally. should be at least 3. 
+var maxSuggestionsArraysLength = 3; // maximum length of arrays to keep stored locally. should be at least 3.
 
 var arrayPosition = [0, 0]; // current position within the suggestions cache starting from which the currently displayed suggestions in the box are extracted
 // should better be:
@@ -263,7 +266,7 @@ function selectItem(itemId) {
 function requestItemDetails(itemId) {
    var self = this;
 
-   // sends request for item details 
+   // sends request for item details
    currentItemId = itemId; // set to enable check whether return still needed (???? should be set by the calling function, this here should not change values outside of its functional scope)
 
    // for static details
@@ -293,7 +296,7 @@ function cursorMove(direction) {
    var positionChange = direction === "down" ? 1 : -1;
    var newPosition = listPosition + positionChange;
 
-   // limit the maxMoveWithinBox to suggestions list length 
+   // limit the maxMoveWithinBox to suggestions list length
    // if list completely displayed in suggestions box
    var listItems = $("#suggestionsList").children("li");
    var listItemCount = listItems.length;
@@ -309,7 +312,7 @@ function cursorMove(direction) {
       return;
    }
 
-   // check whether comfort zone for the present array has been reached, 
+   // check whether comfort zone for the present array has been reached,
    // for position in first array & not the beginning of the results set
    // or last array and end of the results set not in this array
    if ((arrayPosition[0] === 0 && arrayCounter !== 0) || (arrayPosition[0] === suggestionsArrays.length - 1 && !endInLastArray)) {
@@ -336,8 +339,8 @@ function cursorMove(direction) {
 }
 
 /*
-   returns the current set of suggestions to display in the 
-   suggestions box 
+   returns the current set of suggestions to display in the
+   suggestions box
 */
 function getCurrentSuggestionsSet() {
    var cs = {};
@@ -358,7 +361,7 @@ function getCurrentSuggestionsSet() {
    without any scrolling
 */
 function moveWithinList(newPosition, maxMoveWithinBox, listItems) {
-   // catch special case: no items in list (nothing entered yet, no results back yet) 
+   // catch special case: no items in list (nothing entered yet, no results back yet)
    if (maxMoveWithinBox === 0) {
       return true;
    }
@@ -371,7 +374,7 @@ function moveWithinList(newPosition, maxMoveWithinBox, listItems) {
       // change highlighting to item at position
       updateSuggestions({ "position": listPosition });
 
-      // change currentId      
+      // change currentId
       var newId = listItems[listPosition].id;
       currentItemId = parseInt(newId, 10);
       return true;
@@ -544,8 +547,8 @@ function getSuggestionsItemSet() {
 
 
 // incomplete
-/* 
-   Checks whether the new position within the locally cached results 
+/*
+   Checks whether the new position within the locally cached results
    necessitates the request of a previous/next slice of
    the results set
 */
@@ -663,11 +666,11 @@ function checkComfortZone(newPosition) {
 }
 
 // works
-/* 
+/*
    Evaluates the current content of the selection box
    Modifies it as needed for processing by the backend
-   Sends requests for new autocomplete suggestions + 
-   the size of the current results set   
+   Sends requests for new autocomplete suggestions +
+   the size of the current results set
 */
 function onSelectorChanged() {
    // blank out the currently displayed details
@@ -716,7 +719,7 @@ function onSelectorChanged() {
    //ab.log("ssent", selectValue, set);
    session.call("api:search", selectValue, set).then(onNewSuggestions, ab.log);
 
-   // in parallel: persons count for current string   
+   // in parallel: persons count for current string
    session.call("api:count", selectValue).then(function(count) {
       vm.currentMatches(count);
    }, ab.log);
@@ -732,7 +735,7 @@ function onSelectorChanged() {
 /*
    Handles new autocomplete suggestions results set
    Checks whether the current set contains the entire results set
-   Sends the relevant part of the set on to be displayed in the 
+   Sends the relevant part of the set on to be displayed in the
    suggestions box
 */
 function onNewSuggestions(data) {
@@ -806,7 +809,7 @@ function autoCompleteSuggestion(data) {
  *        UI update functions       *
  ************************************/
 // works
-/* 
+/*
    Handles display & updates contents of the suggestions box
 */
 function updateSuggestions(data) {
@@ -815,7 +818,7 @@ function updateSuggestions(data) {
    //    - current navigation position within the list ("position", optional)
    //    - toggle for display of "more above" and "more below" indicators ("above"/"below", optional)
    //    - toggle for display of the box ("display", optional)
-   // fully empty dict 
+   // fully empty dict
 
    // fill box with suggestion items
    if ("items" in data) {

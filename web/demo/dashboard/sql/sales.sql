@@ -32,7 +32,7 @@ BEGIN
    l_event.put('region', :new.region);
    l_event.put('units', :new.units);
    l_event.put('price', :new.price);
-   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#onSale', l_event);
+   crossbar.publish('http://crossbar.io/crossbar/demo/dashboard#onSale', l_event);
 END;
 /
 
@@ -98,9 +98,9 @@ BEGIN
    END LOOP;
 
    -- publish prepared events
-   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#totalUnits', l_units_total);
-   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#totalAsp', l_asp_total);
-   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#totalRevenue', l_revenue_total);
+   crossbar.publish('http://crossbar.io/crossbar/demo/dashboard#totalUnits', l_units_total);
+   crossbar.publish('http://crossbar.io/crossbar/demo/dashboard#totalAsp', l_asp_total);
+   crossbar.publish('http://crossbar.io/crossbar/demo/dashboard#totalRevenue', l_revenue_total);
 END;
 /
 
@@ -177,9 +177,9 @@ BEGIN
    END LOOP;
 
    -- publish prepared events
-   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#unitsByProduct', l_units_by_product);
-   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#aspByProduct', l_asp_by_product);
-   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#revenueByProduct', l_revenue_by_product);
+   crossbar.publish('http://crossbar.io/crossbar/demo/dashboard#unitsByProduct', l_units_by_product);
+   crossbar.publish('http://crossbar.io/crossbar/demo/dashboard#aspByProduct', l_asp_by_product);
+   crossbar.publish('http://crossbar.io/crossbar/demo/dashboard#revenueByProduct', l_revenue_by_product);
 END;
 /
 
@@ -256,8 +256,8 @@ BEGIN
    END LOOP;
 
    -- publish prepared events
-   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#unitsByRegion', l_units_by_region);
-   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#aspByRegion', l_asp_by_region);
-   crossbar.publish('http://tavendo.de/webmq/demo/dashboard#revenueByRegion', l_revenue_by_region);
+   crossbar.publish('http://crossbar.io/crossbar/demo/dashboard#unitsByRegion', l_units_by_region);
+   crossbar.publish('http://crossbar.io/crossbar/demo/dashboard#aspByRegion', l_asp_by_region);
+   crossbar.publish('http://crossbar.io/crossbar/demo/dashboard#revenueByRegion', l_revenue_by_region);
 END;
 /

@@ -9,7 +9,7 @@ AS
    /**
     * RPC/Event URI prefix
     */
-   BASEURI CONSTANT VARCHAR2(200) := 'http://tavendo.de/webmq/demo/product#';
+   BASEURI CONSTANT VARCHAR2(200) := 'http://crossbar.io/crossbar/demo/product#';
 
    /**
     * Get objects. This procedure can drive ExtJS grids and properly
@@ -41,7 +41,7 @@ AS
     * Get objects by filter.
     *
     * Example:
-    *   session.call("http://tavendo.de/webmq/demo/koform#filter", {name: {value: 'S', type: 'prefix'}}, 10).then(ab.log, ab.log);
+    *   session.call("http://crossbar.io/crossbar/demo/koform#filter", {name: {value: 'S', type: 'prefix'}}, 10).then(ab.log, ab.log);
     *
     *      NAME         TYPE
     *      --------------------------------------

@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- *  Copyright 2012-2013 Tavendo GmbH. 
+ *  Copyright 2012-2013 Tavendo GmbH.
  *
  *                                Apache License
  *                          Version 2.0, January 2004
@@ -8,7 +8,7 @@
  *
  ******************************************************************************/
 
-var channelBaseUri = "http://autobahn.tavendo.de/public/demo/sliders/";
+var channelBaseUri = "http://crossbar.io/crossbar/demo/sliders/";
 var newWindowLink = null;
 
 
@@ -26,7 +26,7 @@ function setupDemo() {
    $("#master").slider({
       slide: function(event, ui) {
          sess.publish("event:master", ui.value);
-         sess.publish("http://tavendo.de/webmq/demo/gauges#0", ui.value);
+         sess.publish("http://crossbar.io/crossbar/demo/gauges#0", ui.value);
       }
    });
 

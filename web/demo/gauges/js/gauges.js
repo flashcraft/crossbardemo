@@ -88,7 +88,7 @@ function main (session) {
 
    // wire up gauges for PubSub events
    //
-   var baseUri = "http://tavendo.de/webmq/demo/gauges#";
+   var baseUri = "http://crossbar.io/crossbar/demo/gauges#";
 
    for (var k = 0; k < gauges.length; ++k) {
       (function (p) {

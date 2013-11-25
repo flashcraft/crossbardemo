@@ -1,6 +1,9 @@
 /******************************************************************************
  *
- *  Copyright 2012 Tavendo GmbH. All rights reserved.
+ *  Copyright 2012-2013 Tavendo GmbH.
+ *
+ *  Licensed under the Apache 2.0 license
+ *  http://www.apache.org/licenses/LICENSE-2.0.html
  *
  ******************************************************************************/
 
@@ -109,8 +112,8 @@ $(document).ready(function() {
          updateStatusline("Connected to " + session.wsuri() + " in session " + session.sessionid());
 
          ///** define session prefixes ***/
-         session.prefix("event", "http://autobahn.tavendo.de/public/demo/dashboard#");
-         session.prefix("sales", "http://autobahn.tavendo.de/public/demo/dashboard#");
+         session.prefix("event", "http://crossbar.io/crossbar/demo/dashboard#");
+         session.prefix("sales", "http://crossbar.io/crossbar/demo/dashboard#");
 
 
          // subscribe to events
@@ -131,7 +134,7 @@ $(document).ready(function() {
 
 
          // Oracle Dashboard Demo
-         session.prefix("orasales", "http://tavendo.de/webmq/demo/dashboard#");
+         session.prefix("orasales", "http://crossbar.io/crossbar/demo/dashboard#");
 
          // sales events
          session.subscribe("orasales:totalRevenue", onRevenue);

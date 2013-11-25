@@ -1,10 +1,13 @@
 /******************************************************************************
  *
- *  Copyright 2012-2013 Tavendo GmbH. All rights reserved.
+ *  Copyright 2012-2013 Tavendo GmbH.
+ *
+ *  Licensed under the Apache 2.0 license
+ *  http://www.apache.org/licenses/LICENSE-2.0.html
  *
  ******************************************************************************/
 
-var channelBaseUri = "http://tavendo.de/webmq/demo/chat/";
+var channelBaseUri = "http://crossbar.io/crossbar/demo/chat/";
 var session = null;
 
 var rows = 20; // number of rows in the result set requested from the database
@@ -15,13 +18,13 @@ var addedItemId;
 
 $(document).ready(function() {
    updateStatusline("Not connected.");
-   
+
    ko.applyBindings(vm);
 
    $("#helpButton").click(function() {
       $(".info_bar").toggle();
    });
-   
+
    connect();
 });
 
@@ -48,10 +51,10 @@ function connect() {
       // session open handler
       function (newSession) {
          session = newSession;
-         
+
          updateStatusline("Connected to " + session.wsuri() + " in session " + session.sessionid());
 
-         session.prefix("api", "http://tavendo.de/webmq/demo/product#");
+         session.prefix("api", "http://crossbar.io/crossbar/demo/product#");
 
          // send request for initial data cut from DB
          session.call("api:filter", {}, rows).then(
@@ -221,7 +224,7 @@ function onItemUpdated(uri, obj){
    vm.tableData()[index].itemState("hasBeenEdited");
    window.setTimeout(function() { vm.tableData()[index].itemState(previousItemState); }, 1400);
 
-   // update the changes 
+   // update the changes
    for(var i in obj) {
       if(obj.hasOwnProperty(i)){
          vm.tableData()[index][i](obj[i]);
@@ -260,7 +263,7 @@ function onItemDeleted(uri, obj){
             if(obj.length > vm.tableData().length){
                // we need to add an object
                // in the DB, at this point multiple items may have been deleted already
-               // we need to find the first item in the results set that is not 
+               // we need to find the first item in the results set that is not
                // part of the displayed set
                for( var i = 0;  i < obj.length; i++ ) {
                   var displayed = false;
@@ -290,9 +293,9 @@ function onItemDeleted(uri, obj){
    }, 1400);
 }
 
-// gives the current index of the item to be updated or deleted 
+// gives the current index of the item to be updated or deleted
 // within the grid
-// return 'undefined' is valid, since the item may not be part of 
+// return 'undefined' is valid, since the item may not be part of
 // the present grid content
 function getIndexFromId(id) {
    var index = "notFound",
@@ -309,7 +312,7 @@ function onOraCallError(error) {
    $("#error_overlay").show();
 }
 
-var vm = new ViewModel(); // instantiates the view model and makes its methods accessible 
+var vm = new ViewModel(); // instantiates the view model and makes its methods accessible
 
 function ViewModel() {
 

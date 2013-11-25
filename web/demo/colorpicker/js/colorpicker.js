@@ -1,7 +1,7 @@
 // total number of color pickers as contained in the HTML
 var colorPickersCount = 3;
 
-var channelBaseUri = "http://autobahn.tavendo.de/public/demo/colorpicker/";
+var channelBaseUri = "http://crossbar.io/crossbar/demo/colorpicker/";
 var newWindowLink = null;
 
 function setupDemo() {

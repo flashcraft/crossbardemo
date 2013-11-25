@@ -36,7 +36,7 @@
    #JSCode
    {
        width: 57%;
-      
+
    }
    #PLSQLCode
    {
@@ -81,17 +81,17 @@
 
 function main (session) {
    // subscribe to future vote event
-   session.subscribe("http://tavendo.de/webmq/demo/vote#onvote", 
+   session.subscribe("http://crossbar.io/crossbar/demo/vote#onvote",
       function(topicUri, event) {
-         document.getElementById("votes" + event.subject).value = 
+         document.getElementById("votes" + event.subject).value =
             event.votes;
       });
 
    // get the current vote count
-   session.call("http://tavendo.de/webmq/demo/vote#get").then(
+   session.call("http://crossbar.io/crossbar/demo/vote#get").then(
       function(res){
          for(var i = 0; i < res.length; i++) {
-            document.getElementById("votes" + res[i].subject).value = 
+            document.getElementById("votes" + res[i].subject).value =
                res[i].votes;
          }
    }, ab.log);
@@ -101,13 +101,13 @@ function main (session) {
       getElementsByTagName("button");
    for(var i = 0; i < voteButtons.length; i++) {
       voteButtons[i].onclick = function(evt) {
-         session.call("http://tavendo.de/webmq/demo/vote#vote", 
+         session.call("http://crossbar.io/crossbar/demo/vote#vote",
                evt.target.id).then(ab.log, ab.log);
       }
    }
 
    // subscribe to vote reset event
-   session.subscribe("http://tavendo.de/webmq/demo/vote#onreset", 
+   session.subscribe("http://crossbar.io/crossbar/demo/vote#onreset",
       function() {
          var voteCounters = document.getElementById("voteContainer").
             getElementsByTagName("input");
@@ -116,9 +116,9 @@ function main (session) {
          }
       });
 
-   // wire up reset button   
+   // wire up reset button
    document.getElementById("resetVotes").onclick = function() {
-      session.call("http://tavendo.de/webmq/demo/vote#reset").
+      session.call("http://crossbar.io/crossbar/demo/vote#reset").
          then(ab.log, ab.log);
    };
 }
@@ -153,9 +153,9 @@ AS
    BEGIN
       -- check args
       --
-      IF p_subject NOT IN ('Banana', 'Lemon', 
+      IF p_subject NOT IN ('Banana', 'Lemon',
          'Chocolate') THEN
-         -- raise custom exception, this gets transformed 
+         -- raise custom exception, this gets transformed
          -- into a proper RPC error return
          --
          webmq.raise(BASEURI || 'invalid_argument',
@@ -334,7 +334,7 @@ arrows.drawArrows = function(obj) {
          arrow.border === "top" ? arrowBox.style.borderTop = "3px solid " + arrow.color : arrowBox.style.borderBottom = "3px solid " + arrow.color;
          arrowBox.style.borderLeft = "3px solid " + arrow.color;
 
-         // fudge factors set the displacement for the beginning/end relative to the line start/middle 
+         // fudge factors set the displacement for the beginning/end relative to the line start/middle
          rightFudge = arrow.rightFudge ? arrow.rightFudge : 0;
          topFudge = arrow.topFudge ? arrow.topFudge : 0;
 
@@ -367,12 +367,12 @@ window.onload = function() {
    window.setTimeout(function() {
       arrows.drawArrows(arrows.fromLeft);
       arrows.drawArrows(arrows.fromRight);
-   }, 0) // without the timer, IE10 tries to draw arrows before syntaxhighlighter has completed   
+   }, 0) // without the timer, IE10 tries to draw arrows before syntaxhighlighter has completed
 };
 
 
    </script>
-   
+
 </body>
 </html>
 
