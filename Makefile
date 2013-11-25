@@ -5,7 +5,7 @@ all:
 	@echo "   test             Test produced Web content (crossbar start --cbdataweb ./build/crossbardemo/web)"
 	@echo "   package          Create package"
 	@echo "   install          Create and install package locally"
-	@echo "   update           Create and update package locally"
+#	@echo "   update           Create and update package locally"
 	@echo "   publish          Create and publish package to PyPI"
 	@echo "   publish_s3       Create and publish package to Crossbar.io on S3"
 	@echo ""
@@ -21,10 +21,11 @@ package:
 	scons
 
 install: package
-	cd ./build/dist; easy_install -f . crossbardemo
+	cd ./build; python setup.py install
+#	cd ./build/dist; easy_install -m -f . crossbardemo
 
-update: package
-	cd ./build/dist; easy_install -U -H None -f . crossbardemo
+#update: package
+#	cd ./build/dist; easy_install -m -U -H None -f . crossbardemo
 
 publish_s3: package
 	scons publish

@@ -34,13 +34,14 @@ pkgfiles.extend(env.CopyFiles('build/' + PACKAGE, env.FindFiles("web")))
 
 ## the Egg
 env['__VERSION__'] = open('version.txt').read().strip()
-egg = env.PyEgg('build/dist/%s-%s-py2.7.egg' % (PACKAGE, env['__VERSION__']), 'build/setup.py')
+pypkg_filenames = ['build/dist/%s-%s%s' % (PACKAGE, env['__VERSION__'], suffix) for suffix in ['.zip', '-py2.7.egg', '.win32.exe']]
+pypkg_files = env.PyPackage(pypkg_filenames, 'build/setup.py')
 
 ## the Egg depends on all package files
-Depends(egg, pkgfiles)
+Depends(pypkg_files, pkgfiles)
 
 ## these files will get fingerprinted
-artifacts = [egg]
+artifacts = [pypkg_files]
 
 
 ## Generate checksum files
