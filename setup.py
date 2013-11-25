@@ -19,27 +19,21 @@ Created by Tavendo GmbH. Get in contact at http://tavendo.com
 
 Demos are open-source licensed under the Apache 2.0 license.
 https://github.com/crossbario/crossbardemo/blob/master/LICENSE
+
+Version:  __VERSION__
+Revision: __REVISION__
 """
 
-
-## See: http://stackoverflow.com/a/7071358/884770
-##
-import re
-VERSIONFILE="crossbardemo/_version.py"
-verstrline = open(VERSIONFILE, "rt").read()
-VSRE = r"^__version__ = ['\"]([^'\"]*)['\"]"
-mo = re.search(VSRE, verstrline, re.M)
-if mo:
-   verstr = mo.group(1)
-else:
-   raise RuntimeError("Unable to find version string in %s." % (VERSIONFILE,))
+## gets replaced during Scons build
+__version__ = '__VERSION__'
 
 
 setup(
    name = 'crossbardemo',
-   version = verstr,
+   version = __version__,
    description = 'Crossbar.io Demos',
    long_description = LONGDESC,
+   license = 'Apache 2.0',
    author = 'Tavendo GmbH',
    author_email = 'autobahnws@googlegroups.com',
    url = 'http://crossbar.io',
