@@ -6,14 +6,19 @@
 ##
 ######################################################################
 
-BUILDNAME = 'crossbardemo'
+PACKAGE = 'crossbardemo'
 
-STATICS = ["web"]
+STATICS = ["web", "LICENSE", "MANIFEST.in", "setup.py"]
 
+import os
+import pkg_resources
 
-statics = []
-for d in STATICS:
-   statics.append(Command("%s/%s" % (BUILDNAME, d), d, Copy("$TARGET", "$SOURCE")))
+#taschenmesser = pkg_resources.resource_filename('taschenmesser', '..')
+taschenmesser = "../../infrequent/taschenmesser"
+env = Environment(tools = ['default', 'taschenmesser'],
+                  toolpath = [taschenmesser],
+                  ENV = os.environ)
+
 
 from setup import setup_def
 
@@ -35,47 +40,87 @@ from setuptools.sandbox import run_setup
 #print run_setup("setup.py", ".", ["install"])
 #print run_setup("setup.py", ["bdist_egg"], 'init')
 # python setup.py bdist_egg
+   #setup_def['script_args'] = ['bdist_egg']
+   #setup(**setup_def)
+
 
 import os
 
-def getfiles(rdir):
+def _getfiles(rdir):
    res = []
    for root, subdirs, files in os.walk(rdir):
       for file in files:
          f = os.path.join(root, file)
          res.append(f)
       for sdir in subdirs:
-         res.extend(getfiles(sdir))
+         res.extend(_getfiles(sdir))
    return res
 
-ff = getfiles("web")
-print len(ff)
+def findfiles(paths, recurse = True, patterns = None):
+   res = []
+   if not type(paths) == list:
+      paths = [paths]
+   for path in paths:
+      if os.path.isfile(path):
+         res.append(path)
+      elif os.path.isdir(path) and recurse:
+         res.extend(_getfiles(path))
+      else:
+         pass
+   return res
+
+def copyfiles(files, targetdir = ''):
+   res = []
+   for f in files:
+      fp = os.path.join('build', targetdir,  f)
+      res.append(Command(fp, f, Copy("$TARGET", "$SOURCE")))
+   return res
+
+
+
+pkgfiles = []
+pkgfiles.extend(copyfiles(findfiles(PACKAGE)))
+pkgfiles.extend(copyfiles(findfiles("web"), PACKAGE))
+pkgfiles.extend(copyfiles(["LICENSE", "MANIFEST.in", "setup.py"]))
 
 from crossbardemo import __version__
-print __version__
+#print __version__
 
-def build_function(target, source, env):
-   #print target, source
-   #print target.name, source.name
-   #print target.path, source.path
-   #return
-   setup_def['script_args'] = ['bdist_egg']
-   setup(**setup_def)
-   return None
 
-#   # Code to build "target" from "source"
-#   return None
-bld = Builder(action = build_function)
+egg = env.Egg('build/dist/%s-%s-py2.7.egg' % (PACKAGE, __version__), 'build/setup.py')
 
-env = Environment(BUILDERS = {'Egg' : bld})
+Depends(egg, pkgfiles)
 
-#egg = env.Egg('dist/%s-%s-py2.7.egg' % (BUILDNAME, __version__), 'setup.py')
+artifacts = [egg]
 
-#Depends(egg, statics)
-#Depends(egg, BUILDNAME)
 
-#for s in statics:
-#   for l in s:
-#      print l, l.name
+## Generate checksum files
+##
+checksums = []
+checksums.append(env.MD5("build/CHECKSUM.MD5", artifacts))
+checksums.append(env.SHA1("build/CHECKSUM.SHA1", artifacts))
+checksums.append(env.SHA256("build/CHECKSUM.SHA256", artifacts))
 
-#Default(egg)
+## The default target consists of all artifacts that
+## would get published
+##
+uploads = artifacts + checksums
+Default(uploads)
+
+## Upload to Amazon S3
+##
+env['S3_BUCKET'] = 'crossbar.io'
+env['S3_BUCKET_PREFIX'] = 'download/eggs/' # note the trailing slash!
+env['S3_OBJECT_ACL'] = 'public-read'
+
+## The uploaded stuff is always considered stale
+##
+publish = AlwaysBuild(env.S3("build/.S3UploadDone", uploads))
+
+Depends(publish, uploads)
+Alias("publish", publish)
+
+# http://pythonhosted.org/setuptools/formats.html
+# https://pythonhosted.org/setuptools/easy_install.html#package-index-api
+# http://docs.python.org/3.2/distutils/packageindex.html
+# 
