@@ -60,7 +60,7 @@ Default(uploads)
 ## Upload to Amazon S3
 ##
 env['S3_BUCKET'] = 'crossbar.io'
-env['S3_BUCKET_PREFIX'] = 'download/eggs/' # note the trailing slash!
+env['S3_BUCKET_PREFIX'] = 'download/crossbardemo/' # note the trailing slash!
 env['S3_OBJECT_ACL'] = 'public-read'
 
 ## The uploaded stuff is always considered stale

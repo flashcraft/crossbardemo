@@ -54,7 +54,7 @@ setup(
                   "Operating System :: OS Independent",
                   "Programming Language :: Python",
                   "Programming Language :: JavaScript",
-                  "Topic :: Documentation"
+                  "Topic :: Documentation",
                   "Topic :: Internet",
                   "Topic :: Internet :: WWW/HTTP",
                   "Topic :: Communications",
