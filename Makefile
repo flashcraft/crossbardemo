@@ -4,7 +4,8 @@ all:
 	@echo "   clean            Cleanup"
 	@echo "   test             Test produced Web content (crossbar start --cbdataweb ./build/crossbardemo/web)"
 	@echo "   package          Create package"
-	@echo "   install          Create and install package"
+	@echo "   install          Create and install package locally"
+	@echo "   update           Create and update package locally"
 	@echo "   publish          Create and publish package to PyPI"
 	@echo "   publish_s3       Create and publish package to Crossbar.io on S3"
 	@echo ""
@@ -20,13 +21,16 @@ package:
 	scons
 
 install: package
-	python build/setup.py install
+	cd ./build/dist; easy_install -f . crossbardemo
+
+update: package
+	cd ./build/dist; easy_install -U -H None -f . crossbardemo
 
 publish_s3: package
 	scons publish
 
 publish: clean package
-	python build/setup.py register
-	python build/setup.py sdist upload
-	python build/setup.py bdist_egg upload
-	python build/setup.py bdist_wininst upload
+	cd build; python setup.py register
+	cd build; python setup.py sdist upload
+	cd build; python setup.py bdist_egg upload
+	cd build; python setup.py bdist_wininst upload

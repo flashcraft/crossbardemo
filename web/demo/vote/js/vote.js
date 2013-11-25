@@ -21,12 +21,12 @@ function start() {
    // use jQuery deferreds
    ab.Deferred = $.Deferred;
 
-   // Connect to Tavendo WebMQ ..
+   // Connect to Crossbar.io ..
    //
    ab.launch(
       // WAMP app configuration
       {
-         // Tavendo WebMQ server URL
+         // Crossbar.io server URL
          wsuri: ab.getServerUrl(),
          // authentication info
          appkey: null, // authenticate as anonymous

@@ -176,16 +176,16 @@
                      Import the data into your Oracle database:
                      <br />
                      <pre>
-      sqlldr webmqdemo/webmqdemo@192.168.1.100:1521/orcl
+      sqlldr crossbardemo/crossbardemo@192.168.1.100:1521/orcl
                      control=persondata.ctl data=persondata_en.csv
                      </pre>
-                     (single line, change to the IP of you instance of WebMQ, adjust file paths if necessary)
+                     (single line, change to the IP of your Oracle (or Crossbar.io with Oracle XE) instance, adjust file paths if necessary)
                   </li>
                   <li>
                      Generate the index:
                      <br />
                      <pre>
-      sqlplus webmqdemo/webmqdemo@192.168.1.118:1521/orcl @person_index.sql
+      sqlplus crossbardemo/crossbardemo@192.168.1.118:1521/orcl @person_index.sql
                      </pre>
                      (adjust the IP and file path if necessary)
                   </li>
