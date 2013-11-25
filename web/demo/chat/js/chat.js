@@ -80,8 +80,8 @@ function connect() {
          sess = null;
          switch (code) {
             case ab.CONNECTION_UNSUPPORTED:
-               window.location = "https://webmq.tavendo.de:9090/help/browsers";
-               //alert("Browser does not support WebSocket");
+               window.location = "https://github.com/crossbario/crossbar/wiki/Browser-Support";
+               alert("Browser does not support WebSocket");
                break;
             case ab.CONNECTION_CLOSED:
                window.location.reload();
