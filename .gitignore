@@ -5,3 +5,4 @@ dist
 crossbardemo/web
 *.egg-info
 *.sublime-workspace
+cbdata

@@ -5,5 +5,5 @@
 ##
 ######################################################################
 
-from _version import __version__
-
+__version__ = "__VERSION__"
+__revision__ = "__REVISION__"
