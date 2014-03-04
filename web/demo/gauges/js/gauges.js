@@ -20,31 +20,57 @@ function start() {
    // turn on WAMP debug output
    // ab.debug(true, false, false);
 
-   // use jQuery deferreds
-   ab.Deferred = $.Deferred;
+   // // use jQuery deferreds
+   // ab.Deferred = $.Deferred;
 
-   // Connect to Crossbar.io ..
-   //
-   ab.launch(
-      // WAMP app configuration
-      {
-         // Crossbar.io server URL
-         wsuri: ab.getServerUrl("ws", "ws://127.0.0.1:8080/ws"),
-         // authentication info
-         appkey: null // authenticate as anonymous
-      },
-      // session open handler
-      function (newSession) {
-         session = newSession;
-         ab.log("Connected.")
-         main(session);
-      },
-      // session close handler
-      function (code, reason, detail) {
-         session = null;
-         ab.log(reason);
+   // // Connect to Crossbar.io ..
+   // //
+   // ab.launch(
+   //    // WAMP app configuration
+   //    {
+   //       // Crossbar.io server URL
+   //       wsuri: ab.getServerUrl("ws", "ws://127.0.0.1:8080/ws"),
+   //       // authentication info
+   //       appkey: null // authenticate as anonymous
+   //    },
+   //    // session open handler
+   //    function (newSession) {
+   //       session = newSession;
+   //       ab.log("Connected.")
+   //       main(session);
+   //    },
+   //    // session close handler
+   //    function (code, reason, detail) {
+   //       session = null;
+   //       ab.log(reason);
+   //    }
+   // );
+
+   var wsuri = "ws://127.0.0.1:8080/ws"; // hardcoded for now, FIXME once an equivalent to 'get_appliance_url' exists again
+   // var wsuri: 'ws://' + document.location.host + '/ws';
+
+   var connection = new autobahn.Connection({
+      url: wsuri,
+      realm: 'realm1',
+      // use_deferred: jQuery.Deferred
       }
    );
+
+   connection.onopen = function (newSession) {
+      session = newSession;
+
+      console.log("connected");
+
+      main(session);
+
+   };
+
+   connection.onclose = function() {
+      console.log("connection closed ", arguments);
+   }
+
+   connection.open();
+
 }
 
 function main (session) {
@@ -94,8 +120,8 @@ function main (session) {
 
    for (var k = 0; k < gauges.length; ++k) {
       (function (p) {
-         session.subscribe(baseUri + p, function (topic, event) {
-            gauges[p].refresh(event);
+         session.subscribe(baseUri + "g" + p, function (args, kwargs, details) {
+            gauges[p].refresh(args[0]);
          });
       })(k);
    }

@@ -78,46 +78,6 @@ function updateStatusline(status) {
 
 function connect() {
 
-   // ab._Deferred = jQuery.Deferred;
-
-   // ab.connect(wsuri,
-
-   //    function (session) {
-   //       sess = session;
-   //       ab.log("connected!");
-   //       onConnect0();
-   //    },
-
-   //    function (code, reason, detail) {
-
-   //       sess = null;
-   //       switch (code) {
-   //          case ab.CONNECTION_UNSUPPORTED:
-   //             window.location = "https://github.com/crossbario/crossbar/wiki/Browser-Support";
-   //             alert("Browser does not support WebSocket");
-   //             break;
-   //          case ab.CONNECTION_CLOSED:
-   //             window.location.reload();
-   //             break;
-   //          default:
-   //             ab.log(code, reason, detail);
-
-   //             controllerChannelId = null;
-   //             controllerChannel.value = "";
-   //             controllerChannel.disabled = true;
-   //             controllerChannelSwitch.disabled = true;
-   //             controllerChannelCancel.disabled = true;
-
-   //             retryCount = retryCount + 1;
-   //             updateStatusline("Connection lost. Reconnecting (" + retryCount + ") in " + retryDelay + " secs ..");
-
-   //             break;
-   //       }
-   //    },
-
-   //    {'maxRetries': 60, 'retryDelay': 2000}
-   // );
-
    var connection = new autobahn.Connection({
       url: wsuri,
       realm: 'realm1',
