@@ -27,12 +27,12 @@
 
 .arrowLeft
 {
-    background-image: url('slide_in_left_arrow_d.png');
+    background-image: url('../img/slide_in_left_arrow_d.png');
 }
 
 .arrowRight
 {
-    background-image: url('slide_in_right_arrow_d.png');
+    background-image: url('../img/slide_in_right_arrow_d.png');
 }
 
 #webmqad a {

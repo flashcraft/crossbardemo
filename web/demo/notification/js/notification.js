@@ -7,51 +7,34 @@
  *
  ******************************************************************************/
 
-var channelBaseUri = "http://crossbar.io/crossbar/demo/notifications/";
+var channelBaseUri = "io.crossbar.demo.notification.";
 
 var notificationCount = null;
 
 // notification-related variables
 
-var ad;
-var ad_countdown;
-var ad_hide;
-var ad_shown = false;
-var ad_width = 600;
-var ad_time_to_hide = 6;
-var ad_time_remaining = 0;
+var ad,
+    ad_countdown,
+    ad_hide,
+    ad_shown = false,
+    ad_width = 600,
+    ad_time_to_hide = 6,
+    ad_time_remaining = 0,
+    currentSubscription = null;
 
 
 function abChangeFavicon() {
-   //ab.log("called");
-   //var links = document.getElementsByTagName("link");
-   //ab.log(links);
-   //for (var i = 0; i < links.length; i++) {
-   //   if (links[i].getAttribute("rel") === "shortcut icon") {
-   //      if (links[i].getAttribute("href") === "favicon.ico") {
-   //         ab.log("favicon.ico to record.ico");
-   //         links[i].href = "record.ico";
-   //      }
-   //      else if (links[i].getAttribute("href") === "record.ico") {
-   //         ab.log("record.ico to favicon.ico");
-   //         links[i].href = "favicon.ico";
-   //      }
-   //      console.log("1", links[i]);
-   //      console.log("2", links[i].href);
-   //      console.log("3", links[i].getAttribute("href"));
-   //   };
-   //}
 
    var currentIcon = $("#favicon").attr("href");
-   //ab.log(currentIcon);
+
    $("#favicon").remove();
    var newIcon;
    if (currentIcon === "record.ico") {
-      ab.log("1");
+      // console.log("1");
       newIcon = "<link id='favicon' rel='shortcut icon' href='favicon.ico'>";
    }
    else {
-      ab.log("2");
+      // console.log("2");
       newIcon = "<link id='favicon' rel='shortcut icon' href='record.ico'>";
    }
    $(newIcon).appendTo("head");
@@ -93,7 +76,14 @@ function onChannelSwitch(oldChannelId, newChannelId) {
 
    if (oldChannelId) {
 
-      sess.unsubscribe("event:" + oldChannelId);
+      currentSubscription.unsubscribe().then(
+         function() {
+            console.log("successful unsubscribe");
+         },
+         function(error) {
+            console.log("unsubscribe error ", error);
+         }
+      );
 
    } else {
 
@@ -104,8 +94,17 @@ function onChannelSwitch(oldChannelId, newChannelId) {
 
    }
 
-   sess.prefix("event", channelBaseUri);
-   sess.subscribe("event:" + newChannelId, onNotification);
+   // sess.prefix("event", channelBaseUri);
+   // sess.subscribe("event:" + newChannelId, onNotification);
+   sess.subscribe(channelBaseUri + newChannelId, onNotification).then(
+      function(subscription) {
+         console.log("subscribe");
+         currentSubscription = subscription;
+      },
+      function(error) {
+         console.log("subscription error ", error);
+      }
+   );
 
    $('#new-window').attr('href', window.location.pathname + '?channel=' + newChannelId);
    //$('#pubsub_new_window_link').html(window.location.origin + window.location.pathname + '?channel=' + newChannelId);
@@ -114,13 +113,11 @@ function onChannelSwitch(oldChannelId, newChannelId) {
 
 function sendNotification () {
 
-   //ab.log("send", arguments);
-   sess.publish("event:" + $("#pub_topic").val(), $("#notification_message").val(), false);
-
+   // sess.publish("event:" + $("#pub_topic").val(), $("#notification_message").val(), false);
+   sess.publish(channelBaseUri + $("#pub_topic").val(), [$("#notification_message").val()], {}, {exclude_me: false});
 }
 
-function onNotification(topicUri, event) {
-   ab.log(topicUri, event);
+function onNotification(args, kwargs, details) {
 
    notificationCount += 1;
 
@@ -129,7 +126,7 @@ function onNotification(topicUri, event) {
    //Notificon(notificationCount);
 
    // display side-scrolling notification
-   $("#webmqad_message").text(event);
+   $("#webmqad_message").text(args[0]);
    toggle("emptyEvent", true);
 
 }
@@ -183,7 +180,6 @@ function toggle(event, newNotification) {
    // if triggered based on a new notification,
    // start the countdown and hide after this
    if (newNotification) {
-      ab.log("new", ad_shown);
       ad_time_remaining = ad_time_to_hide;
       ad_countdown.innerHTML = ad_time_remaining;
 
@@ -194,7 +190,7 @@ function toggle(event, newNotification) {
             ad_shown = false;
             ad_countdown.style.visibility = 'hidden';
             window.setTimeout(function() {
-               ad.style.backgroundImage = "url('img/slide_in_left_arrow.png')";
+               ad.style.backgroundImage = "url('img/slide_in_left_arrow_d.png')";
             }, 500);
          }
       }, 1000 * ad_time_to_hide);

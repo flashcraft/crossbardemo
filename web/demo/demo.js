@@ -18,10 +18,12 @@
    Checks for channel information encoded in the URL to automatically switch to that channel
 */
 
-var wsuri = get_appliance_url("hub-websocket", "ws://127.0.0.1:8080/ws");
-var sess = null;
-var retryCount = 0;
-var retryDelay = 2;
+// var wsuri = get_appliance_url("hub-websocket", "ws://127.0.0.1:8080/ws");
+var wsuri = "ws://127.0.0.1:8080/ws"; // hardcoded for now, FIXME once an equivalent to 'get_appliance_url' exists again
+// var wsuri: 'ws://' + document.location.host + '/ws';
+// var sess = null;
+// var retryCount = 0;
+// var retryDelay = 2;
 
 var _idchars = "0123456789";
 var _idlen = 6;
@@ -76,72 +78,76 @@ function updateStatusline(status) {
 
 function connect() {
 
-   ab._Deferred = jQuery.Deferred;
+   // ab._Deferred = jQuery.Deferred;
 
-   ab.connect(wsuri,
+   // ab.connect(wsuri,
 
-      function (session) {
-         sess = session;
-         ab.log("connected!");
-         onConnect0();
-      },
+   //    function (session) {
+   //       sess = session;
+   //       ab.log("connected!");
+   //       onConnect0();
+   //    },
 
-      function (code, reason, detail) {
+   //    function (code, reason, detail) {
 
-         sess = null;
-         switch (code) {
-            case ab.CONNECTION_UNSUPPORTED:
-               window.location = "https://github.com/crossbario/crossbar/wiki/Browser-Support";
-               alert("Browser does not support WebSocket");
-               break;
-            case ab.CONNECTION_CLOSED:
-               window.location.reload();
-               break;
-            default:
-               ab.log(code, reason, detail);
+   //       sess = null;
+   //       switch (code) {
+   //          case ab.CONNECTION_UNSUPPORTED:
+   //             window.location = "https://github.com/crossbario/crossbar/wiki/Browser-Support";
+   //             alert("Browser does not support WebSocket");
+   //             break;
+   //          case ab.CONNECTION_CLOSED:
+   //             window.location.reload();
+   //             break;
+   //          default:
+   //             ab.log(code, reason, detail);
 
-               controllerChannelId = null;
-               controllerChannel.value = "";
-               controllerChannel.disabled = true;
-               controllerChannelSwitch.disabled = true;
-               controllerChannelCancel.disabled = true;
+   //             controllerChannelId = null;
+   //             controllerChannel.value = "";
+   //             controllerChannel.disabled = true;
+   //             controllerChannelSwitch.disabled = true;
+   //             controllerChannelCancel.disabled = true;
 
-               retryCount = retryCount + 1;
-               updateStatusline("Connection lost. Reconnecting (" + retryCount + ") in " + retryDelay + " secs ..");
+   //             retryCount = retryCount + 1;
+   //             updateStatusline("Connection lost. Reconnecting (" + retryCount + ") in " + retryDelay + " secs ..");
 
-               break;
-         }
-      },
+   //             break;
+   //       }
+   //    },
 
-      {'maxRetries': 60, 'retryDelay': 2000}
+   //    {'maxRetries': 60, 'retryDelay': 2000}
+   // );
+
+   var connection = new autobahn.Connection({
+      url: wsuri,
+      realm: 'realm1',
+      // use_deferred: jQuery.Deferred
+      }
    );
-}
 
+   connection.onopen = function (session) {
+      sess = session;
 
-function onConnect0() {
-   console.log("onConnect0");
-   sess.authreq().then(function () {
-      console.log("authreqresult");
-      sess.auth().then(onAuth, ab.log);
-   }, function() { console.log("autrequest failure") });
-}
+      updateStatusline("Connected to " + wsuri);
 
+      retryCount = 0;
 
-function onAuth(permissions) {
-   ab.log("authenticated!", permissions);
+      if (checkChannelId(controllerChannel.value)) {
+         switchChannel(controllerChannel.value);
+      } else {
+         switchChannel(randomChannelId());
+      }
 
-   updateStatusline("Connected to " + wsuri);
-   retryCount = 0;
+      // afterAuth(); // only exists in colorpicker demo! - CHECKME
 
-   if (checkChannelId(controllerChannel.value)) {
-      switchChannel(controllerChannel.value);
-   } else {
-      switchChannel(randomChannelId());
+   };
+
+   connection.onclose = function() {
+      console.log("connection closed ", arguments);
    }
 
-   afterAuth();
-
-};
+   connection.open();
+}
 
 var setupInfoDictionary = {};
 
