@@ -98,7 +98,9 @@ function connect() {
          switchChannel(randomChannelId());
       }
 
-      // afterAuth(); // only exists in colorpicker demo! - CHECKME
+      if(typeof(afterAuth) !== "undefined" ) {
+         afterAuth(); // only exists in colorpicker demo! - CHECKME
+      }
 
    };
 

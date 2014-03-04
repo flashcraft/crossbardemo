@@ -1,8 +1,9 @@
 // total number of color pickers as contained in the HTML
-var colorPickersCount = 3;
-
-var channelBaseUri = "http://crossbar.io/crossbar/demo/colorpicker/";
-var newWindowLink = null;
+var colorPickersCount = 3,
+    channelBaseUri = "io.crossbar.demo.colorpicker.",
+    currentChannelUri = null,
+    currentSubscription = null,
+    newWindowLink = null;
 
 function setupDemo() {
 
@@ -52,29 +53,49 @@ function setupPicker(k) {
       setExtraColors(k, color);
 
       // publish the color change event on our topic
-      sess.publish("event:color-change", { index: k, color: color });
+      // sess.publish("event:color-change", { index: k, color: color });
+      sess.publish(currentChannelUri + "color_change", [{ index: k, color: color }], {}, {acknowledge: true}).then(
+         function(publication) {
+            console.log("published", publication, currentChannelUri + "color_change");
+
+         },
+         function(error) {
+            console.log("publication error", error);
+         }
+      );
    });
 }
 
 
 // our event handler for processing remote color changes
-function onColorChangeRemote(topic, event) {
+function onColorChangeRemote(args, kwargs, details) {
+   console.log("color change remote", args, kwargs, details);
    // set color in color picker
-   $.farbtastic('#picker' + event.index).setColor(event.color, true);
+   $.farbtastic('#picker' + args[0].index).setColor(args[0].color, true);
 
    // set colors associated with color picker
-   setExtraColors(event.index, event.color);
+   setExtraColors(args[0].index, args[0].color);
 };
 
 
 function onChannelSwitch(oldChannelId, newChannelId) {
 
    if (oldChannelId) {
-      sess.unsubscribe("event:color-change");
+      currentSubscription.unsubscribe();
    }
 
-   sess.prefix("event", channelBaseUri + newChannelId + '#');
+   // sess.prefix("event", channelBaseUri + newChannelId + '#');
+   currentChannelUri = channelBaseUri + newChannelId + ".";
 
-   sess.subscribe("event:color-change", onColorChangeRemote);
+   sess.subscribe(currentChannelUri + "color_change", onColorChangeRemote).then(
+      function(subscription) {
+         console.log("subscribed", subscription, currentChannelUri + "color_change");
+         currentSubscription = subscription;
+      },
+      function(error) {
+         console.log("subscription error", error);
+      }
+
+   );
    newWindowLink.setAttribute('href', window.location.pathname + '?channel=' + newChannelId);
 }
