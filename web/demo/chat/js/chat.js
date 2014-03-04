@@ -8,7 +8,6 @@
  ******************************************************************************/
 
 var channelBaseUri = "io.crossbar.demo.chat",
-    // channelBaseUri = "http://crossbar.io/crossbar/demo/chat/",
     initialChannel = null,
     currentSubscription = null,
     presetNicks = ["Nick", "Knatterton", "Micky", "Maus", "Donald", "Bruce", "Wayne", "Clark", "Kent", "Sarah", "Connor", "Mary", "Shelley", "Rosemary", "Wilma", "Louis", "Selina", "Barbara", "Gordon", "Herbert", "The Count"],
@@ -21,10 +20,8 @@ var channelBaseUri = "io.crossbar.demo.chat",
     retryDelay = 2;
 
 var oldHash = window.location.href;
-console.log("oldHash", oldHash);
 
 // var wsuri = get_appliance_url("hub-websocket", "ws://127.0.0.1:8080/ws");
-// var wsuri = 'ws://127.0.0.1:9000/';
 var wsuri = "ws://127.0.0.1:8080/ws";
 
 var chatWindow = null;
@@ -74,9 +71,6 @@ function switchChannel(oldChannelID, newChannelID) {
       }
    );
 
-   // sess.subscribe("event:" + newChannelID, onMessage);
-
-
    // clear messages box
    $("#messages_box").html('');
 }
@@ -111,9 +105,6 @@ function connect() {
       location.hash = ""; // reset in case of reload with hash "#1"
       location.hash = "#ch1";
 
-
-      sess.subscribe("com.test.topic", function(){console.log("test text received ", arguments);}).then(function(){console.log("test subscribed", arguments);}, function(){console.log("test subscribe failed", arguments);});
-      // sess.publish("com.test.topic", ["foobar"]);
    };
 
    connection.onclose = function() {
@@ -123,33 +114,6 @@ function connect() {
    connection.open();
 
 }
-
-
-// function onConnect0() {
-//    sess.authreq().then(function() {
-//       sess.auth().then(onAuth, console.log);
-//    }, console.log);
-// }
-
-
-// function onAuth(permissions) {
-//    //console.log("authenticated!", permissions);
-
-//    updateStatusline("Connected to " + wsuri);
-//    retryCount = 0;
-
-//    // if window url contained channel id, do the subscriptions for this
-//    if (initialChannel) {
-//       switchChannel(null, initialChannel);
-//    }
-
-//    // set initial hash value/channel
-//    location.hash = ""; // reset in case of reload with hash "#1"
-//    location.hash = "#1";
-
-
-// };
-
 
 
 function onHashChanged(evt) {
@@ -188,13 +152,11 @@ function onHashChanged(evt) {
       if ("ch" + (i + 1) == newChannelID) {
 
          $(channelSelectors[i]).addClass("channel_selected");
-         //channelSelectors[i].classList.add("channel_selected");
       }
 
       else if ($(channelSelectors[i]).hasClass("channel_selected")) {
 
          $(channelSelectors[i]).removeClass("channel_selected");
-         //channelSelectors[i].classList.remove("channel_selected");
       }
    }
 
@@ -206,9 +168,6 @@ function onHashChanged(evt) {
 
 
 function setupDemo() {
-
-   // console.log("stuff to set up");
-
    chatWindow = $("#chat_window");
 
 
@@ -243,11 +202,9 @@ function setupDemo() {
    messageInput = $("#message_input")[0];
    messageInput.onkeypress = function(e) {
       var e = e || event; // IE8 fix, since here the window.event, not the event itself contains the keyCode
-      //console.log("keypressed", e);
       if (e.keyCode === 13) {
          console.log("enter");
          sendMessage(messageInput);
-         //e.preventDefault(); // older IEs don't do this
          return false;
       };
 
@@ -266,6 +223,7 @@ function setupDemo() {
 function sendMessage(messageInput) {
    var message = messageInput.value;
    var currentNick = nick.val();
+
    // check if own nick has changed since last send
    if (currentNick !== oldNick) {
       changeOwnNick(currentNick);
@@ -275,13 +233,11 @@ function sendMessage(messageInput) {
    if (windowUrl.indexOf('#') !== -1) {
       channel = windowUrl.split('#')[1];
    }
-   // console.log("to send:", message, currentNick, channel);
+
    var payload = {};
    payload.message = message;
    payload.nick = currentNick;
 
-   // sess.publish("event:" + channel, payload, true);
-   console.log("publishing to ", channelBaseUri + "." + channel);
    sess.publish(channelBaseUri + "." + channel, [payload], {}, {exclude_me: false});
 
    // clear the message input
@@ -344,7 +300,6 @@ function onMessage(args, kwargs, details) {
 }
 
 function addMessage(payload) {
-   console.log("message received", payload);
 
    // get the parts of the message event
    var message = payload.message;
