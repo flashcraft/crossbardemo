@@ -90,7 +90,7 @@ function main (session) {
 
    // wire up gauges for PubSub events
    //
-   var baseUri = "http://crossbar.io/crossbar/demo/gauges#";
+   var baseUri = "io.crossbar.demo.gauges.";
 
    for (var k = 0; k < gauges.length; ++k) {
       (function (p) {

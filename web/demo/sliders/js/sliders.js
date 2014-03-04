@@ -8,8 +8,11 @@
  *
  ******************************************************************************/
 
-var channelBaseUri = "http://crossbar.io/crossbar/demo/sliders/";
-var newWindowLink = null;
+var channelBaseUri = "io.crossbar.demo.sliders.",
+    currentBaseUri = null,
+    newWindowLink = null,
+    currentMasterSubscription = null,
+    currentEqSubscription = null;
 
 
 function setupDemo() {
@@ -25,8 +28,8 @@ function setupDemo() {
 
    $("#master").slider({
       slide: function(event, ui) {
-         sess.publish("event:master", ui.value);
-         sess.publish("http://crossbar.io/crossbar/demo/gauges#0", ui.value);
+         sess.publish(currentBaseUri + "master", [ui.value]);
+         sess.publish("io.crossbar.demo.gauges.0", [ui.value]);
       }
    });
 
@@ -44,7 +47,7 @@ function setupDemo() {
          orientation: "vertical",
 
          slide: function(event, ui) {
-            sess.publish("event:eq", { idx: k, val: ui.value });
+            sess.publish(currentBaseUri +  "eq", [{ idx: k, val: ui.value }]);
          }
       });
       i += 1;
@@ -54,18 +57,18 @@ function setupDemo() {
 }
 
 
-function onMaster(topicUri, event) {
+function onMaster(args, kwargs, details) {
 
    $("#master").slider({
-      value: event
+      value: args[0]
    });
 }
 
 
-function onEq(topicUri, event) {
+function onEq(args, kwargs, details) {
 
-   $("#eq span:nth-child(" + event.idx + ")").slider({
-      value: event.val
+   $("#eq span:nth-child(" + args[0].idx + ")").slider({
+      value: args[0].val
    });
 }
 
@@ -73,12 +76,43 @@ function onEq(topicUri, event) {
 function onChannelSwitch(oldChannelId, newChannelId) {
 
    if (oldChannelId) {
-      sess.unsubscribe("event:master");
+      // sess.unsubscribe("event:master");
+      currentMasterSubscription.unsubscribe().then(
+         function() {
+            console.log("unsubscribed master");
+         },
+         function(error) {
+            console.log("master unsubscribe failed", error);
+         });
+      currentEqSubscription.unsubscribe().then(
+         function() {
+            console.log("unsubscribed eq");
+         },
+         function(error) {
+            console.log("eq unsubscribe failed", error);
+         });
    }
 
-   sess.prefix("event", channelBaseUri + newChannelId + '#');
-   sess.subscribe("event:master", onMaster);
-   sess.subscribe("event:eq", onEq);
+   // sess.prefix("event", channelBaseUri + newChannelId + '#');
+   // sess.subscribe("event:master", onMaster);
+   // sess.subscribe("event:eq", onEq);
+   currentBaseUri = channelBaseUri + newChannelId + ".";
+   sess.subscribe(currentBaseUri + "master", onMaster).then(
+      function(subscription) {
+         currentMasterSubscription = subscription;
+      },
+      function(error) {
+         console.log("subscription failed ", error);
+      }
+   );
+   sess.subscribe(currentBaseUri + "eq", onEq).then(
+      function(subscription) {
+         currentEqSubscription = subscription;
+      },
+      function(error) {
+         console.log("subscription failed ", error);
+      }
+   );
 
    newWindowLink.setAttribute('href', window.location.pathname + '?channel=' + newChannelId);
 }
