@@ -7,8 +7,10 @@
  *
  ******************************************************************************/
 
-var channelBaseUri = "http://crossbar.io/crossbar/demo/colorpicker/";
+var channelBaseUri = "io.crossbar.demo.beatbox.";
 var newWindowLink = null;
+
+var currentSubscriptions = [];
 
 
 // options checkboxes
@@ -35,7 +37,9 @@ function loadSample(btn, file) {
    samples[btn].setAttribute('src', samplesBaseUri + file);
    samples[btn].load();
    samples[btn].volume = 1;
-   samples[btn].loop = true;
+   // samples[btn].loop = true;
+   samples[btn].setAttribute('loop', true);
+   samples[btn].initialTime = 0;
 }
 
 
@@ -43,29 +47,43 @@ function setupDemo() {
 
    newWindowLink = document.getElementById('new-window');
 
-   if (ab.getBrowser().name === "MSIE") {
+   // if (ab.getBrowser().name === "MSIE") {
 
-      // MSIE10 only supports MPEG formats
-      console.log("MSIE detected .. using MP3 versions of samples");
+   //    // MSIE10 only supports MPEG formats
+   //    console.log("MSIE detected .. using MP3 versions of samples");
 
+   //    loadSample(0, 'demo_beatbox_sample_a.mp3');
+   //    //      loadSample(1, 'demo_beatbox_sample_b_kick.mp3');
+   //    loadSample(1, 'demo_beatbox_sample_b.mp3');
+   //    loadSample(2, 'demo_beatbox_sample_c.mp3');
+   //    loadSample(3, 'demo_beatbox_sample_d.mp3');
+
+   // } else {
+
+   //    // for Chrome/Firefox, we use WAV version, since
+   //    // those appear to have a faster attack rate
+   //    console.log("using WAV versions of samples");
+
+      // loadSample(0, 'demo_beatbox_sample_a.wav');
+      // //      loadSample(1, 'demo_beatbox_sample_b_kick.wav');
+      // loadSample(1, 'demo_beatbox_sample_b.wav');
+      // loadSample(2, 'demo_beatbox_sample_c.wav');
+      // loadSample(3, 'demo_beatbox_sample_d.wav');
+
+   // }
+
+   // FF doesn't do mp3, IE doesn't do WAV, easiest do give mp3 to IE
+   if(navigator.userAgent.indexOf("Trident") !== -1)  {
+      console.log("loading mp3s");
       loadSample(0, 'demo_beatbox_sample_a.mp3');
-      //      loadSample(1, 'demo_beatbox_sample_b_kick.mp3');
       loadSample(1, 'demo_beatbox_sample_b.mp3');
       loadSample(2, 'demo_beatbox_sample_c.mp3');
       loadSample(3, 'demo_beatbox_sample_d.mp3');
-
    } else {
-
-      // for Chrome/Firefox, we use WAV version, since
-      // those appear to have a faster attack rate
-      console.log("using WAV versions of samples");
-
       loadSample(0, 'demo_beatbox_sample_a.wav');
-      //      loadSample(1, 'demo_beatbox_sample_b_kick.wav');
       loadSample(1, 'demo_beatbox_sample_b.wav');
       loadSample(2, 'demo_beatbox_sample_c.wav');
       loadSample(3, 'demo_beatbox_sample_d.wav');
-
    }
 
    // check if audio enabled via URL switch
@@ -141,56 +159,73 @@ function setupDemo() {
    $("#helpButton").click(function() { $(".info_bar").toggle(); });
 }
 
-function onPadButtonDown(topicUri, event) {
+function onPadButtonDown(args, kwargs, details) {
 
-   if (!buttons[event.b].pressed) {
+   console.log("onPadButtonDown", args, kwargs, details);
+
+   if (!buttons[kwargs.b].pressed) {
 
       if (enable_audio.checked) {
          // do NOT change order/content of the following 2 lines!
-         samples[event.b].currentTime = samples[event.b].initialTime;
-         samples[event.b].play();
+         samples[kwargs.b].currentTime = samples[kwargs.b].initialTime;
+         samples[kwargs.b].play();
       }
 
-      buttons[event.b].pressed = true;
-      // buttons[event.b].btn.style.background = "#ff6600";
-      buttons[event.b].btn.style.background = "#d0b800";
+      buttons[kwargs.b].pressed = true;
+      // buttons[kwargs.b].btn.style.background = "#ff6600";
+      buttons[kwargs.b].btn.style.background = "#d0b800";
    }
 }
 
 
-function onPadButtonUp(topicUri, event) {
+function onPadButtonUp(args, kwargs, details) {
 
-   if (buttons[event.b].pressed) {
+   console.log("onPadButtonUp", args, kwargs, details);
+
+   if (buttons[kwargs.b].pressed) {
 
       if (enable_audio.checked) {
          // do NOT change order/content of the following 2 lines!
-         samples[event.b].currentTime = samples[event.b].initialTime;
-         samples[event.b].pause();
+         samples[kwargs.b].currentTime = samples[kwargs.b].initialTime;
+         samples[kwargs.b].pause();
       }
 
-      buttons[event.b].pressed = false;
-      buttons[event.b].btn.style.background = "#666";
+      buttons[kwargs.b].pressed = false;
+      buttons[kwargs.b].btn.style.background = "#666";
    }
 }
 
 
 function padButton(btn, down) {
 
-   var evt = { b: btn, t: 0 };
-
    if (down) {
       if (direct_trigger.checked) {
-         onPadButtonDown(null, evt);
+         onPadButtonDown(null, { "b": btn, "t": 0 });
       }
       if (pub_trigger.checked) {
-         sess.publish("event:pad-down", evt, direct_trigger.checked);
+         sess.publish(channelBaseUri + controllerChannelId + ".pad_down", [], { "b": btn, "t": 0 }, { exclude_me: false, acknowledge: true }).then(
+            function(publication) {
+               console.log("published", publication);
+            },
+            function(error) {
+               console.log("publication error");
+            }
+         );
       }
    } else {
       if (direct_trigger.checked) {
-         onPadButtonUp(null, evt);
+         onPadButtonUp(null, { "b": btn, "t": 0});
       }
       if (pub_trigger.checked) {
-         sess.publish("event:pad-up", evt, direct_trigger.checked);
+         sess.publish(channelBaseUri + controllerChannelId + ".pad_up", [], { "b": btn, "t": 0}, { exclude_me: false, acknowledge: true }).then(
+         // sess.publish(channelBaseUri + "pad_up", [6, 23], { "b": btn, "t": 0});
+            function(publication) {
+               console.log("published", publication);
+            },
+            function(error) {
+               console.log("publication error");
+            }
+         );
       }
    }
 }
@@ -213,13 +248,34 @@ function setPadButtonHandlers(button, btn) {
 function onChannelSwitch(oldChannelId, newChannelId) {
 
    if (oldChannelId) {
-      sess.unsubscribe("event:pad-down");
-      sess.unsubscribe("event:pad-up");
+      // sess.unsubscribe("event:pad_down");
+      // sess.unsubscribe("event:pad_up");
+      currentSubscriptions[0].unsubscribe();
+      currentSubscriptions[1].unsubscribe();
    }
 
-   sess.prefix("event", channelBaseUri + newChannelId + '#');
-   sess.subscribe("event:pad-down", onPadButtonDown);
-   sess.subscribe("event:pad-up", onPadButtonUp);
+   // sess.prefix("event", channelBaseUri + newChannelId + '#');
+   // sess.subscribe("event:pad_down", onPadButtonDown);
+   // sess.subscribe("event:pad_up", onPadButtonUp);
+
+   sess.subscribe(channelBaseUri + newChannelId + ".pad_down", onPadButtonDown).then(
+      function(subscription) {
+         console.log("subscribed pad_down", subscription);
+         currentSubscriptions[0] = subscription;
+      },
+      function(error) {
+         console.log("subscription error pad_down", error);
+      }
+   );
+   sess.subscribe(channelBaseUri + newChannelId + ".pad_up", onPadButtonUp).then(
+      function(subscription) {
+         console.log("subscribed pad_up", subscription);
+         currentSubscriptions[1] = subscription;
+      },
+      function(error) {
+         console.log("subscription error pad_up", error);
+      }
+   );
 
    newWindowLink.setAttribute('href', window.location.pathname + '?channel=' + newChannelId + '&audio=off');
 }
