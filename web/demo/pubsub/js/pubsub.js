@@ -7,21 +7,23 @@
  *
  ******************************************************************************/
 
-var hubRestApi = get_appliance_url("hub-web", "http://127.0.0.1:8090");
-var channelBaseUri = "http://crossbar.io/crossbar/demo/pubsub/";
+var hubRestApi = "http://localhost:8080",
+   // hubRestApi = get_appliance_url("hub-web", "http://127.0.0.1:8090"),
+    channelBaseUri = "io.crossbar.demo.pubsub.",
 
-var sendTime = null;
-var recvTime = null;
+    sendTime = null,
+    recvTime = null,
 
-var receivedMessages = null;
-var receivedMessagesClear = null;
+    receivedMessages = null,
+    receivedMessagesClear = null,
 
-var curlLine = null;
+    curlLine = null,
 
-var pubTopic = null;
-var pubMessage = null;
-var pubMessageBtn = null;
+    pubTopic = null,
+    pubMessage = null,
+    pubMessageBtn = null,
 
+    currentSubscription = null;
 
 function updateCurl() {
    //var cbody = encodeURI('"' + $("#pub_message").val() + '"');
@@ -59,7 +61,17 @@ function setupDemo() {
    pubMessageBtn.onclick = function () {
 
       sendTime = (new Date).getTime();
-      sess.publish("event:" + $("#pub_topic").val(), $("#pub_message").val(), false);
+      // sess.publish("event:" + $("#pub_topic").val(), $("#pub_message").val(), false);
+      sess.publish(channelBaseUri + $("#pub_topic").val(), [$("#pub_message").val()], {}, {exclude_me: false});
+      // sess.publish(channelBaseUri + $("#pub_topic").val(), [$("#pub_message").val()], {}, {acknowledge: true, exclude_me: false}).then(
+      //    function(publication) {
+      //       console.log("published", publication);
+
+      //    },
+      //    function(error) {
+      //       console.log("publication error", error);
+      //    }
+      // );
    }
    pubMessageBtn.disabled = false;
 
@@ -91,10 +103,9 @@ function setupDemo() {
 }
 
 
-function onMessage(topicUri, event) {
-
-   //console.log(topicUri);
-   //console.log(event);
+function onMessage(args, kwargs, details) {
+   var event = args[0];
+   console.log("event received");
 
    if (sendTime) {
       recvTime = (new Date).getTime();
@@ -112,13 +123,14 @@ function onMessage(topicUri, event) {
 
 
 function onChannelSwitch(oldChannelId, newChannelId) {
+   console.log("onChannelSwitch", oldChannelId, newChannelId);
 
    if (oldChannelId) {
 
-      sess.unsubscribe("event:" + oldChannelId);
+      currentSubscription.unsubscribe();
 
    } else {
-
+      console.log("initial setup");
       // initial setup
       //
       $("#pub_topic").val(newChannelId);
@@ -126,11 +138,25 @@ function onChannelSwitch(oldChannelId, newChannelId) {
       updateCurl();
    }
 
-   sess.prefix("event", channelBaseUri);
-   sess.subscribe("event:" + newChannelId, onMessage);
+   sess.subscribe(channelBaseUri + newChannelId, onMessage).then(
+      function(subscription) {
+         console.log("subscribed", subscription, newChannelId);
+         currentSubscription = subscription;
+      },
+      function(error) {
+         console.log("subscription error", error);
+      }
+   );
+   console.log("post subscribe");
 
    $('#new-window').attr('href', window.location.pathname + '?channel=' + newChannelId);
-   //$('#pubsub_new_window_link').html(window.location.origin + window.location.pathname + '?channel=' + newChannelId);
    $('#pubsub_new_window_link').html(window.location.protocol + "//" + window.location.host + window.location.pathname + '?channel=' + newChannelId);
    $("#sub_topic_full").text(channelBaseUri + newChannelId);
 }
+
+
+
+var testreceive = function(args, kwargs, details) {
+   console.log("testreceive", args, kwargs, details);
+}
+

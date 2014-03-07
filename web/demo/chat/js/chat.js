@@ -60,10 +60,10 @@ function switchChannel(oldChannelID, newChannelID) {
       );
    }
 
-   // sess.prefix("event", channelBaseUri);
-   console.log("subscription uri ", channelBaseUri + "." + newChannelID);
+   // console.log("subscription uri ", channelBaseUri + "." + newChannelID);
    sess.subscribe(channelBaseUri + "." + newChannelID, onMessage).then(
       function(subscription) {
+         console.log("subscriped", subscription);
          currentSubscription = subscription;
       },
       function(error) {

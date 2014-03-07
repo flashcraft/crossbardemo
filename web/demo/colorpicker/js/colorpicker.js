@@ -86,16 +86,18 @@ function onChannelSwitch(oldChannelId, newChannelId) {
 
    // sess.prefix("event", channelBaseUri + newChannelId + '#');
    currentChannelUri = channelBaseUri + newChannelId + ".";
+   oldChannelId = newChannelId;
 
    sess.subscribe(currentChannelUri + "color_change", onColorChangeRemote).then(
       function(subscription) {
          console.log("subscribed", subscription, currentChannelUri + "color_change");
          currentSubscription = subscription;
+
       },
       function(error) {
          console.log("subscription error", error);
       }
-
    );
+
    newWindowLink.setAttribute('href', window.location.pathname + '?channel=' + newChannelId);
 }
