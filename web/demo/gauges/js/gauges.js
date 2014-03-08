@@ -20,32 +20,6 @@ function start() {
    // turn on WAMP debug output
    // ab.debug(true, false, false);
 
-   // // use jQuery deferreds
-   // ab.Deferred = $.Deferred;
-
-   // // Connect to Crossbar.io ..
-   // //
-   // ab.launch(
-   //    // WAMP app configuration
-   //    {
-   //       // Crossbar.io server URL
-   //       wsuri: ab.getServerUrl("ws", "ws://127.0.0.1:8080/ws"),
-   //       // authentication info
-   //       appkey: null // authenticate as anonymous
-   //    },
-   //    // session open handler
-   //    function (newSession) {
-   //       session = newSession;
-   //       ab.log("Connected.")
-   //       main(session);
-   //    },
-   //    // session close handler
-   //    function (code, reason, detail) {
-   //       session = null;
-   //       ab.log(reason);
-   //    }
-   // );
-
    var wsuri = "ws://127.0.0.1:8080/ws"; // hardcoded for now, FIXME once an equivalent to 'get_appliance_url' exists again
    // var wsuri: 'ws://' + document.location.host + '/ws';
 

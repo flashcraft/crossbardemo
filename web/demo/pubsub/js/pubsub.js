@@ -105,7 +105,7 @@ function setupDemo() {
 
 function onMessage(args, kwargs, details) {
    var event = args[0];
-   console.log("event received");
+   console.log("event received", details);
 
    if (sendTime) {
       recvTime = (new Date).getTime();

@@ -28,34 +28,58 @@ function start() {
    // get active worksheet of the wijspread control
    sheet = spread.getActiveSheet();
 
-   // turn on WAMP debug output
-   // ab.debug(true, false, false);
+   // // turn on WAMP debug output
+   // // ab.debug(true, false, false);
 
-   // use jQuery deferreds
-   ab.Deferred = $.Deferred;
+   // // use jQuery deferreds
+   // ab.Deferred = $.Deferred;
 
-   // Connect to Crossbar.io ..
-   //
-   ab.launch(
-      // WAMP app configuration
-      {
-         // Crossbar.io URL
-         wsuri: ab.getServerUrl("ws", "ws://127.0.0.1:8080/ws"),
-         // authentication info
-         appkey: null // authenticate as anonymous
-      },
-      // session open handler
-      function (newSession) {
-         session = newSession;
-         console.log("Connected!");
-         main(session);
-      },
-      // session close handler
-      function (code, reason, detail) {
-         session = null;
-         console.log(reason);
+   // // Connect to Crossbar.io ..
+   // //
+   // ab.launch(
+   //    // WAMP app configuration
+   //    {
+   //       // Crossbar.io URL
+   //       // wsuri: ab.getServerUrl("ws", "ws://127.0.0.1:8080/ws"),
+   //       wsuri: "ws://127.0.0.1:8080/ws",
+   //       // authentication info
+   //       appkey: null // authenticate as anonymous
+   //    },
+   //    // session open handler
+   //    function (newSession) {
+   //       session = newSession;
+   //       console.log("Connected!");
+   //       main(session);
+   //    },
+   //    // session close handler
+   //    function (code, reason, detail) {
+   //       session = null;
+   //       console.log(reason);
+   //    }
+   // );
+   var wsuri = "ws://127.0.0.1:8080/ws";
+   var connection = new autobahn.Connection({
+      url: wsuri,
+      realm: 'realm1',
+      // use_deferred: jQuery.Deferred
       }
    );
+
+   connection.onopen = function (newSession) {
+      session = newSession;
+
+      console.log("connected");
+
+      main(session);
+
+   };
+
+   connection.onclose = function() {
+      session = null;
+      console.log("connection closed ", arguments);
+   }
+
+   connection.open();
 }
 
 
@@ -78,14 +102,14 @@ function main (session) {
       sheet.getCell(0, 0).value(ticks);
    }, 1000);
 
-   var slidersbaseUri = "http://crossbar.io/crossbar/demo/sliders/123456#";
+   var slidersbaseUri = "io.crossbar.demo.sliders.123456.";
 
    // Master volume
    sheet.getCell(2, 0).value(0);
    sheet.getCell(2, 1).text("Master");
-   session.subscribe(slidersbaseUri + "master", function (topic, event) {
+   session.subscribe(slidersbaseUri + "master", function (args, kwargs, details) {
       //console.log(topic, event);
-      sheet.getCell(2, 0).value(event);
+      sheet.getCell(2, 0).value(args[0]);
    });
 
    // Graphic EQ
@@ -93,10 +117,10 @@ function main (session) {
       sheet.getCell(3 + i, 0).value(0);
       sheet.getCell(3 + i, 1).text("EQ-" + i);
    }
-   session.subscribe(slidersbaseUri + "eq", function (topic, event) {
-      //console.log(topic, event);
+   session.subscribe(slidersbaseUri + "eq", function (args, kwargs, details) {
+      console.log(args, kwargs, details);
       //spread.isPaintSuspended(true);
-      sheet.getCell(3 + event.idx, 0).value(event.val);
+      sheet.getCell(3 + args[0].idx, 0).value(args[0].val);
       //spread.isPaintSuspended(false);
       //sheet.repaint();
    });
@@ -112,9 +136,12 @@ function main (session) {
    spread.isPaintSuspended(false);
 }
 
+// setting up custom functions not updated to WAMPv2/Crossbar2
 
 var subs = {};
 var pubs = {};
+var subIdsToUris = {};
+var pubIdsToUris = {};
 
 function setupCustomFuns () {
 
@@ -139,19 +166,29 @@ function setupCustomFuns () {
 
          subs[uri] = 0;
 
-         session.subscribe(uri, function (topic, event) {
-
-            subs[uri] = event;
+         // this presently overwrites the previously assigned handler for the topic
+         // can only be changed within AutobahnJS - CHECKME once the library has been adapted
+         session.subscribe(uri, function (args, kwargs, details) {
+            console.log("subscription evt received", args, kwargs, details, uri);
+            subs[uri] = args[0];
 
             spread.isPaintSuspended(true);
 
             var cell = sheet.getCell(row, col);
-            cell.value(event);
+            cell.value(args[0]);
 
             spread.isPaintSuspended(false);
 
-            //sheet.repaint();
-         });
+            sheet.repaint();
+         }).then(
+            function(subscription) {
+               console.log("custom subscription", subscription, uri);
+               // no allowing unsubscribe, so do nothing with the received object
+            },
+            function(error) {
+               console.log("subscription error custom subscription", error);
+            }
+         );
 
          return subs[uri];
       }
@@ -171,12 +208,12 @@ function setupCustomFuns () {
 
       if (pubs[uri] !== undefined && pubs[uri] === evt) {
 
-         //console.log("PUBLISH", "Value already published");
+         console.log("PUBLISH", "Value already published");
 
       } else {
 
          pubs[uri] = evt;
-         session.publish(uri, evt);
+         session.publish(uri, [evt]);
          return evt;
       }
 
