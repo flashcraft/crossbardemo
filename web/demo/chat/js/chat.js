@@ -245,7 +245,7 @@ function sendMessage(messageInput) {
    messageInput.placeholder = '';
 
    // add the message to the message window
-   addMessage(payload);
+   // addMessage(payload); // now done via reception of message from server
 };
 
 function changeOwnNick(currentNick) {

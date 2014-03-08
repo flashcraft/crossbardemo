@@ -118,7 +118,7 @@ function main (session) {
       sheet.getCell(3 + i, 1).text("EQ-" + i);
    }
    session.subscribe(slidersbaseUri + "eq", function (args, kwargs, details) {
-      console.log(args, kwargs, details);
+      // console.log(args, kwargs, details);
       //spread.isPaintSuspended(true);
       sheet.getCell(3 + args[0].idx, 0).value(args[0].val);
       //spread.isPaintSuspended(false);
