@@ -1,10 +1,7 @@
 <!DOCTYPE html>
-
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
    <meta charset="utf-8" />
-
-
 
    <!--<link rel="icon" href="record.ico" type="image/png" />--> <!--not for IE-->
    <link rel="shortcut icon" href="../../img/favicon.ico">
@@ -54,7 +51,7 @@
          <div id="demo_title">
             <span>Notifications</span>
          </div>
-         <a class="navbar-brand" href="#">
+         <a class="navbar-brand" href="/">
             <img src="../../img/crossbar_icon_inverted.png" alt="crossbar logo inverted" width="60" height="60">
             <span class="fontFace">
                <span>Crossbar</span><span>.io</span>
@@ -66,13 +63,9 @@
       </center>
    </header>
 
-   <!--<button onclick="abChangeFavicon()">Change Favicon</button>-->
    <div id="demo_body">
-
       <div class="box box_left">
-
          <div class="box_heading">Publication Topic</div>
-
          <div class="box_content">
             <input type="text" id="pub_topic" class="textbox_active" size="6" maxlength="6" value="{{channel}}">
             <br/>
@@ -81,22 +74,15 @@
             </p>
             <textarea id="notification_message" spellcheck="false" class="webmq_demo_textbox_active" cols="38" rows="4" style="resize: none;"></textarea>
             <button id="send_notification" class="button">Send notification</button>
-
             <div class="status_line">
                Status: <span class="statusline"></span>
             </div>
-
          </div>
-
-
-
       </div>
 
 
       <div class="box box_right">
-
          <div class="box_heading">Subscription Topic</div>
-
          <div class="box_content">
             <input type="text" id="controller-channel" class="textbox_active" size="6" maxlength="6" value="{{channel}}">
             <button id="controller-channel-switch" class="button">Subscribe</button>
@@ -106,30 +92,19 @@
                URI: <span id="sub_topic_full"></span>
             </p>
          </div>
-
       </div>
 
       <div class="box box_right additional_tab">
-
          <div class="box_heading">Open in additional Tab</div>
-
          <div class="box_content centered">
             <div id="pubsub_new_window">
                <a id="new-window" href="" target="_blank">click to open in another window</a>
             </div>
-            <!--<div id="pubusb_or">
-               or use this link in a different browser
-            </div>
-            <div id="pubsub_new_window_link"></div>-->
-
          </div>
-
          <button id="helpButton" class="button">?</button>
-
       </div>
 
       <div class="info_bar" style="display: none;">
-
          <p class="info_bar_heading">Demo of notifications for PubSub events:
          </p>
          <ul>
@@ -144,10 +119,7 @@
                Notify across browser windows by using a common controller channel.
             </li>
          </ul>
-
       </div>
-
-
 
       <div id="webmqad" class="notextselect defaultcursor arrowLeft">
          <div id="webmqad_message">You don't have any notifications yet!</div>

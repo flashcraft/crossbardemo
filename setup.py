@@ -42,7 +42,7 @@ setup(
    packages = find_packages(),
    include_package_data = True,
    data_files = [('.', ['LICENSE'])],
-   zip_safe = True,
+   zip_safe = False,
    ## http://pypi.python.org/pypi?%3Aaction=list_classifiers
    ##
    classifiers = ["License :: OSI Approved :: Apache Software License",

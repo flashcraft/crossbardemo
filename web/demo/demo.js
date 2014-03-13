@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- *  Copyright 2012-2013 Tavendo GmbH.
+ *  Copyright (C) 2012-2014 Tavendo GmbH.
  *
  *  Licensed under the Apache 2.0 license
  *  http://www.apache.org/licenses/LICENSE-2.0.html
@@ -18,12 +18,16 @@
    Checks for channel information encoded in the URL to automatically switch to that channel
 */
 
-// var wsuri = get_appliance_url("hub-websocket", "ws://127.0.0.1:8080/ws");
-var wsuri = "ws://127.0.0.1:8080/ws"; // hardcoded for now, FIXME once an equivalent to 'get_appliance_url' exists again
-// var wsuri: 'ws://' + document.location.host + '/ws';
-// var sess = null;
-// var retryCount = 0;
-// var retryDelay = 2;
+var wsuri;
+
+if (document.location.protocol === "file:") {
+   wsuri =  "ws://127.0.0.1:8080/ws";
+} else {
+   var scheme = document.location.protocol === 'https:' ? 'wss://' : 'ws://';
+   var port = document.location.port !== "" ? ':' + document.location.port : '';
+   wsuri = scheme + document.location.hostname + port + "/ws";
+}
+
 
 var _idchars = "0123456789";
 var _idlen = 6;

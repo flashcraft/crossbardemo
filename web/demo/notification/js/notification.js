@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- *  Copyright 2012-2013 Tavendo GmbH.
+ *  Copyright (C) 2012-2014 Tavendo GmbH.
  *
  *  Licensed under the Apache 2.0 license
  *  http://www.apache.org/licenses/LICENSE-2.0.html
