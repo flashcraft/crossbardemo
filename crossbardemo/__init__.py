@@ -1,7 +1,8 @@
 ######################################################################
 ##
-##   Copyright (c) 2013 Tavendo GmbH. All rights reserved.
-##   Author(s): Tobias Oberstein
+##   Copyright (C) 2013-2014 Tavendo GmbH.
+##   Licensed under Apache 2.0 license
+##   See: http://www.apache.org/licenses/LICENSE-2.0.html
 ##
 ######################################################################
 

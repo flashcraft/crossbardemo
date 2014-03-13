@@ -1,6 +1,6 @@
 ######################################################################
 ##
-##   Copyright (C) 2013 Tavendo GmbH.
+##   Copyright (C) 2013-2014 Tavendo GmbH.
 ##   Licensed under Apache 2.0 license
 ##   See: http://www.apache.org/licenses/LICENSE-2.0.html
 ##
@@ -9,8 +9,8 @@
 import os
 import pkg_resources
 
-#taschenmesser = pkg_resources.resource_filename('taschenmesser', '..')
-taschenmesser = "../../infrequent/taschenmesser"
+taschenmesser = pkg_resources.resource_filename('taschenmesser', '..')
+#taschenmesser = "../../infrequent/taschenmesser"
 env = Environment(tools = ['default', 'taschenmesser'],
                   toolpath = [taschenmesser],
                   ENV = os.environ)

@@ -1,6 +1,6 @@
 ######################################################################
 ##
-##   Copyright (C) 2013 Tavendo GmbH.
+##   Copyright (C) 2013-2014 Tavendo GmbH.
 ##   Licensed under Apache 2.0 license
 ##   See: http://www.apache.org/licenses/LICENSE-2.0.html
 ##
@@ -10,7 +10,7 @@ from setuptools import setup, find_packages
 
 
 LONGDESC = """
-Demos for Crossbar.io - The open-source multi-protocol application router.
+Demos for Crossbar.io - The open-source polyglot application router.
 
 Find out more at http://crossbar.io
 Source code: https://github.com/crossbario/crossbardemo
@@ -38,7 +38,7 @@ setup(
    author_email = 'autobahnws@googlegroups.com',
    url = 'http://crossbar.io',
    platforms = ('Any'),
-   install_requires = ['crossbar>=0.8.3'],
+   install_requires = ['crossbar>=0.9.1'],
    packages = find_packages(),
    include_package_data = True,
    data_files = [('.', ['LICENSE'])],
