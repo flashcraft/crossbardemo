@@ -26,6 +26,9 @@
    <script type="text/javascript" src="../../js/jquery.min.js"></script>
    <script type="text/javascript" src="../../jqueryui/js/jquery-ui-1.8.23.custom.min.js"></script>
 
+   <script>
+      AUTOBAHN_DEBUG = true;
+   </script>
    <script type="text/javascript" src="../../js/autobahn.min.js"></script>
 
    <script type="text/javascript" src="../util.js"></script>
@@ -47,10 +50,22 @@
             </span>
          </a>
       </div>
-      <center>
-         <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/sliders">Source Code</a>
-      </center>
    </header>
+
+   <div class="demo_links">
+      <p>
+         Synchronize slider positions across any browser tab subscribed to the same channel.
+      </p>
+      <div>
+         <a href="" target="_blank" id="secondInstance">Open 2nd instance</a>
+         <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/sliders">
+            Source Code
+         </a>
+         <a href="http://crossbar.io">
+            Crossbar.io Homepage
+         </a>
+      </div>
+   </div>
 
    <section id="demo_body">
 
@@ -67,7 +82,6 @@
                   Controller Channel: <input type="text" id="controller-channel" size="6" maxlength="6" value="{{channel}}">
                   <button id="controller-channel-switch" class="button">Switch</button>
                   <button id="controller-channel-cancel" class="button">Cancel</button>
-                  <div class="new_window"><a id="new-window" href="" target="_blank">Open in additional Window</a></div>
                </div>
 
                <div class="demo">
@@ -120,7 +134,9 @@
             </li>
             <li>
                All interactions on this demo occur in response to messages routed through the instance of Crossbar.io displayed in the status line at the bottom of the demo box.
-
+            </li>
+            <li>
+               This demo can also be used to control the <a href="../gauges/index.html" target="_blank">Gauges Demo</a> and for data input on the <a href="../spread/index.html" target="_blank">Spreadsheet Demo</a>
             </li>
          </ul>
       </div>

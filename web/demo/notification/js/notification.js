@@ -12,7 +12,6 @@ var channelBaseUri = "io.crossbar.demo.notification.";
 var notificationCount = null;
 
 // notification-related variables
-
 var ad,
     ad_countdown,
     ad_hide,
@@ -30,11 +29,9 @@ function abChangeFavicon() {
    $("#favicon").remove();
    var newIcon;
    if (currentIcon === "record.ico") {
-      // console.log("1");
       newIcon = "<link id='favicon' rel='shortcut icon' href='favicon.ico'>";
    }
    else {
-      // console.log("2");
       newIcon = "<link id='favicon' rel='shortcut icon' href='record.ico'>";
    }
    $(newIcon).appendTo("head");
@@ -45,8 +42,6 @@ function abChangeFavicon() {
 function setupDemo() {
 
    $("#notification_message").val("Hello World!");
-
-   // initialize any variables
 
    // set up event handlers
    $("#send_notification").click(sendNotification);
@@ -88,14 +83,11 @@ function onChannelSwitch(oldChannelId, newChannelId) {
    } else {
 
       // initial setup
-      //
       $("#pub_topic").val(newChannelId);
       $("#pub_topic_full").text(channelBaseUri + newChannelId);
 
    }
 
-   // sess.prefix("event", channelBaseUri);
-   // sess.subscribe("event:" + newChannelId, onNotification);
    sess.subscribe(channelBaseUri + newChannelId, onNotification).then(
       function(subscription) {
          console.log("subscribe");
@@ -107,13 +99,11 @@ function onChannelSwitch(oldChannelId, newChannelId) {
    );
 
    $('#new-window').attr('href', window.location.pathname + '?channel=' + newChannelId);
-   //$('#pubsub_new_window_link').html(window.location.origin + window.location.pathname + '?channel=' + newChannelId);
+   $('#secondInstance').attr('href', window.location.pathname + '?channel=' + newChannelId);
    $("#sub_topic_full").text(channelBaseUri + newChannelId);
 }
 
 function sendNotification () {
-
-   // sess.publish("event:" + $("#pub_topic").val(), $("#notification_message").val(), false);
    sess.publish(channelBaseUri + $("#pub_topic").val(), [$("#notification_message").val()], {}, {exclude_me: false});
 }
 
@@ -123,7 +113,6 @@ function onNotification(args, kwargs, details) {
 
    // change Favicon
    Tinycon.setBubble(notificationCount);
-   //Notificon(notificationCount);
 
    // display side-scrolling notification
    $("#webmqad_message").text(args[0]);

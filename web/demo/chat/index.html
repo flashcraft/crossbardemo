@@ -25,10 +25,22 @@
                </span>
             </a>
          </div>
-         <center>
-            <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/chat">Source Code</a>
-         </center>
       </header>
+
+      <div class="demo_links">
+         <p>
+            Chat with any browser tab set to the same channel.
+         </p>
+         <div>
+            <a href="" target="_blank" id="secondInstance">Open 2nd instance</a>
+            <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/chat">
+               Source Code
+            </a>
+            <a href="http://crossbar.io">
+               Crossbar.io Homepage
+            </a>
+         </div>
+      </div>
 
       <div id="demo_body">
          <div class="chat_channel_selector">
@@ -58,7 +70,7 @@
 
       <div id="chat_window">
          <button class="flatButton" id="hide_chat_window">X</button>
-         <div id="channel_title">something</div>
+         <div id="channel_title">Channel 1</div>
          <div class="content">
             <div>
                <span id="my_nick">My Nick </span><input type="text" id="nick" size="15" maxlength="15" />
@@ -105,6 +117,9 @@
       <![endif]-->
 
       <script type="text/javascript" src="../../js/jquery.min.js"></script>
+      <script>
+         AUTOBAHN_DEBUG = true;
+      </script>
       <script type="text/javascript" src="../../js/autobahn.min.js"></script>
 
       <!-- // <script type="text/javascript" src="../util.js"></script> -->

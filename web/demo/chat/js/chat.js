@@ -17,12 +17,18 @@ var channelBaseUri = "io.crossbar.demo.chat",
     nickColors = ["black", "orange", "green", "blue", "red"],
     sess = null,
     retryCount = 0,
-    retryDelay = 2;
+    retryDelay = 2,
+    oldHash = window.location.href;
 
-var oldHash = window.location.href;
+var wsuri;
 
-// var wsuri = get_appliance_url("hub-websocket", "ws://127.0.0.1:8080/ws");
-var wsuri = "ws://127.0.0.1:8080/ws";
+if (document.location.protocol === "file:") {
+   wsuri =  "ws://127.0.0.1:8080/ws";
+} else {
+   var scheme = document.location.protocol === 'https:' ? 'wss://' : 'ws://';
+   var port = document.location.port !== "" ? ':' + document.location.port : '';
+   wsuri = scheme + document.location.hostname + port + "/ws";
+}
 
 var chatWindow = null;
 
@@ -30,11 +36,7 @@ var chatWindow = null;
 updateStatusline("Not connected.");
 
 // check for controller channel id in the URL
-//var windowUrl = window.location.href; // writable reference
 var windowUrl = document.URL; // string
-
-// check for the '#' fragment
-// then cut the number after the '#'
 if (windowUrl.indexOf('#') !== -1) {
    initialChannel = windowUrl.split('#')[1];
 } else {
@@ -73,6 +75,9 @@ function switchChannel(oldChannelID, newChannelID) {
 
    // clear messages box
    $("#messages_box").html('');
+
+   // set the second instance link
+   $('#secondInstance').attr('href', window.location.pathname + '?channel=' + newChannelID);
 }
 
 
@@ -83,27 +88,30 @@ function updateStatusline(status) {
 
 function connect() {
 
-   // ab._Deferred = jQuery.Deferred;
-
-
    var connection = new autobahn.Connection({
       url: wsuri,
-      realm: 'realm1'}
-   );
+      realm: 'realm1',
+      max_retries: 30,
+      initial_retry_delay: 2
+   });
 
    connection.onopen = function (session) {
       sess = session;
 
       updateStatusline("Connected to " + wsuri);
 
+      console.log("initialChannel", initialChannel);
+
       // if window url contained channel id, do the subscriptions for this
       if (initialChannel) {
+         // trigger some of the channgel change effects manually,
+         // since there was no hash change
+         // event which would normally do so
          switchChannel(null, initialChannel);
-      }
 
-      // set initial hash value/channel
-      location.hash = ""; // reset in case of reload with hash "#1"
-      location.hash = "#ch1";
+         changeChannelIndicators(initialChannel);
+
+      }
 
    };
 
@@ -118,9 +126,6 @@ function connect() {
 
 function onHashChanged(evt) {
    console.log("onHashChanged", oldHash);
-
-   //var newUrl = evt.newURL; // IE event does not contain this value
-   //var oldUrl = evt.oldURL; // IE event does not contain this value
 
    var newUrl = window.location.href;
    var oldUrl = oldHash;
@@ -142,16 +147,23 @@ function onHashChanged(evt) {
       oldChannelID = null;
    }
 
-   switchChannel(oldChannelID, newChannelID);
+   switchChannel ( oldChannelID, newChannelID );
+
+   changeChannelIndicators ( newChannelID );
+}
+
+function changeChannelIndicators ( newChannelID ) {
 
    // indicate presently picked channel via highlighting
-   var channelSelectors = $(".chat_channel_selector");
+   var channelSelectors = $(".chat_channel_selector"),
+       currentChannel;
 
    for (var i = 0; i < channelSelectors.length; i++) {
 
       if ("ch" + (i + 1) == newChannelID) {
 
          $(channelSelectors[i]).addClass("channel_selected");
+         currentChannel = i + 1;
       }
 
       else if ($(channelSelectors[i]).hasClass("channel_selected")) {
@@ -161,15 +173,12 @@ function onHashChanged(evt) {
    }
 
    // set the channel title on the chat window
-   $("#channel_title").text("Channel " + newChannelID);
-
-
+   $("#channel_title").text("Channel " + currentChannel);
 }
 
 
 function setupDemo() {
    chatWindow = $("#chat_window");
-
 
    // add 'onhashchange' event to trigger the channel change + chat window display
    window.onhashchange = onHashChanged;
@@ -221,6 +230,8 @@ function setupDemo() {
 }
 
 function sendMessage(messageInput) {
+   console.log("send message");
+
    var message = messageInput.value;
    var currentNick = nick.val();
 
@@ -244,8 +255,6 @@ function sendMessage(messageInput) {
    messageInput.value = '';
    messageInput.placeholder = '';
 
-   // add the message to the message window
-   // addMessage(payload); // now done via reception of message from server
 };
 
 function changeOwnNick(currentNick) {
@@ -293,6 +302,7 @@ function getNickColor(nickString) {
 
 // function onMessage(topicUri, event) {
 function onMessage(args, kwargs, details) {
+   console.log("on message");
 
    addMessage(args[0]);
    // set new message highlighting on "chat" button
@@ -307,8 +317,6 @@ function addMessage(payload) {
    var nickColor = getNickColor(messageNick);
 
    var messageTime = formattedMessageTime();
-
-   // set colors
 
    var messagesBox = $("#messages_box")[0];
 

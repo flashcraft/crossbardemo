@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- *  Copyright 2012-2013 Tavendo GmbH.
+ *  Copyright 2012-2014 Tavendo GmbH.
  *
  *                                Apache License
  *                          Version 2.0, January 2004
@@ -17,7 +17,7 @@ var channelBaseUri = "io.crossbar.demo.sliders.",
 
 function setupDemo() {
 
-   newWindowLink = document.getElementById('new-window');
+   newWindowLink = document.getElementById('secondInstance');
 
    $("#master").slider({
       value: 60,
@@ -83,7 +83,6 @@ function onEq(args, kwargs, details) {
 function onChannelSwitch(oldChannelId, newChannelId) {
 
    if (oldChannelId) {
-      // sess.unsubscribe("event:master");
       currentMasterSubscription.unsubscribe().then(
          function() {
             console.log("unsubscribed master");
@@ -100,9 +99,6 @@ function onChannelSwitch(oldChannelId, newChannelId) {
          });
    }
 
-   // sess.prefix("event", channelBaseUri + newChannelId + '#');
-   // sess.subscribe("event:master", onMaster);
-   // sess.subscribe("event:eq", onEq);
    currentBaseUri = channelBaseUri + newChannelId + ".";
    sess.subscribe(currentBaseUri + "master", onMaster).then(
       function(subscription) {

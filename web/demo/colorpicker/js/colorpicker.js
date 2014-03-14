@@ -1,5 +1,13 @@
-// total number of color pickers as contained in the HTML
-var colorPickersCount = 3,
+/******************************************************************************
+ *
+ *  Copyright 2012-2014 Tavendo GmbH.
+ *
+ *  Licensed under the Apache 2.0 license
+ *  http://www.apache.org/licenses/LICENSE-2.0.html
+ *
+ ******************************************************************************/
+
+var colorPickersCount = 3, // total number of color pickers as contained in the HTML
     channelBaseUri = "io.crossbar.demo.colorpicker.",
     currentChannelUri = null,
     currentSubscription = null,
@@ -7,13 +15,12 @@ var colorPickersCount = 3,
 
 function setupDemo() {
 
-   newWindowLink = document.getElementById('new-window');
+   newWindowLink = document.getElementById('secondInstance');
 
    // setup the color pickers
    for (var i = 0; i < colorPickersCount; ++i) {
       setupPicker(i);
    }
-
 
    $("#helpButton").click(function() { $(".info_bar").toggle() });
 
@@ -24,8 +31,6 @@ function afterAuth() {
    $.farbtastic('#picker1').setColor("#555");
    $.farbtastic('#picker2').setColor("#fff");
 };
-
-
 
 // set colors associated with / controlled by a color picker
 function setExtraColors(k, color) {
@@ -53,7 +58,6 @@ function setupPicker(k) {
       setExtraColors(k, color);
 
       // publish the color change event on our topic
-      // sess.publish("event:color-change", { index: k, color: color });
       sess.publish(currentChannelUri + "color_change", [{ index: k, color: color }], {}, {acknowledge: true}).then(
          function(publication) {
             console.log("published", publication, currentChannelUri + "color_change");
@@ -84,7 +88,6 @@ function onChannelSwitch(oldChannelId, newChannelId) {
       currentSubscription.unsubscribe();
    }
 
-   // sess.prefix("event", channelBaseUri + newChannelId + '#');
    currentChannelUri = channelBaseUri + newChannelId + ".";
    oldChannelId = newChannelId;
 

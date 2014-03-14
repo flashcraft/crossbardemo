@@ -24,11 +24,16 @@
       </header>
       <div class="demo_links">
          <p>
-            Real-time powered Gauges - built with <a href="http://justgage.com/">JustGage</a>.
+            Real-time powered Gauges - built with <a href="http://justgage.com/">JustGage</a>.<br>
+            Receive data from the <a href="../sliders/index.html" target="_blank">Sliders Demo</a> or the <a href="../spread/index.html" target="_blank">Spreadsheet Demo</a>
          </p>
          <div>
-            <a id="secondInstance" href="" target="_blank">Open 2nd instance</a>
+            <!-- <a id="secondInstance" href="" target="_blank">Open 2nd instance</a> -->
+            <a href="../sliders/index.html" target="_blank">Open Sliders Demo</a>
             <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/gauges">Source Code</a>
+            <a href="http://crossbar.io">
+               Crossbar.io Homepage
+            </a>
          </div>
       </div>
 
@@ -39,6 +44,11 @@
          <div id="g3"></div>
       </div>
 
+      <div class="status_line noContainer">
+         Status: <span class="statusline"></span>
+      </div>
+
+
       <!-- jQuery -->
       <script type="text/javascript" src="../../js/jquery.min.js"></script>
 
@@ -47,6 +57,9 @@
       <script src="../../js/justgage.1.0.1.min.js"></script>
 
       <!-- AutobahnJS -->
+      <script>
+         AUTOBAHN_DEBUG = true;
+      </script>
       <script src="../../js/autobahn.min.js"></script>
 
       <!-- Demo code -->

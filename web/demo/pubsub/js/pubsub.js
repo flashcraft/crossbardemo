@@ -8,7 +8,6 @@
  ******************************************************************************/
 
 var hubRestApi = "http://localhost:8080",
-   // hubRestApi = get_appliance_url("hub-web", "http://127.0.0.1:8090"),
     channelBaseUri = "io.crossbar.demo.pubsub.",
 
     sendTime = null,
@@ -17,7 +16,7 @@ var hubRestApi = "http://localhost:8080",
     receivedMessages = null,
     receivedMessagesClear = null,
 
-    curlLine = null,
+    // curlLine = null,
 
     pubTopic = null,
     pubMessage = null,
@@ -25,11 +24,14 @@ var hubRestApi = "http://localhost:8080",
 
     currentSubscription = null;
 
-function updateCurl() {
-   //var cbody = encodeURI('"' + $("#pub_message").val() + '"');
-   var cbody = $("#pub_message").val();
-   curlLine.value = "curl -d 'topic=" + channelBaseUri + $("#pub_topic").val() + "&event=\"" + cbody + "\"' " + hubRestApi;
-}
+// Note: REST bridge functionality has not yet been implemented for
+//       the new version of Crossbar.io, and all related functionality
+//       has been disabled for now.
+
+// function updateCurl() {
+//    var cbody = $("#pub_message").val();
+//    curlLine.value = "curl -d 'topic=" + channelBaseUri + $("#pub_topic").val() + "&event=\"" + cbody + "\"' " + hubRestApi;
+// }
 
 
 function setupDemo() {
@@ -47,9 +49,8 @@ function setupDemo() {
       receivedMessagesClear.disabled = true;
    }
 
-   curlLine = document.getElementById('pub_curl');
-   //curlLine.disabled = true;
-   curlLine.readOnly = true;
+   // curlLine = document.getElementById('pub_curl');
+   // curlLine.readOnly = true;
 
    pubTopic = document.getElementById('pub_topic');
    pubMessage = document.getElementById('pub_message');
@@ -61,17 +62,15 @@ function setupDemo() {
    pubMessageBtn.onclick = function () {
 
       sendTime = (new Date).getTime();
-      // sess.publish("event:" + $("#pub_topic").val(), $("#pub_message").val(), false);
-      sess.publish(channelBaseUri + $("#pub_topic").val(), [$("#pub_message").val()], {}, {exclude_me: false});
-      // sess.publish(channelBaseUri + $("#pub_topic").val(), [$("#pub_message").val()], {}, {acknowledge: true, exclude_me: false}).then(
-      //    function(publication) {
-      //       console.log("published", publication);
+      sess.publish(channelBaseUri + $("#pub_topic").val(), [$("#pub_message").val()], {}, {acknowledge: true, exclude_me: false}).then(
+         function(publication) {
+            console.log("published", publication);
 
-      //    },
-      //    function(error) {
-      //       console.log("publication error", error);
-      //    }
-      // );
+         },
+         function(error) {
+            console.log("publication error", error);
+         }
+      );
    }
    pubMessageBtn.disabled = false;
 
@@ -82,7 +81,7 @@ function setupDemo() {
       ab.log(e);
       if (isValueChar(e)) {
          if (checkChannelId(pubTopic.value)) {
-            updateCurl();
+            // updateCurl();
             $("#pub_topic_full").text(channelBaseUri + pubTopic.value);
             pubMessageBtn.disabled = false;
          } else {
@@ -94,7 +93,7 @@ function setupDemo() {
    $(pubMessage).keyup(function(e) {
 
       if (isValueChar(e)) {
-         updateCurl();
+         // updateCurl();
       }
    });
 
@@ -131,11 +130,11 @@ function onChannelSwitch(oldChannelId, newChannelId) {
 
    } else {
       console.log("initial setup");
+
       // initial setup
-      //
       $("#pub_topic").val(newChannelId);
       $("#pub_topic_full").text(channelBaseUri + newChannelId);
-      updateCurl();
+      // updateCurl();
    }
 
    sess.subscribe(channelBaseUri + newChannelId, onMessage).then(
@@ -150,11 +149,10 @@ function onChannelSwitch(oldChannelId, newChannelId) {
    console.log("post subscribe");
 
    $('#new-window').attr('href', window.location.pathname + '?channel=' + newChannelId);
+   $('#secondInstance').attr('href', window.location.pathname + '?channel=' + newChannelId);
    $('#pubsub_new_window_link').html(window.location.protocol + "//" + window.location.host + window.location.pathname + '?channel=' + newChannelId);
    $("#sub_topic_full").text(channelBaseUri + newChannelId);
 }
-
-
 
 var testreceive = function(args, kwargs, details) {
    console.log("testreceive", args, kwargs, details);

@@ -34,6 +34,9 @@
    <![endif]-->
 
    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+   <script>
+      AUTOBAHN_DEBUG = true;
+   </script>
    <script type="text/javascript" src="../../js/autobahn.min.js"></script>
 
    <script type="text/javascript" src="../../js/tinycon.js"></script>
@@ -58,10 +61,22 @@
             </span>
          </a>
       </div>
-      <center>
-         <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/notification">Source Code</a>
-      </center>
    </header>
+
+   <div class="demo_links">
+      <p>
+         Send a notification which can be received in any browser
+      </p>
+      <div>
+         <a href="" target="_blank" id="secondInstance">Open 2nd instance</a>
+         <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/notification">
+            Source Code
+         </a>
+         <a href="http://crossbar.io">
+            Crossbar.io Homepage
+         </a>
+      </div>
+   </div>
 
    <div id="demo_body">
       <div class="box box_left">
@@ -94,7 +109,7 @@
          </div>
       </div>
 
-      <div class="box box_right additional_tab">
+      <!-- <div class="box box_right additional_tab">
          <div class="box_heading">Open in additional Tab</div>
          <div class="box_content centered">
             <div id="pubsub_new_window">
@@ -102,7 +117,7 @@
             </div>
          </div>
          <button id="helpButton" class="button">?</button>
-      </div>
+      </div> -->
 
       <div class="info_bar" style="display: none;">
          <p class="info_bar_heading">Demo of notifications for PubSub events:

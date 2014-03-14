@@ -21,6 +21,9 @@
       <link href="http://cdn.wijmo.com/spreadjs/jquery.wijmo.wijspread.1.20131.1.css" rel="stylesheet" type="text/css" />
 
       <!-- AutobahnJS -->
+      <script>
+         AUTOBAHN_DEBUG = true;
+      </script>
       <script type="text/javascript" src="../../js/autobahn.min.js"></script>
 
       <!-- Demo code -->
@@ -42,7 +45,8 @@
       </header>
       <div class="demo_links">
          <p>
-            An Excel-like spreadsheet powered by <a href="http://wijmo.com/widgets/wijmo-enterprise/spreadjs/">Wijmo/SpreadJS</a> that gets a live data stream from Sliders demo.
+            An Excel-like spreadsheet powered by <a href="http://wijmo.com/widgets/wijmo-enterprise/spreadjs/">Wijmo/SpreadJS</a><br>
+            Gets a live data stream from the <a href="../sliders/index.html?channel=123456" target= _blank>Sliders Demo</a> and can send data to the <a href="../gauges/index.html" target="_blank">Gauges Demo</a>
          </p>
          <div>
             <a href="/demo/sliders/index.html?channel=123456" target="_blank">Open Sliders Demo</a>
@@ -56,5 +60,10 @@
       <center>To enter a formula, navigate to a cell, press backspace, and then type your formula, e.g. <pre>=SUM(A5:A12)</pre></center>
       <center>To subscribe to some topic, enter a formula <pre>=SUBSCRIBE("io.crossbar.demo.sliders.123456.master")</pre></center>
       <center>To publish to some topic, enter a formula <pre>=PUBLISH("io.crossbar.demo.gauges.g1", A3)</pre></center>
+
+      <div class="status_line noContainer">
+         Status: <span class="statusline"></span>
+      </div>
+
    </body>
 </html>

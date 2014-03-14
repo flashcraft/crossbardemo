@@ -21,7 +21,9 @@
    <![endif]-->
 
    <script type="text/javascript" src="../../js/jquery.min.js"></script>
-
+   <script>
+      AUTOBAHN_DEBUG = true;
+   </script>
    <script type="text/javascript" src="../../js/autobahn.min.js"></script>
 
    <script type="text/javascript" src="../util.js"></script>
@@ -44,10 +46,21 @@
             </span>
          </a>
       </div>
-      <center>
-         <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/beatbox">Source Code</a>
-      </center>
    </header>
+   <div class="demo_links">
+      <p>
+         Trigger sound samples in any browse tab subscribed to the same channel.
+      </p>
+      <div>
+         <a href="" target="_blank" id="secondInstance">Open 2nd instance</a>
+         <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/beatbox">
+            Source Code
+         </a>
+         <a href="http://crossbar.io">
+            Crossbar.io Homepage
+         </a>
+      </div>
+      </div>
 
    <div id="demo_body">
       <div class="box box_left">
@@ -64,7 +77,6 @@
                Controller Channel: <input type="text" id="controller-channel" size="6" maxlength="6"  value="{{channel}}">
                <button id="controller-channel-switch" class="button">Switch</button>
                <button id="controller-channel-cancel" class="button">Cancel</button>
-               <div class="new_window"><a id="new-window" href="" target="_blank">Open in additional Window</a></div>
             </div>
 
 

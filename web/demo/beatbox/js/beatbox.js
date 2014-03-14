@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- *  Copyright 2012-2013 Tavendo GmbH.
+ *  Copyright 2012-2014 Tavendo GmbH.
  *
  *  Licensed under the Apache 2.0 license
  *  http://www.apache.org/licenses/LICENSE-2.0.html
@@ -28,7 +28,6 @@ var buttons = [];
  * on refresh (F5) it succeeds. Needs further investigation.
  * With the sound files served from Apache, this does not happen ..
  */
-//var samplesBaseUri = 'http://www.tavendo.de/static/snd/';
 var samplesBaseUri = 'snd/';
 
 
@@ -37,15 +36,14 @@ function loadSample(btn, file) {
    samples[btn].setAttribute('src', samplesBaseUri + file);
    samples[btn].load();
    samples[btn].volume = 1;
-   // samples[btn].loop = true;
-   samples[btn].setAttribute('loop', true);
+   samples[btn].loop = true;
    samples[btn].initialTime = 0;
 }
 
 
 function setupDemo() {
 
-   newWindowLink = document.getElementById('new-window');
+   newWindowLink = document.getElementById('secondInstance');
 
    // if (ab.getBrowser().name === "MSIE") {
 
@@ -72,7 +70,7 @@ function setupDemo() {
 
    // }
 
-   // FF doesn't do mp3, IE doesn't do WAV, easiest do give mp3 to IE
+   // IE doesn't do WAV, FF doesn't do mp3s
    if(navigator.userAgent.indexOf("Trident") !== -1)  {
       console.log("loading mp3s");
       loadSample(0, 'demo_beatbox_sample_a.mp3');
@@ -88,7 +86,6 @@ function setupDemo() {
 
    // check if audio enabled via URL switch
    if ("audio" in setupInfoDictionary && setupInfoDictionary.audio === "off") {
-      //ab.log("audio set via URL");
       document.getElementById('enable_audio').checked = false;
    }
 
@@ -155,7 +152,6 @@ function setupDemo() {
       }
    };
 
-   //$("#helpButton").click(toggleHelp);
    $("#helpButton").click(function() { $(".info_bar").toggle(); });
 }
 
@@ -172,7 +168,6 @@ function onPadButtonDown(args, kwargs, details) {
       }
 
       buttons[kwargs.b].pressed = true;
-      // buttons[kwargs.b].btn.style.background = "#ff6600";
       buttons[kwargs.b].btn.style.background = "#d0b800";
    }
 }
@@ -218,7 +213,6 @@ function padButton(btn, down) {
       }
       if (pub_trigger.checked) {
          sess.publish(channelBaseUri + controllerChannelId + ".pad_up", [], { "b": btn, "t": 0}, { exclude_me: false, acknowledge: true }).then(
-         // sess.publish(channelBaseUri + "pad_up", [6, 23], { "b": btn, "t": 0});
             function(publication) {
                console.log("published", publication);
             },
@@ -248,15 +242,9 @@ function setPadButtonHandlers(button, btn) {
 function onChannelSwitch(oldChannelId, newChannelId) {
 
    if (oldChannelId) {
-      // sess.unsubscribe("event:pad_down");
-      // sess.unsubscribe("event:pad_up");
       currentSubscriptions[0].unsubscribe();
       currentSubscriptions[1].unsubscribe();
    }
-
-   // sess.prefix("event", channelBaseUri + newChannelId + '#');
-   // sess.subscribe("event:pad_down", onPadButtonDown);
-   // sess.subscribe("event:pad_up", onPadButtonUp);
 
    sess.subscribe(channelBaseUri + newChannelId + ".pad_down", onPadButtonDown).then(
       function(subscription) {

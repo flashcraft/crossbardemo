@@ -21,6 +21,9 @@
       <![endif]-->
 
       <script type="text/javascript" src="../../js/jquery.min.js"></script>
+      <script>
+         AUTOBAHN_DEBUG = true;
+      </script>
       <script type="text/javascript" src="../../js/autobahn.min.js"></script>
 
       <script type="text/javascript" src="../util.js"></script>
@@ -44,10 +47,22 @@
                </span>
             </a>
       </div>
-      <center>
-         <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/pubsub">Source Code</a>
-      </center>
    </header>
+
+   <div class="demo_links">
+      <p>
+         Publish on a channel and receive published events in any browser subscribed to the same channel.
+      </p>
+      <div>
+         <a href="" target="_blank" id="secondInstance">Open 2nd instance</a>
+         <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/pubsub">
+            Source Code
+         </a>
+         <a href="http://crossbar.io">
+            Crossbar.io Homepage
+         </a>
+      </div>
+   </div>
 
    <div id="pubsub_wrapper" class="content_wrapper">
             <div id="pub_sub_wrapper">
@@ -112,7 +127,7 @@
 
                   </div>
 
-                  <div id="or_wrapper">
+                  <!-- <div id="or_wrapper">
                      <div id="pub_or_wrapper" class="column column_left">
                         <p class="or">or</p>
                      </div>
@@ -122,9 +137,9 @@
                      <div id="sub_or_wrapper" class="column column_right">
                         <p class="or">or</p>
                      </div>
-                  </div>
+                  </div> -->
 
-                  <div id="alt_2_wrapper">
+                  <!-- <div id="alt_2_wrapper">
 
                      <div id="pub_alt_2_wrapper" class="column column_left">
                         <div class="box box_pubsub_left">
@@ -155,7 +170,7 @@
                         </div>
                         <button id="helpButton" class="button">?</button>
                      </div>
-                  </div>
+                  </div> -->
             </div>
 
 

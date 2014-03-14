@@ -1,6 +1,10 @@
 /******************************************************************************
  *
- *  Copyright 2013 Tavendo GmbH. Licensed under the Apache 2.0 license.
+ *  Copyright 2012-2014 Tavendo GmbH.
+ *
+ *                                Apache License
+ *                          Version 2.0, January 2004
+ *                       http://www.apache.org/licenses/
  *
  ******************************************************************************/
 
@@ -14,19 +18,22 @@ start();
 
 
 function start() {
-   // set link to open a second instance
-   document.getElementById("secondInstance").href = window.location.pathname;
 
-   // turn on WAMP debug output
-   // ab.debug(true, false, false);
+   var wsuri;
 
-   var wsuri = "ws://127.0.0.1:8080/ws"; // hardcoded for now, FIXME once an equivalent to 'get_appliance_url' exists again
-   // var wsuri: 'ws://' + document.location.host + '/ws';
+   if (document.location.protocol === "file:") {
+      wsuri =  "ws://127.0.0.1:8080/ws";
+   } else {
+      var scheme = document.location.protocol === 'https:' ? 'wss://' : 'ws://';
+      var port = document.location.port !== "" ? ':' + document.location.port : '';
+      wsuri = scheme + document.location.hostname + port + "/ws";
+   }
 
    var connection = new autobahn.Connection({
       url: wsuri,
       realm: 'realm1',
-      // use_deferred: jQuery.Deferred
+      max_retries: 30,
+      initial_retry_delay: 2
       }
    );
 
@@ -35,17 +42,24 @@ function start() {
 
       console.log("connected");
 
+      updateStatusline("Connected to " + wsuri);
+
       main(session);
 
    };
 
    connection.onclose = function() {
       console.log("connection closed ", arguments);
+      updateStatusline("Not connected.");
    }
 
    connection.open();
 
 }
+
+function updateStatusline(status) {
+   $(".statusline").text(status);
+};
 
 function main (session) {
    // create and configure gauges

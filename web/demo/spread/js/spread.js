@@ -1,8 +1,12 @@
 /******************************************************************************
  *
- *  Copyright 2013 Tavendo GmbH. Licensed under the Apache 2.0 license.
+ *  Copyright 2013-2014 Tavendo GmbH.
+ *
+ *  Licensed under the Apache 2.0 license
+ *  http://www.apache.org/licenses/LICENSE-2.0.html
  *
  ******************************************************************************/
+
 /* global document: false, console: false, ab: true, $: true */
 
 "use strict";
@@ -28,40 +32,21 @@ function start() {
    // get active worksheet of the wijspread control
    sheet = spread.getActiveSheet();
 
-   // // turn on WAMP debug output
-   // // ab.debug(true, false, false);
+   var wsuri;
 
-   // // use jQuery deferreds
-   // ab.Deferred = $.Deferred;
+   if (document.location.protocol === "file:") {
+      wsuri =  "ws://127.0.0.1:8080/ws";
+   } else {
+      var scheme = document.location.protocol === 'https:' ? 'wss://' : 'ws://';
+      var port = document.location.port !== "" ? ':' + document.location.port : '';
+      wsuri = scheme + document.location.hostname + port + "/ws";
+   }
 
-   // // Connect to Crossbar.io ..
-   // //
-   // ab.launch(
-   //    // WAMP app configuration
-   //    {
-   //       // Crossbar.io URL
-   //       // wsuri: ab.getServerUrl("ws", "ws://127.0.0.1:8080/ws"),
-   //       wsuri: "ws://127.0.0.1:8080/ws",
-   //       // authentication info
-   //       appkey: null // authenticate as anonymous
-   //    },
-   //    // session open handler
-   //    function (newSession) {
-   //       session = newSession;
-   //       console.log("Connected!");
-   //       main(session);
-   //    },
-   //    // session close handler
-   //    function (code, reason, detail) {
-   //       session = null;
-   //       console.log(reason);
-   //    }
-   // );
-   var wsuri = "ws://127.0.0.1:8080/ws";
    var connection = new autobahn.Connection({
       url: wsuri,
       realm: 'realm1',
-      // use_deferred: jQuery.Deferred
+      max_retries: 30,
+      initial_retry_delay: 2
       }
    );
 
@@ -70,6 +55,8 @@ function start() {
 
       console.log("connected");
 
+      updateStatusline("Connected to " + wsuri);
+
       main(session);
 
    };
@@ -77,11 +64,16 @@ function start() {
    connection.onclose = function() {
       session = null;
       console.log("connection closed ", arguments);
+      updateStatusline("Not connected");
    }
 
    connection.open();
 }
 
+
+function updateStatusline(status) {
+   $(".statusline").text(status);
+};
 
 function main (session) {
 
@@ -108,7 +100,6 @@ function main (session) {
    sheet.getCell(2, 0).value(0);
    sheet.getCell(2, 1).text("Master");
    session.subscribe(slidersbaseUri + "master", function (args, kwargs, details) {
-      //console.log(topic, event);
       sheet.getCell(2, 0).value(args[0]);
    });
 
@@ -118,11 +109,7 @@ function main (session) {
       sheet.getCell(3 + i, 1).text("EQ-" + i);
    }
    session.subscribe(slidersbaseUri + "eq", function (args, kwargs, details) {
-      // console.log(args, kwargs, details);
-      //spread.isPaintSuspended(true);
       sheet.getCell(3 + args[0].idx, 0).value(args[0].val);
-      //spread.isPaintSuspended(false);
-      //sheet.repaint();
    });
 
    // Create some formulas
@@ -136,8 +123,6 @@ function main (session) {
    spread.isPaintSuspended(false);
 }
 
-// setting up custom functions not updated to WAMPv2/Crossbar2
-
 var subs = {};
 var pubs = {};
 var subIdsToUris = {};
@@ -148,26 +133,19 @@ function setupCustomFuns () {
    // create custom SUBSCRIBE spreadsheet function
    var sub = $.ce.createFunction("SUBSCRIBE", function (args) {
 
-      //console.log("SUBSCRIBE", args);
-
       var uri = args[0];
 
       if (subs[uri] !== undefined) {
 
-         //console.log("SUBSCRIBE", "Value cached");
          return subs[uri];
 
       } else {
-
-         //console.log("SUBSCRIBE", "Setting up subscription");
 
          var row = sheet.getActiveRowIndex();
          var col = sheet.getActiveColumnIndex();
 
          subs[uri] = 0;
 
-         // this presently overwrites the previously assigned handler for the topic
-         // can only be changed within AutobahnJS - CHECKME once the library has been adapted
          session.subscribe(uri, function (args, kwargs, details) {
             console.log("subscription evt received", args, kwargs, details, uri);
             subs[uri] = args[0];
@@ -200,8 +178,6 @@ function setupCustomFuns () {
 
    // create custom PUBLISH spreadsheet function
    var pub = $.ce.createFunction("PUBLISH", function (args) {
-
-      //console.log("PUBLISH", args);
 
       var uri = args[0];
       var evt = args[1];

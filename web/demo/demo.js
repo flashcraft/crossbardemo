@@ -48,7 +48,6 @@ function checkChannelId(id) {
 
 function isValueChar(e) {
 
-   //alert(evt);
    var kc = e.keyCode;
    if ((kc > 8 && kc < 46 && kc !== 32) || (kc > 90 && kc < 94) || (kc > 111 && kc < 186) ) {
       return false;
@@ -85,7 +84,8 @@ function connect() {
    var connection = new autobahn.Connection({
       url: wsuri,
       realm: 'realm1',
-      // use_deferred: jQuery.Deferred
+      max_retries: 30,
+      initial_retry_delay: 2
       }
    );
 
@@ -103,7 +103,7 @@ function connect() {
       }
 
       if(typeof(afterAuth) !== "undefined" ) {
-         afterAuth(); // only exists in colorpicker demo! - CHECKME
+         afterAuth(); // only exists in colorpicker demo
       }
 
    };
@@ -126,7 +126,6 @@ $(document).ready(function()
    controllerChannel = document.getElementById('controller-channel');
 
    // check for additional demo setup data in the URL
-   //var windowUrl = window.location.href; // writable reference
    windowUrl = document.URL; // string
 
    // check if '?' fragment is present
