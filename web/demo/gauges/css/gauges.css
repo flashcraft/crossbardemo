@@ -23,7 +23,7 @@
     float: left;
 }
 
-#bigSlider {
+.bigSlider {
     width: 300px;
 
     margin: -22px 0 0 61px;

@@ -40,7 +40,7 @@
       <div id="demo_body">
          <div id="bigGauge">
             <div id="g0"></div>
-            <div id="bigSlider"></div>
+            <div id="s0" class="bigSlider"></div>
          </div>
 
          <div id="smallGauges">
@@ -50,9 +50,9 @@
                <div id="g3"></div>
             </div>
             <div id="eqSliders">
-               <span></span>
-               <span></span>
-               <span></span>
+               <span id="s1"></span>
+               <span id="s2"></span>
+               <span id="s3"></span>
             </div>
             <div>
                Controller Channel: <input type="text" id="controller-channel" size="6" maxlength="6" value="{{channel}}">
@@ -88,6 +88,7 @@
       <script src="../../js/autobahn.min.js"></script>
 
       <!-- Demo code -->
+      <script type="text/javascript" src="../demo.js"></script>
       <script src="js/gauges.js"></script>
    </body>
 </html>

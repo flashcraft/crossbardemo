@@ -12,60 +12,71 @@
 
 "use strict";
 
-var session = null;
+// var session = null;
 
-start();
+// start();
 
+// function start() {
 
-function start() {
+//    var wsuri;
 
-   var wsuri;
+//    if (document.location.protocol === "file:") {
+//       wsuri =  "ws://127.0.0.1:8080/ws";
+//    } else {
+//       var scheme = document.location.protocol === 'https:' ? 'wss://' : 'ws://';
+//       var port = document.location.port !== "" ? ':' + document.location.port : '';
+//       wsuri = scheme + document.location.hostname + port + "/ws";
+//    }
 
-   if (document.location.protocol === "file:") {
-      wsuri =  "ws://127.0.0.1:8080/ws";
-   } else {
-      var scheme = document.location.protocol === 'https:' ? 'wss://' : 'ws://';
-      var port = document.location.port !== "" ? ':' + document.location.port : '';
-      wsuri = scheme + document.location.hostname + port + "/ws";
-   }
+//    var connection = new autobahn.Connection({
+//       url: wsuri,
+//       realm: 'realm1',
+//       max_retries: 30,
+//       initial_retry_delay: 2
+//       }
+//    );
 
-   var connection = new autobahn.Connection({
-      url: wsuri,
-      realm: 'realm1',
-      max_retries: 30,
-      initial_retry_delay: 2
-      }
-   );
+//    connection.onopen = function (newSession) {
+//       session = newSession;
 
-   connection.onopen = function (newSession) {
-      session = newSession;
+//       console.log("connected");
 
-      console.log("connected");
+//       updateStatusline("Connected to " + wsuri);
 
-      updateStatusline("Connected to " + wsuri);
+//       main(session);
 
-      main(session);
+//    };
 
-   };
+//    connection.onclose = function() {
+//       console.log("connection closed ", arguments);
+//       updateStatusline("Not connected.");
+//    }
 
-   connection.onclose = function() {
-      console.log("connection closed ", arguments);
-      updateStatusline("Not connected.");
-   }
+//    connection.open();
 
-   connection.open();
+// }
 
-}
+// function updateStatusline(status) {
+//    $(".statusline").text(status);
+// };
 
-function updateStatusline(status) {
-   $(".statusline").text(status);
-};
+var newWindowLink = null,
+    currentSubscriptions = [];
 
-function main (session) {
+var baseUri = "io.crossbar.demo.gauges.",
+    currentBaseUri = null;
+
+var gauges = [];
+
+var sliders = null;
+
+function setupDemo() {
+
+   newWindowLink = document.getElementById('secondInstance');
+
    var gaugeValues = [30, 20, 40, 60];
    // create and configure gauges
    //
-   var gauges = [];
 
    gauges.push(new JustGage({
       id: "g" + gauges.length,
@@ -103,18 +114,7 @@ function main (session) {
       label: "oz"
    }));
 
-   // wire up gauges for PubSub events
-   //
-   var baseUri = "io.crossbar.demo.gauges.";
 
-   for (var k = 0; k < gauges.length; ++k) {
-      (function (p) {
-         session.subscribe(baseUri + "g" + p, function (args, kwargs, details) {
-            console.log("refresh", p, args[0]);
-            gauges[p].refresh(args[0]);
-         });
-      })(k);
-   }
 
    // auto-animate gauges
    //
@@ -128,24 +128,11 @@ function main (session) {
 
 
    // instantiate sliders
-   $("#bigSlider").slider({
+   $("#s0").slider({
       value: gaugeValues[0],
       orientation: "horizontal",
       range: "min",
       animate: true
-   });
-
-   $("#bigSlider").slider({
-      slide: function(event, ui) {
-         session.publish("io.crossbar.demo.gauges.g0", [ui.value], {}, {acknowledge: true, exclude_me: false}).then(
-            function(publication) {
-               console.log("gauges published ", publication);
-            },
-            function(error) {
-               console.log("gauges publish failed ", error);
-            }
-         );
-      }
    });
 
    var i = 1;
@@ -159,10 +146,80 @@ function main (session) {
          value: gaugeValues[i],
          range: "min",
          animate: true,
-         orientation: "vertical",
+         orientation: "vertical"
+      });
+      i += 1;
+   });
+
+   // store sliders in array
+   // sliders = [$("#s0")[0], $("#s1")[0], $("#s2")[0], $("#s3")[0]];
+}
+
+function onChannelSwitch(oldChannelId, newChannelId) {
+   console.log("onChannelSwitch");
+
+   // unsubscribe
+   if (oldChannelId) {
+      currentSubscriptions.forEach( function (el, index, array) {
+         el.unsubscribe().then(
+            function() {
+               console.log("unsubscribed");
+            },
+            function(error) {
+               console.log("unsubscribe failed", error);
+            }
+         );
+      });
+   }
+
+   // wire up gauges + sliders for PubSub events
+   //
+
+   currentBaseUri = baseUri + newChannelId;
+
+   for (var k = 0; k < gauges.length; ++k) {
+      (function (p) {
+         sess.subscribe(currentBaseUri + ".g" + p, function (args, kwargs, details) {
+            console.log("refresh", p, args[0]);
+            gauges[p].refresh(args[0]);
+            $("#s" + p).slider({ value: args[0]});
+         }).then(
+            function(subscription) {
+               console.log("subscribed ", currentBaseUri, subscription);
+               currentSubscriptions.push(subscription);
+            },
+            function(error) {
+               console.log("unsubscribe failed ", error);
+            }
+         );
+      })(k);
+   }
+
+   // update publish for the sliders
+   $("#s0").slider({
+      slide: function(event, ui) {
+         sess.publish(currentBaseUri + ".g0", [ui.value], {}, {acknowledge: true, exclude_me: false}).then(
+            function(publication) {
+               console.log("gauges published ", publication);
+            },
+            function(error) {
+               console.log("gauges publish failed ", error);
+            }
+         );
+      }
+   });
+
+
+   var i = 1;
+   $("#eqSliders > span").each(function() {
+      // read initial values from markup and remove that
+      // var value = parseInt($(this).text(), 10);
+      var k = i;
+
+      $(this).slider({
 
          slide: function(event, ui) {
-            session.publish("io.crossbar.demo.gauges.g" + k, [ui.value], {}, {acknowledge: true, exclude_me: false}).then(
+            sess.publish(currentBaseUri + ".g" + k, [ui.value], {}, {acknowledge: true, exclude_me: false}).then(
                function(publication) {
                   console.log("gauges published ", publication);
                },
@@ -174,4 +231,7 @@ function main (session) {
       });
       i += 1;
    });
+
+
+   newWindowLink.setAttribute('href', window.location.pathname + '?channel=' + newChannelId);
 }

@@ -18,7 +18,8 @@
    Checks for channel information encoded in the URL to automatically switch to that channel
 */
 
-var wsuri;
+var wsuri,
+    sess;
 
 if (document.location.protocol === "file:") {
    wsuri =  "ws://127.0.0.1:8080/ws";
