@@ -29,14 +29,6 @@ function setupDemo() {
    $("#master").slider({
       slide: function(event, ui) {
          sess.publish(currentBaseUri + "master", [ui.value]);
-         sess.publish("io.crossbar.demo.gauges.g0", [ui.value], {}, {acknowledge: true}).then(
-            function(publication) {
-               // console.log("gauges published ", publication);
-            },
-            function(error) {
-               console.log("gauges publish failed ", error);
-            }
-         );
       }
    });
 

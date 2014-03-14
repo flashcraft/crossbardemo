@@ -45,44 +45,26 @@ function setupDemo() {
 
    newWindowLink = document.getElementById('secondInstance');
 
-   // if (ab.getBrowser().name === "MSIE") {
-
-   //    // MSIE10 only supports MPEG formats
-   //    console.log("MSIE detected .. using MP3 versions of samples");
-
+   // IE doesn't do WAV, FF doesn't do mp3s
+   // if(navigator.userAgent.indexOf("Trident") !== -1)  {
+   //    console.log("IE detected - loading mp3s");
    //    loadSample(0, 'demo_beatbox_sample_a.mp3');
-   //    //      loadSample(1, 'demo_beatbox_sample_b_kick.mp3');
    //    loadSample(1, 'demo_beatbox_sample_b.mp3');
    //    loadSample(2, 'demo_beatbox_sample_c.mp3');
    //    loadSample(3, 'demo_beatbox_sample_d.mp3');
-
    // } else {
-
-   //    // for Chrome/Firefox, we use WAV version, since
-   //    // those appear to have a faster attack rate
    //    console.log("using WAV versions of samples");
-
-      // loadSample(0, 'demo_beatbox_sample_a.wav');
-      // //      loadSample(1, 'demo_beatbox_sample_b_kick.wav');
-      // loadSample(1, 'demo_beatbox_sample_b.wav');
-      // loadSample(2, 'demo_beatbox_sample_c.wav');
-      // loadSample(3, 'demo_beatbox_sample_d.wav');
-
+   //    loadSample(0, 'demo_beatbox_sample_a.wav');
+   //    loadSample(1, 'demo_beatbox_sample_b.wav');
+   //    loadSample(2, 'demo_beatbox_sample_c.wav');
+   //    loadSample(3, 'demo_beatbox_sample_d.wav');
    // }
 
-   // IE doesn't do WAV, FF doesn't do mp3s
-   if(navigator.userAgent.indexOf("Trident") !== -1)  {
-      console.log("loading mp3s");
       loadSample(0, 'demo_beatbox_sample_a.mp3');
       loadSample(1, 'demo_beatbox_sample_b.mp3');
       loadSample(2, 'demo_beatbox_sample_c.mp3');
       loadSample(3, 'demo_beatbox_sample_d.mp3');
-   } else {
-      loadSample(0, 'demo_beatbox_sample_a.wav');
-      loadSample(1, 'demo_beatbox_sample_b.wav');
-      loadSample(2, 'demo_beatbox_sample_c.wav');
-      loadSample(3, 'demo_beatbox_sample_d.wav');
-   }
+
 
    // check if audio enabled via URL switch
    if ("audio" in setupInfoDictionary && setupInfoDictionary.audio === "off") {
@@ -162,6 +144,7 @@ function onPadButtonDown(args, kwargs, details) {
    if (!buttons[kwargs.b].pressed) {
 
       if (enable_audio.checked) {
+         console.log("playing a sample");
          // do NOT change order/content of the following 2 lines!
          samples[kwargs.b].currentTime = samples[kwargs.b].initialTime;
          samples[kwargs.b].play();
@@ -226,6 +209,16 @@ function padButton(btn, down) {
 
 
 function setPadButtonHandlers(button, btn) {
+
+   button.ontouchstart = function(evt) {
+      padButton(btn, true);
+      evt.preventDefault();
+   };
+   button.ontouchend = function(evt) {
+      padButton(btn, false);
+      evt.preventDefault();
+   };
+
    button.onmousedown = function() {
       padButton(btn, true);
    };
@@ -236,6 +229,9 @@ function setPadButtonHandlers(button, btn) {
    button.onmouseout = function() {
       padButton(btn, false);
    };
+
+
+
 }
 
 

@@ -62,13 +62,14 @@ function updateStatusline(status) {
 };
 
 function main (session) {
+   var gaugeValues = [30, 20, 40, 60];
    // create and configure gauges
    //
    var gauges = [];
 
    gauges.push(new JustGage({
       id: "g" + gauges.length,
-      value: getRandomInt(0, 100),
+      value: gaugeValues[gauges.length],
       min: 0,
       max: 100,
       title: "Big Fella",
@@ -77,7 +78,7 @@ function main (session) {
 
    gauges.push(new JustGage({
       id: "g" + gauges.length,
-      value: getRandomInt(0, 100),
+      value: gaugeValues[gauges.length],
       min: 0,
       max: 100,
       title: "Small Buddy",
@@ -86,7 +87,7 @@ function main (session) {
 
    gauges.push(new JustGage({
       id: "g" + gauges.length,
-      value: getRandomInt(0, 100),
+      value: gaugeValues[gauges.length],
       min: 0,
       max: 100,
       title: "Tiny Lad",
@@ -95,7 +96,7 @@ function main (session) {
 
    gauges.push(new JustGage({
       id: "g" + gauges.length,
-      value: getRandomInt(0, 100),
+      value: gaugeValues[gauges.length],
       min: 0,
       max: 100,
       title: "Little Pal",
@@ -109,6 +110,7 @@ function main (session) {
    for (var k = 0; k < gauges.length; ++k) {
       (function (p) {
          session.subscribe(baseUri + "g" + p, function (args, kwargs, details) {
+            console.log("refresh", p, args[0]);
             gauges[p].refresh(args[0]);
          });
       })(k);
@@ -123,4 +125,53 @@ function main (session) {
          }
       }, 2500);
    }
+
+
+   // instantiate sliders
+   $("#bigSlider").slider({
+      value: gaugeValues[0],
+      orientation: "horizontal",
+      range: "min",
+      animate: true
+   });
+
+   $("#bigSlider").slider({
+      slide: function(event, ui) {
+         session.publish("io.crossbar.demo.gauges.g0", [ui.value], {}, {acknowledge: true, exclude_me: false}).then(
+            function(publication) {
+               console.log("gauges published ", publication);
+            },
+            function(error) {
+               console.log("gauges publish failed ", error);
+            }
+         );
+      }
+   });
+
+   var i = 1;
+
+   $("#eqSliders > span").each(function() {
+      // read initial values from markup and remove that
+      // var value = parseInt($(this).text(), 10);
+      var k = i;
+
+      $(this).empty().slider({
+         value: gaugeValues[i],
+         range: "min",
+         animate: true,
+         orientation: "vertical",
+
+         slide: function(event, ui) {
+            session.publish("io.crossbar.demo.gauges.g" + k, [ui.value], {}, {acknowledge: true, exclude_me: false}).then(
+               function(publication) {
+                  console.log("gauges published ", publication);
+               },
+               function(error) {
+                  console.log("gauges publish failed ", error);
+               }
+            );
+         }
+      });
+      i += 1;
+   });
 }

@@ -4,6 +4,7 @@
       <meta charset="UTF-8">
       <link rel="shortcut icon" href="../../img/favicon.ico">
       <title>Gauges</title>
+      <link rel="stylesheet" href="../../jqueryui/css/ui-lightness/jquery-ui-1.8.23.custom.css">
       <link rel="stylesheet" href="../demo.css">
       <link rel="stylesheet" href="css/gauges.css">
    </head>
@@ -24,12 +25,11 @@
       </header>
       <div class="demo_links">
          <p>
-            Real-time powered Gauges - built with <a href="http://justgage.com/">JustGage</a>.<br>
-            Receive data from the <a href="../sliders/index.html" target="_blank">Sliders Demo</a> or the <a href="../spread/index.html" target="_blank">Spreadsheet Demo</a>
+            Gauge state synched across all browser tabs subscribed to the same channel.<br>
+            Built with <a href="http://justgage.com/">JustGage</a>.
          </p>
          <div>
-            <!-- <a id="secondInstance" href="" target="_blank">Open 2nd instance</a> -->
-            <a href="../sliders/index.html" target="_blank">Open Sliders Demo</a>
+            <a id="secondInstance" href="" target="_blank">Open 2nd instance</a>
             <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/gauges">Source Code</a>
             <a href="http://crossbar.io">
                Crossbar.io Homepage
@@ -38,19 +38,44 @@
       </div>
 
       <div id="demo_body">
-         <div id="g0"></div>
-         <div id="g1"></div>
-         <div id="g2"></div>
-         <div id="g3"></div>
+         <div id="bigGauge">
+            <div id="g0"></div>
+            <div id="bigSlider"></div>
+         </div>
+
+         <div id="smallGauges">
+            <div id="gauges">
+               <div id="g1"></div>
+               <div id="g2"></div>
+               <div id="g3"></div>
+            </div>
+            <div id="eqSliders">
+               <span></span>
+               <span></span>
+               <span></span>
+            </div>
+            <div>
+               Controller Channel: <input type="text" id="controller-channel" size="6" maxlength="6" value="{{channel}}">
+               <button id="controller-channel-switch" class="button">Switch</button>
+               <button id="controller-channel-cancel" class="button">Cancel</button>
+            </div>
+         </div>
+
+
+
+          <div class="status_line noContainer">
+            Status: <span class="statusline"></span>
+         </div>
+
+
       </div>
 
-      <div class="status_line noContainer">
-         Status: <span class="statusline"></span>
-      </div>
+
 
 
       <!-- jQuery -->
       <script type="text/javascript" src="../../js/jquery.min.js"></script>
+      <script type="text/javascript" src="../../jqueryui/js/jquery-ui-1.8.23.custom.min.js"></script>
 
       <!-- JustGage -->
       <script src="../../js/raphael.2.1.0.min.js"></script>

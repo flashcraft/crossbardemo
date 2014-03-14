@@ -49,9 +49,9 @@ connect();
 
 
 function switchChannel(oldChannelID, newChannelID) {
+   console.log("switchChannel called");
    // either oldChannelID or newChannelID could be null = start page with no demo selected
    if (oldChannelID && currentSubscription !== null) {
-      // sess.unsubscribe("event:" + oldChannelID);
       currentSubscription.unsubscribe().then(
          function() {
             console.log("successful unsubscribe");
@@ -62,7 +62,6 @@ function switchChannel(oldChannelID, newChannelID) {
       );
    }
 
-   // console.log("subscription uri ", channelBaseUri + "." + newChannelID);
    sess.subscribe(channelBaseUri + "." + newChannelID, onMessage).then(
       function(subscription) {
          console.log("subscriped", subscription);
@@ -77,7 +76,7 @@ function switchChannel(oldChannelID, newChannelID) {
    $("#messages_box").html('');
 
    // set the second instance link
-   $('#secondInstance').attr('href', window.location.pathname + '?channel=' + newChannelID);
+   $('#secondInstance').attr('href', window.location.pathname + '#' + newChannelID);
 }
 
 
@@ -102,15 +101,10 @@ function connect() {
 
       console.log("initialChannel", initialChannel);
 
-      // if window url contained channel id, do the subscriptions for this
+      // if window url contained channel id, trigger the necessary actions
       if (initialChannel) {
-         // trigger some of the channgel change effects manually,
-         // since there was no hash change
-         // event which would normally do so
          switchChannel(null, initialChannel);
-
          changeChannelIndicators(initialChannel);
-
       }
 
    };
@@ -188,15 +182,21 @@ function setupDemo() {
 
    // set up show + hide chat window handlers
    document.getElementById("show_chat_window").onclick = function () {
+
       $("#chat_window").toggle(300);
+
       var messagesBox = $("#messages_box")[0];
+
       // scroll messages box
       messagesBox.scrollTop = messagesBox.scrollHeight;
+
    };
 
    document.getElementById("hide_chat_window").onclick = function () {
+
       $("#chat_window").toggle(300);
       $("#show_chat_window").removeClass("message_received");
+
    };
 
 
@@ -210,21 +210,29 @@ function setupDemo() {
    // set 'enter' on chat message textarea sends message
    messageInput = $("#message_input")[0];
    messageInput.onkeypress = function(e) {
+
       var e = e || event; // IE8 fix, since here the window.event, not the event itself contains the keyCode
+
       if (e.keyCode === 13) {
+
          console.log("enter");
          sendMessage(messageInput);
+
          return false;
+
       };
 
    };
 
 
    $("#helpButton").click(function() {
+
       $(".info_bar").toggle();
+
       if ($("#chat_window:visible").length) {
          $("#chat_window").toggle(300);
       }
+
    });
 
 }
@@ -258,12 +266,16 @@ function sendMessage(messageInput) {
 };
 
 function changeOwnNick(currentNick) {
+
    // get the color value for the old nick
    var nickColor = assignedNicks[oldNick];
+
    // delete the old nick
    delete assignedNicks[oldNick];
+
    // add new nick with the old color
    assignedNicks[currentNick] = nickColor;
+
 };
 
 
@@ -277,7 +289,6 @@ function getNickColor(nickString) {
       for (var i in assignedNicks) {
          if (assignedNicks.hasOwnProperty(i)) {
             nickCounter += 1;
-
          }
       }
 
@@ -302,11 +313,13 @@ function getNickColor(nickString) {
 
 // function onMessage(topicUri, event) {
 function onMessage(args, kwargs, details) {
+
    console.log("on message");
 
    addMessage(args[0]);
    // set new message highlighting on "chat" button
    $("#show_chat_window").addClass("message_received");
+
 }
 
 function addMessage(payload) {
