@@ -40,3 +40,15 @@ The source-code for the demos can be found in the repository [here](https://gith
 	> 
 
 4. **Open** demos at `http://127.0.0.1:8080` in your browser.
+
+
+# Building
+
+To build the installable Python package:
+
+	make package
+
+To install the Python package from sources:
+
+	make install
+
