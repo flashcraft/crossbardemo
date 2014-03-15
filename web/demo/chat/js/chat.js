@@ -7,6 +7,8 @@
  *
  ******************************************************************************/
 
+"use strict";
+
 var channelBaseUri = "io.crossbar.demo.chat",
     initialChannel = null,
     currentSubscription = null,
@@ -62,7 +64,7 @@ function switchChannel(oldChannelID, newChannelID) {
       );
    }
 
-   sess.subscribe(channelBaseUri + "." + newChannelID, onMessage).then(
+   sess.subscribe("api:" + newChannelID, onMessage).then(
       function(subscription) {
          console.log("subscriped", subscription);
          currentSubscription = subscription;
@@ -96,6 +98,8 @@ function connect() {
 
    connection.onopen = function (session) {
       sess = session;
+
+      sess.prefix("api", channelBaseUri);
 
       updateStatusline("Connected to " + wsuri);
 
@@ -208,7 +212,7 @@ function setupDemo() {
    getNickColor(nick.val()); // assigns a color to the nick
 
    // set 'enter' on chat message textarea sends message
-   messageInput = $("#message_input")[0];
+   var messageInput = $("#message_input")[0];
    messageInput.onkeypress = function(e) {
 
       var e = e || event; // IE8 fix, since here the window.event, not the event itself contains the keyCode
@@ -257,7 +261,7 @@ function sendMessage(messageInput) {
    payload.message = message;
    payload.nick = currentNick;
 
-   sess.publish(channelBaseUri + "." + channel, [payload], {}, {exclude_me: false});
+   sess.publish("api:" + channel, [payload], {}, {exclude_me: false});
 
    // clear the message input
    messageInput.value = '';

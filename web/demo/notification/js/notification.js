@@ -7,7 +7,9 @@
  *
  ******************************************************************************/
 
-var channelBaseUri = "io.crossbar.demo.notification.";
+"use strict";
+
+var channelBaseUri = "io.crossbar.demo.notification";
 
 var notificationCount = null;
 
@@ -64,6 +66,13 @@ function setupDemo() {
    ad_countdown.style.visibility = 'hidden';
 
    $("#helpButton").click(function() { $(".info_bar").toggle(); });
+
+   // select the current channel string on focus
+   var publishChannel = document.getElementById("pub_topic");
+   publishChannel.onmouseup = function() { return false; };
+   publishChannel.onfocus = function(evt) {
+         evt.target.select();
+   };
 }
 
 function onChannelSwitch(oldChannelId, newChannelId) {
@@ -84,11 +93,11 @@ function onChannelSwitch(oldChannelId, newChannelId) {
 
       // initial setup
       $("#pub_topic").val(newChannelId);
-      $("#pub_topic_full").text(channelBaseUri + newChannelId);
+      $("#pub_topic_full").text(channelBaseUri + "." + newChannelId);
 
    }
 
-   sess.subscribe(channelBaseUri + newChannelId, onNotification).then(
+   sess.subscribe("api:" + newChannelId, onNotification).then(
       function(subscription) {
          console.log("subscribe");
          currentSubscription = subscription;
@@ -100,11 +109,11 @@ function onChannelSwitch(oldChannelId, newChannelId) {
 
    $('#new-window').attr('href', window.location.pathname + '?channel=' + newChannelId);
    $('#secondInstance').attr('href', window.location.pathname + '?channel=' + newChannelId);
-   $("#sub_topic_full").text(channelBaseUri + newChannelId);
+   $("#sub_topic_full").text(channelBaseUri + "." + newChannelId);
 }
 
 function sendNotification () {
-   sess.publish(channelBaseUri + $("#pub_topic").val(), [$("#notification_message").val()], {}, {exclude_me: false});
+   sess.publish("api:" + $("#pub_topic").val(), [$("#notification_message").val()], {}, {exclude_me: false});
 }
 
 function onNotification(args, kwargs, details) {

@@ -12,58 +12,10 @@
 
 "use strict";
 
-// var session = null;
-
-// start();
-
-// function start() {
-
-//    var wsuri;
-
-//    if (document.location.protocol === "file:") {
-//       wsuri =  "ws://127.0.0.1:8080/ws";
-//    } else {
-//       var scheme = document.location.protocol === 'https:' ? 'wss://' : 'ws://';
-//       var port = document.location.port !== "" ? ':' + document.location.port : '';
-//       wsuri = scheme + document.location.hostname + port + "/ws";
-//    }
-
-//    var connection = new autobahn.Connection({
-//       url: wsuri,
-//       realm: 'realm1',
-//       max_retries: 30,
-//       initial_retry_delay: 2
-//       }
-//    );
-
-//    connection.onopen = function (newSession) {
-//       session = newSession;
-
-//       console.log("connected");
-
-//       updateStatusline("Connected to " + wsuri);
-
-//       main(session);
-
-//    };
-
-//    connection.onclose = function() {
-//       console.log("connection closed ", arguments);
-//       updateStatusline("Not connected.");
-//    }
-
-//    connection.open();
-
-// }
-
-// function updateStatusline(status) {
-//    $(".statusline").text(status);
-// };
-
 var newWindowLink = null,
     currentSubscriptions = [];
 
-var baseUri = "io.crossbar.demo.gauges.",
+var channelBaseUri = "io.crossbar.demo.gauges",
     currentBaseUri = null;
 
 var gauges = [];
@@ -175,7 +127,7 @@ function onChannelSwitch(oldChannelId, newChannelId) {
    // wire up gauges + sliders for PubSub events
    //
 
-   currentBaseUri = baseUri + newChannelId;
+   currentBaseUri = channelBaseUri + "." + newChannelId;
 
    for (var k = 0; k < gauges.length; ++k) {
       (function (p) {

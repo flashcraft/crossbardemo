@@ -18,8 +18,11 @@
    Checks for channel information encoded in the URL to automatically switch to that channel
 */
 
+"use strict";
+
 var wsuri,
-    sess;
+    sess,
+    windowUrl;
 
 if (document.location.protocol === "file:") {
    wsuri =  "ws://127.0.0.1:8080/ws";
@@ -95,7 +98,8 @@ function connect() {
 
       updateStatusline("Connected to " + wsuri);
 
-      retryCount = 0;
+      // establish prefix to use for shorter URL notation
+      sess.prefix("api", channelBaseUri);
 
       if (checkChannelId(controllerChannel.value)) {
          switchChannel(controllerChannel.value);
@@ -125,6 +129,14 @@ $(document).ready(function()
    controllerChannelSwitch = document.getElementById('controller-channel-switch');
    controllerChannelCancel = document.getElementById('controller-channel-cancel');
    controllerChannel = document.getElementById('controller-channel');
+
+
+   controllerChannel.onmouseup = function() { return false; };
+   controllerChannel.onfocus = function(evt) {
+         console.log("evt", evt.target);
+         evt.target.select();
+
+   };
 
    // check for additional demo setup data in the URL
    windowUrl = document.URL; // string

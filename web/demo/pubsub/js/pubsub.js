@@ -7,8 +7,10 @@
  *
  ******************************************************************************/
 
+"use strict";
+
 var hubRestApi = "http://localhost:8080",
-    channelBaseUri = "io.crossbar.demo.pubsub.",
+    channelBaseUri = "io.crossbar.demo.pubsub",
 
     sendTime = null,
     recvTime = null,
@@ -30,7 +32,7 @@ var hubRestApi = "http://localhost:8080",
 
 // function updateCurl() {
 //    var cbody = $("#pub_message").val();
-//    curlLine.value = "curl -d 'topic=" + channelBaseUri + $("#pub_topic").val() + "&event=\"" + cbody + "\"' " + hubRestApi;
+//    curlLine.value = "curl -d 'topic=" + channelBaseUri + "." + $("#pub_topic").val() + "&event=\"" + cbody + "\"' " + hubRestApi;
 // }
 
 
@@ -49,6 +51,13 @@ function setupDemo() {
       receivedMessagesClear.disabled = true;
    }
 
+   // select the current channel string on focus
+   var publishChannel = document.getElementById("pub_topic");
+   publishChannel.onmouseup = function() { return false; };
+   publishChannel.onfocus = function(evt) {
+         evt.target.select();
+   };
+
    // curlLine = document.getElementById('pub_curl');
    // curlLine.readOnly = true;
 
@@ -62,7 +71,7 @@ function setupDemo() {
    pubMessageBtn.onclick = function () {
 
       sendTime = (new Date).getTime();
-      sess.publish(channelBaseUri + $("#pub_topic").val(), [$("#pub_message").val()], {}, {acknowledge: true, exclude_me: false}).then(
+      sess.publish("api:" + $("#pub_topic").val(), [$("#pub_message").val()], {}, {acknowledge: true, exclude_me: false}).then(
          function(publication) {
             console.log("published", publication);
 
@@ -78,11 +87,10 @@ function setupDemo() {
    // using jQuery because IE8 handles .onkeyup differently
    $(pubTopic).keyup(function(e) {
 
-      ab.log(e);
       if (isValueChar(e)) {
          if (checkChannelId(pubTopic.value)) {
             // updateCurl();
-            $("#pub_topic_full").text(channelBaseUri + pubTopic.value);
+            $("#pub_topic_full").text(sess.resolve("api:" + pubTopic.value));
             pubMessageBtn.disabled = false;
          } else {
             pubMessageBtn.disabled = true;
@@ -133,11 +141,11 @@ function onChannelSwitch(oldChannelId, newChannelId) {
 
       // initial setup
       $("#pub_topic").val(newChannelId);
-      $("#pub_topic_full").text(channelBaseUri + newChannelId);
+      $("#pub_topic_full").text(sess.resolve("api:" + newChannelId));
       // updateCurl();
    }
 
-   sess.subscribe(channelBaseUri + newChannelId, onMessage).then(
+   sess.subscribe("api:" + newChannelId, onMessage).then(
       function(subscription) {
          console.log("subscribed", subscription, newChannelId);
          currentSubscription = subscription;
@@ -151,7 +159,7 @@ function onChannelSwitch(oldChannelId, newChannelId) {
    $('#new-window').attr('href', window.location.pathname + '?channel=' + newChannelId);
    $('#secondInstance').attr('href', window.location.pathname + '?channel=' + newChannelId);
    $('#pubsub_new_window_link').html(window.location.protocol + "//" + window.location.host + window.location.pathname + '?channel=' + newChannelId);
-   $("#sub_topic_full").text(channelBaseUri + newChannelId);
+   $("#sub_topic_full").text(sess.resolve("api:" + newChannelId));
 }
 
 var testreceive = function(args, kwargs, details) {

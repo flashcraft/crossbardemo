@@ -7,7 +7,9 @@
  *
  ******************************************************************************/
 
-var channelBaseUri = "io.crossbar.demo.beatbox.";
+"use strict";
+
+var channelBaseUri = "io.crossbar.demo.beatbox"; // used for prefix mapping to "api" in demo.js
 var newWindowLink = null;
 
 var currentSubscriptions = [];
@@ -46,25 +48,19 @@ function setupDemo() {
    newWindowLink = document.getElementById('secondInstance');
 
    // IE doesn't do WAV, FF doesn't do mp3s
-   // if(navigator.userAgent.indexOf("Trident") !== -1)  {
-   //    console.log("IE detected - loading mp3s");
-   //    loadSample(0, 'demo_beatbox_sample_a.mp3');
-   //    loadSample(1, 'demo_beatbox_sample_b.mp3');
-   //    loadSample(2, 'demo_beatbox_sample_c.mp3');
-   //    loadSample(3, 'demo_beatbox_sample_d.mp3');
-   // } else {
-   //    console.log("using WAV versions of samples");
-   //    loadSample(0, 'demo_beatbox_sample_a.wav');
-   //    loadSample(1, 'demo_beatbox_sample_b.wav');
-   //    loadSample(2, 'demo_beatbox_sample_c.wav');
-   //    loadSample(3, 'demo_beatbox_sample_d.wav');
-   // }
-
+   if(navigator.userAgent.indexOf("Trident") !== -1)  {
+      console.log("IE detected - loading mp3s");
       loadSample(0, 'demo_beatbox_sample_a.mp3');
       loadSample(1, 'demo_beatbox_sample_b.mp3');
       loadSample(2, 'demo_beatbox_sample_c.mp3');
       loadSample(3, 'demo_beatbox_sample_d.mp3');
-
+   } else {
+      console.log("using WAV versions of samples");
+      loadSample(0, 'demo_beatbox_sample_a.wav');
+      loadSample(1, 'demo_beatbox_sample_b.wav');
+      loadSample(2, 'demo_beatbox_sample_c.wav');
+      loadSample(3, 'demo_beatbox_sample_d.wav');
+   }
 
    // check if audio enabled via URL switch
    if ("audio" in setupInfoDictionary && setupInfoDictionary.audio === "off") {
@@ -181,7 +177,7 @@ function padButton(btn, down) {
          onPadButtonDown(null, { "b": btn, "t": 0 });
       }
       if (pub_trigger.checked) {
-         sess.publish(channelBaseUri + controllerChannelId + ".pad_down", [], { "b": btn, "t": 0 }, { exclude_me: false, acknowledge: true }).then(
+         sess.publish("api:" + controllerChannelId + ".pad_down", [], { "b": btn, "t": 0 }, { exclude_me: false, acknowledge: true }).then(
             function(publication) {
                console.log("published", publication);
             },
@@ -195,7 +191,7 @@ function padButton(btn, down) {
          onPadButtonUp(null, { "b": btn, "t": 0});
       }
       if (pub_trigger.checked) {
-         sess.publish(channelBaseUri + controllerChannelId + ".pad_up", [], { "b": btn, "t": 0}, { exclude_me: false, acknowledge: true }).then(
+         sess.publish("api:" + controllerChannelId + ".pad_up", [], { "b": btn, "t": 0}, { exclude_me: false, acknowledge: true }).then(
             function(publication) {
                console.log("published", publication);
             },
@@ -242,7 +238,7 @@ function onChannelSwitch(oldChannelId, newChannelId) {
       currentSubscriptions[1].unsubscribe();
    }
 
-   sess.subscribe(channelBaseUri + newChannelId + ".pad_down", onPadButtonDown).then(
+   sess.subscribe("api:" + newChannelId + ".pad_down", onPadButtonDown).then(
       function(subscription) {
          console.log("subscribed pad_down", subscription);
          currentSubscriptions[0] = subscription;
@@ -251,7 +247,7 @@ function onChannelSwitch(oldChannelId, newChannelId) {
          console.log("subscription error pad_down", error);
       }
    );
-   sess.subscribe(channelBaseUri + newChannelId + ".pad_up", onPadButtonUp).then(
+   sess.subscribe("api:" + newChannelId + ".pad_up", onPadButtonUp).then(
       function(subscription) {
          console.log("subscribed pad_up", subscription);
          currentSubscriptions[1] = subscription;

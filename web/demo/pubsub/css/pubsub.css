@@ -238,3 +238,9 @@
 {
    position: relative;
 }
+
+#pub_message,
+#sub_message {
+   overflow: auto; /*remove vertical scroll bars in IE*/
+}
+

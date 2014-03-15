@@ -8,7 +8,9 @@
  *
  ******************************************************************************/
 
-var channelBaseUri = "io.crossbar.demo.sliders.",
+"use strict";
+
+var channelBaseUri = "io.crossbar.demo.sliders",
     currentBaseUri = null,
     newWindowLink = null,
     currentMasterSubscription = null,
@@ -91,7 +93,7 @@ function onChannelSwitch(oldChannelId, newChannelId) {
          });
    }
 
-   currentBaseUri = channelBaseUri + newChannelId + ".";
+   currentBaseUri = channelBaseUri + "." + newChannelId + ".";
    sess.subscribe(currentBaseUri + "master", onMaster).then(
       function(subscription) {
          currentMasterSubscription = subscription;

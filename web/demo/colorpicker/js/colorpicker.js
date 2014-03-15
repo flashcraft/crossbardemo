@@ -7,8 +7,10 @@
  *
  ******************************************************************************/
 
+"use strict";
+
 var colorPickersCount = 3, // total number of color pickers as contained in the HTML
-    channelBaseUri = "io.crossbar.demo.colorpicker.",
+    channelBaseUri = "io.crossbar.demo.colorpicker",
     currentChannelUri = null,
     currentSubscription = null,
     newWindowLink = null;

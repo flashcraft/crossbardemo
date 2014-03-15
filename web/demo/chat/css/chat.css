@@ -162,6 +162,7 @@
 {
    resize: none;
    margin-top: 10px;
+   overflow: auto;
 }
 
 #send_message
@@ -220,7 +221,7 @@
 
 .status_line
 {
-   position: fixed;
+   /*position: fixed;*/
    left: 1em;
 /*    color: #eee; */
    bottom: 1em;
