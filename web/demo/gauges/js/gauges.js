@@ -13,16 +13,13 @@
 "use strict";
 
 var newWindowLink = null,
-    currentSubscriptions = [];
-
-var channelBaseUri = "io.crossbar.demo.gauges",
-    currentBaseUri = null;
-
-var gauges = [];
-
-var sliders = null;
+    currentSubscriptions = [],
+    gauges = [],
+    sliders = null;
 
 function setupDemo() {
+
+   sess.prefix("api", demoPrefix + ".gauges");
 
    newWindowLink = document.getElementById('secondInstance');
 
@@ -127,17 +124,15 @@ function onChannelSwitch(oldChannelId, newChannelId) {
    // wire up gauges + sliders for PubSub events
    //
 
-   currentBaseUri = channelBaseUri + "." + newChannelId;
-
    for (var k = 0; k < gauges.length; ++k) {
       (function (p) {
-         sess.subscribe(currentBaseUri + ".g" + p, function (args, kwargs, details) {
+         sess.subscribe("api:" + newChannelId + ".g" + p, function (args, kwargs, details) {
             console.log("refresh", p, args[0]);
             gauges[p].refresh(args[0]);
             $("#s" + p).slider({ value: args[0]});
          }).then(
             function(subscription) {
-               console.log("subscribed ", currentBaseUri, subscription);
+               console.log("subscribed ", "api:" + newChannelId, subscription);
                currentSubscriptions.push(subscription);
             },
             function(error) {
@@ -150,7 +145,7 @@ function onChannelSwitch(oldChannelId, newChannelId) {
    // update publish for the sliders
    $("#s0").slider({
       slide: function(event, ui) {
-         sess.publish(currentBaseUri + ".g0", [ui.value], {}, {acknowledge: true, exclude_me: false}).then(
+         sess.publish("api:" + newChannelId + ".g0", [ui.value], {}, {acknowledge: true, exclude_me: false}).then(
             function(publication) {
                console.log("gauges published ", publication);
             },
@@ -171,7 +166,7 @@ function onChannelSwitch(oldChannelId, newChannelId) {
       $(this).slider({
 
          slide: function(event, ui) {
-            sess.publish(currentBaseUri + ".g" + k, [ui.value], {}, {acknowledge: true, exclude_me: false}).then(
+            sess.publish("api:" + newChannelId + ".g" + k, [ui.value], {}, {acknowledge: true, exclude_me: false}).then(
                function(publication) {
                   console.log("gauges published ", publication);
                },

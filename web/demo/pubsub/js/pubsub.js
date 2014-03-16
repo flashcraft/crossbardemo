@@ -9,10 +9,7 @@
 
 "use strict";
 
-var hubRestApi = "http://localhost:8080",
-    channelBaseUri = "io.crossbar.demo.pubsub",
-
-    sendTime = null,
+var sendTime = null,
     recvTime = null,
 
     receivedMessages = null,
@@ -37,6 +34,8 @@ var hubRestApi = "http://localhost:8080",
 
 
 function setupDemo() {
+
+   sess.prefix("api", demoPrefix + ".pubsub");
 
    receivedMessages = document.getElementById('sub_message');
    receivedMessages.value = "";
@@ -70,7 +69,8 @@ function setupDemo() {
 
    pubMessageBtn.onclick = function () {
 
-      sendTime = (new Date).getTime();
+      // sendTime = (new Date).getTime();
+      sendTime = performance.now();
       sess.publish("api:" + $("#pub_topic").val(), [$("#pub_message").val()], {}, {acknowledge: true, exclude_me: false}).then(
          function(publication) {
             console.log("published", publication);
@@ -115,8 +115,11 @@ function onMessage(args, kwargs, details) {
    console.log("event received", details);
 
    if (sendTime) {
-      recvTime = (new Date).getTime();
-      $("#sub_message_details_time").text((recvTime - sendTime) + " ms / " + event.length + " bytes");
+      // recvTime = (new Date).getTime();
+      recvTime = performance.now();
+      var diff = recvTime - sendTime;
+      diff = Math.round(diff * 10)/10;
+      $("#sub_message_details_time").text(diff + " ms / " + event.length + " bytes");
       sendTime = null;
    } else {
       $("#sub_message_details_time").text(" - / " + event.length + " bytes");

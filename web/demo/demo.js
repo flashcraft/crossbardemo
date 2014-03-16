@@ -87,7 +87,7 @@ function connect() {
 
    var connection = new autobahn.Connection({
       url: wsuri,
-      realm: 'realm1',
+      realm: demoRealm,
       max_retries: 30,
       initial_retry_delay: 2
       }
@@ -96,10 +96,12 @@ function connect() {
    connection.onopen = function (session) {
       sess = session;
 
+      setupDemo();
+
       updateStatusline("Connected to " + wsuri);
 
       // establish prefix to use for shorter URL notation
-      sess.prefix("api", channelBaseUri);
+      // sess.prefix("api", channelBaseUri);
 
       if (checkChannelId(controllerChannel.value)) {
          switchChannel(controllerChannel.value);
@@ -110,6 +112,8 @@ function connect() {
       if(typeof(afterAuth) !== "undefined" ) {
          afterAuth(); // only exists in colorpicker demo
       }
+
+
 
    };
 
@@ -130,12 +134,10 @@ $(document).ready(function()
    controllerChannelCancel = document.getElementById('controller-channel-cancel');
    controllerChannel = document.getElementById('controller-channel');
 
-
+   // select the current channel string on focus
    controllerChannel.onmouseup = function() { return false; };
    controllerChannel.onfocus = function(evt) {
-         console.log("evt", evt.target);
          evt.target.select();
-
    };
 
    // check for additional demo setup data in the URL
@@ -189,7 +191,7 @@ $(document).ready(function()
       controllerChannelCancel.disabled = true;
    }
 
-   setupDemo();
+   // setupDemo();
 
    connect();
 

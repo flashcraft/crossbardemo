@@ -10,12 +10,12 @@
 "use strict";
 
 var colorPickersCount = 3, // total number of color pickers as contained in the HTML
-    channelBaseUri = "io.crossbar.demo.colorpicker",
-    currentChannelUri = null,
     currentSubscription = null,
     newWindowLink = null;
 
 function setupDemo() {
+
+   sess.prefix("api", demoPrefix + ".colorpicker");
 
    newWindowLink = document.getElementById('secondInstance');
 
@@ -60,9 +60,9 @@ function setupPicker(k) {
       setExtraColors(k, color);
 
       // publish the color change event on our topic
-      sess.publish(currentChannelUri + "color_change", [{ index: k, color: color }], {}, {acknowledge: true}).then(
+      sess.publish("api:" + controllerChannelId + ".color_change", [{ index: k, color: color }], {}, {acknowledge: true}).then(
          function(publication) {
-            console.log("published", publication, currentChannelUri + "color_change");
+            console.log("published", publication, "api" + controllerChannelId + ".color_change");
 
          },
          function(error) {
@@ -90,12 +90,11 @@ function onChannelSwitch(oldChannelId, newChannelId) {
       currentSubscription.unsubscribe();
    }
 
-   currentChannelUri = channelBaseUri + newChannelId + ".";
    oldChannelId = newChannelId;
 
-   sess.subscribe(currentChannelUri + "color_change", onColorChangeRemote).then(
+   sess.subscribe("api:" + newChannelId + ".color_change", onColorChangeRemote).then(
       function(subscription) {
-         console.log("subscribed", subscription, currentChannelUri + "color_change");
+         console.log("subscribed", subscription, "api:" + newChannelId + ".color_change");
          currentSubscription = subscription;
 
       },

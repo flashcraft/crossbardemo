@@ -9,8 +9,7 @@
 
 "use strict";
 
-var channelBaseUri = "io.crossbar.demo.chat",
-    initialChannel = null,
+var initialChannel = null,
     currentSubscription = null,
     presetNicks = ["Nick", "Knatterton", "Micky", "Maus", "Donald", "Bruce", "Wayne", "Clark", "Kent", "Sarah", "Connor", "Mary", "Shelley", "Rosemary", "Wilma", "Louis", "Selina", "Barbara", "Gordon", "Herbert", "The Count"],
     nick,
@@ -79,6 +78,9 @@ function switchChannel(oldChannelID, newChannelID) {
 
    // set the second instance link
    $('#secondInstance').attr('href', window.location.pathname + '#' + newChannelID);
+
+   // clear the unread chat message indicator if set
+   $("#show_chat_window").removeClass("message_received");
 }
 
 
@@ -91,7 +93,7 @@ function connect() {
 
    var connection = new autobahn.Connection({
       url: wsuri,
-      realm: 'realm1',
+      realm: demoRealm,
       max_retries: 30,
       initial_retry_delay: 2
    });
@@ -99,7 +101,7 @@ function connect() {
    connection.onopen = function (session) {
       sess = session;
 
-      sess.prefix("api", channelBaseUri);
+      sess.prefix("api", demoPrefix + ".chat");
 
       updateStatusline("Connected to " + wsuri);
 

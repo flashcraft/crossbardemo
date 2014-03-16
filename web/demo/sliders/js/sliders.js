@@ -10,14 +10,14 @@
 
 "use strict";
 
-var channelBaseUri = "io.crossbar.demo.sliders",
-    currentBaseUri = null,
-    newWindowLink = null,
+var newWindowLink = null,
     currentMasterSubscription = null,
     currentEqSubscription = null;
 
 
 function setupDemo() {
+
+   sess.prefix("api", demoPrefix + ".sliders");
 
    newWindowLink = document.getElementById('secondInstance');
 
@@ -30,7 +30,7 @@ function setupDemo() {
 
    $("#master").slider({
       slide: function(event, ui) {
-         sess.publish(currentBaseUri + "master", [ui.value]);
+         sess.publish("api:" +  controllerChannelId + ".master", [ui.value]);
       }
    });
 
@@ -48,7 +48,7 @@ function setupDemo() {
          orientation: "vertical",
 
          slide: function(event, ui) {
-            sess.publish(currentBaseUri +  "eq", [{ idx: k, val: ui.value }]);
+            sess.publish("api:" +  controllerChannelId + ".eq", [{ idx: k, val: ui.value }]);
          }
       });
       i += 1;
@@ -93,8 +93,7 @@ function onChannelSwitch(oldChannelId, newChannelId) {
          });
    }
 
-   currentBaseUri = channelBaseUri + "." + newChannelId + ".";
-   sess.subscribe(currentBaseUri + "master", onMaster).then(
+   sess.subscribe("api:" + newChannelId + ".master", onMaster).then(
       function(subscription) {
          currentMasterSubscription = subscription;
       },
@@ -102,7 +101,8 @@ function onChannelSwitch(oldChannelId, newChannelId) {
          console.log("subscription failed ", error);
       }
    );
-   sess.subscribe(currentBaseUri + "eq", onEq).then(
+
+   sess.subscribe("api:" + newChannelId + ".eq", onEq).then(
       function(subscription) {
          currentEqSubscription = subscription;
       },

@@ -9,8 +9,6 @@
 
 "use strict";
 
-var channelBaseUri = "io.crossbar.demo.notification";
-
 var notificationCount = null;
 
 // notification-related variables
@@ -42,6 +40,8 @@ function abChangeFavicon() {
 
 
 function setupDemo() {
+
+   sess.prefix("api", demoPrefix + ".notification");
 
    $("#notification_message").val("Hello World!");
 
@@ -93,7 +93,7 @@ function onChannelSwitch(oldChannelId, newChannelId) {
 
       // initial setup
       $("#pub_topic").val(newChannelId);
-      $("#pub_topic_full").text(channelBaseUri + "." + newChannelId);
+      $("#pub_topic_full").text(sess.resolve("api:" + newChannelId));
 
    }
 
@@ -109,7 +109,7 @@ function onChannelSwitch(oldChannelId, newChannelId) {
 
    $('#new-window').attr('href', window.location.pathname + '?channel=' + newChannelId);
    $('#secondInstance').attr('href', window.location.pathname + '?channel=' + newChannelId);
-   $("#sub_topic_full").text(channelBaseUri + "." + newChannelId);
+   $("#sub_topic_full").text(sess.resolve("api:" + newChannelId));
 }
 
 function sendNotification () {

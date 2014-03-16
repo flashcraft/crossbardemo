@@ -9,7 +9,6 @@
 
 "use strict";
 
-var channelBaseUri = "io.crossbar.demo.beatbox"; // used for prefix mapping to "api" in demo.js
 var newWindowLink = null;
 
 var currentSubscriptions = [];
@@ -44,6 +43,8 @@ function loadSample(btn, file) {
 
 
 function setupDemo() {
+
+   sess.prefix("api", demoPrefix + ".beatbox");
 
    newWindowLink = document.getElementById('secondInstance');
 
