@@ -28,6 +28,7 @@ pkgfiles.extend(env.CopyFiles('build', ["LICENSE", "MANIFEST.in"]))
 ## setup.py & __init__py files with __VERSION__ and __REVISION__ replaced
 pkgfiles.append(env.VersionStamp('build/setup.py', ['setup.py', 'version.txt', '.git/refs/heads/master']))
 pkgfiles.append(env.VersionStamp('build/' + PACKAGE + '/__init__.py', [PACKAGE + '/__init__.py', 'version.txt', '.git/refs/heads/master']))
+pkgfiles.extend(env.CopyFiles('build', [PACKAGE + "/basic.py"]))
 
 ## web files
 pkgfiles.extend(env.CopyFiles('build/' + PACKAGE, env.FindFiles("web")))
