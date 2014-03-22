@@ -60,7 +60,7 @@ function isValueChar(e) {
    }
 }
 
-var controllerChannelId = null;
+var controllerChannelId;
 var controllerChannel = null;
 var controllerChannelSwitch = null;
 var controllerChannelCancel = null;
@@ -82,10 +82,10 @@ function updateStatusline(status) {
    $(".statusline").text(status);
 };
 
-
+var connection = null;
 function connect() {
 
-   var connection = new autobahn.Connection({
+   connection = new autobahn.Connection({
       url: wsuri,
       realm: demoRealm,
       max_retries: 30,
@@ -94,7 +94,10 @@ function connect() {
    );
 
    connection.onopen = function (session) {
+
       sess = session;
+
+      controllerChannelId = null;
 
       setupDemo();
 
@@ -118,6 +121,7 @@ function connect() {
    };
 
    connection.onclose = function() {
+      sess = null;
       console.log("connection closed ", arguments);
    }
 

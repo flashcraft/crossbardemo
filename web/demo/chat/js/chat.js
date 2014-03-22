@@ -52,7 +52,7 @@ connect();
 function switchChannel(oldChannelID, newChannelID) {
    console.log("switchChannel called");
    // either oldChannelID or newChannelID could be null = start page with no demo selected
-   if (oldChannelID && currentSubscription !== null) {
+   if (oldChannelID && currentSubscription !== null && currentSubscription.session.isOpen === true) {
       currentSubscription.unsubscribe().then(
          function() {
             console.log("successful unsubscribe");

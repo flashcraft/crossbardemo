@@ -44,6 +44,8 @@ function loadSample(btn, file) {
 
 function setupDemo() {
 
+   console.log("setupDemo", sess.id, sess.isOpen);
+
    sess.prefix("api", demoPrefix + ".beatbox");
 
    newWindowLink = document.getElementById('secondInstance');
@@ -235,8 +237,12 @@ function setPadButtonHandlers(button, btn) {
 function onChannelSwitch(oldChannelId, newChannelId) {
 
    if (oldChannelId) {
-      currentSubscriptions[0].unsubscribe();
-      currentSubscriptions[1].unsubscribe();
+      // check whether session for subscriptions still open
+      // since this might be called on a reconnect
+      if(currentSubscriptions[0].session.isOpen === true) {
+         currentSubscriptions[0].unsubscribe();
+         currentSubscriptions[1].unsubscribe();
+      }
    }
 
    sess.subscribe("api:" + newChannelId + ".pad_down", onPadButtonDown).then(
@@ -260,5 +266,3 @@ function onChannelSwitch(oldChannelId, newChannelId) {
 
    newWindowLink.setAttribute('href', window.location.pathname + '?channel=' + newChannelId + '&audio=off');
 }
-
-
