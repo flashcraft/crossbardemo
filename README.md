@@ -10,45 +10,39 @@ The source-code for the demos can be found in the repository [here](https://gith
 
 1. **Install**
 
-	To install from [PyPI](https://pypi.python.org/pypi/crossbardemo):
+To install from [PyPI](https://pypi.python.org/pypi/crossbardemo)
 
-        easy_install crossbardemo
+```shell
+pip install crossbardemo
+```
 
-	To upgrade an existing package from PyPI:
+To upgrade an existing package from PyPI
 	
-		easy_install -U crossbardemo
+```shell
+pip install --upgrade crossbardemo
+```
 
-	To install from sources
+2. **Create** a new **Crossbar**.io node
 
-		git clone git@github.com:crossbario/crossbardemo.git
-		cd crossbardemo
-		python setup.py install
+```shell
+cd $HOME
+mkdir demo1
+cd demo1
+crossbar init --template demos
+```
 
-2. **Restart** the server
+and start
 
-		$ crossbar restart --server ws://127.0.0.1:9000 --password secret
-		Restarting Crossbar.io ..
-        ...
+```shell
+cd $HOME/test1
+crossbar start
+```
 
-3. **Deploy** demos into Web directory
+3. **Open** demos at `http://127.0.0.1:8080` in your browser.
 
-		$ crossbar scratchweb --server ws://127.0.0.1:9000 --password secret --demoinit
-		Scratching Web directory ..
-		Scratched Web directory and copied 918 files (22450455 bytes).
+![](design/shot_demos_home.png)
 
-	> **Warning**: This will scratch any existing content under your Web directory!
-	> 
+For example, open the "Chat" demos in two browser tabs to see it communicate in real-time
 
-4. **Open** demos at `http://127.0.0.1:8080` in your browser.
-
-
-# Building
-
-To build the installable Python package:
-
-	make package
-
-To install the Python package from sources:
-
-	make install
+![](design/shot_demos_chat.png)
 
