@@ -38,6 +38,21 @@ cd $HOME/demo1
 crossbar start
 ```
 
+**Crossbar**.io will log startup
+
+```shell
+$ crossbar start
+2014-04-02 14:48:08+0200 [Controller 136] Log opened.
+2014-04-02 14:48:08+0200 [Controller 136] ============================== Crossbar.io ==============================
+...
+2014-04-02 14:48:10+0200 [Controller 136] Worker 3740: Class 'crossbardemo.basic.TimeService' (1) started in realm 'realm1' on router 101
+2014-04-02 14:48:10+0200 [Controller 136] Worker 3740: Class 'crossbardemo.basic.TickService' (2) started in realm 'realm1' on router 101
+2014-04-02 14:48:10+0200 [Controller 136] Worker 3740: Class 'crossbardemo.basic.MathService' (3) started in realm 'realm1' on router 101
+2014-04-02 14:48:10+0200 [Worker 3740] Loaded static Web resource 'web' from module 'crossbardemo 0.3.2' (filesystem path c:\Python27\lib\site-packages\crossbardemo\web)
+2014-04-02 14:48:10+0200 [Worker 3740] Site starting on 8080
+...
+```
+
 ### 3) Test the Demos
 
 Open the demos entry page at `http://127.0.0.1:8080` in your browser
