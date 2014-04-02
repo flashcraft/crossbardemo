@@ -6,9 +6,9 @@ The complete demo bundle is available as a [Python package](https://pypi.python.
 
 The source-code for the demos can be found in the repository [here](https://github.com/crossbario/crossbardemo/web) and is [open-source licensed](https://github.com/crossbario/crossbardemo/blob/master/LICENSE) under the Apache 2.0 license. This allows you to *reuse the code even in commercial projects* for use as starting points in your development.
 
-## Get it
+## Try it
 
-1. **Install**
+### 1) Install the Demos
 
 To install from [PyPI](https://pypi.python.org/pypi/crossbardemo)
 
@@ -22,7 +22,7 @@ To upgrade an existing package from PyPI
 pip install --upgrade crossbardemo
 ```
 
-2. **Create** a new **Crossbar**.io node
+### 2) **Create** a new **Crossbar**.io node
 
 ```shell
 cd $HOME
@@ -38,7 +38,9 @@ cd $HOME/test1
 crossbar start
 ```
 
-3. **Open** demos at `http://127.0.0.1:8080` in your browser.
+### 3) Test the Demos
+
+Open the demos at `http://127.0.0.1:8080` in your browser.
 
 ![](design/shot_demos_home.png)
 
