@@ -30,13 +30,13 @@ class TimeService(ApplicationSession):
    A simple time service application component.
    """
 
-   def __init__(self, realm = "realm1"):
+   def __init__(self, config):
       ApplicationSession.__init__(self)
-      self._realm = realm
+      self.config = config
 
 
    def onConnect(self):
-      self.join(self._realm)
+      self.join(self.config.realm)
 
 
    def onJoin(self, details):
@@ -54,13 +54,13 @@ class TickService(ApplicationSession):
    An application component that publishes an event every second.
    """
 
-   def __init__(self, realm = "realm1"):
+   def __init__(self, config):
       ApplicationSession.__init__(self)
-      self._realm = realm
+      self.config = config
 
 
    def onConnect(self):
-      self.join(self._realm)
+      self.join(self.config.realm)
 
 
    @inlineCallbacks
@@ -78,13 +78,13 @@ class MathService(ApplicationSession):
    An application component providing math services.
    """
 
-   def __init__(self, realm = "realm1"):
+   def __init__(self, config):
       ApplicationSession.__init__(self)
-      self._realm = realm
+      self.config = config
 
 
    def onConnect(self):
-      self.join(self._realm)
+      self.join(self.config.realm)
 
 
    def onJoin(self, details):

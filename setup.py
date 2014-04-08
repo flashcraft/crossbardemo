@@ -38,7 +38,7 @@ setup(
    author_email = 'autobahnws@googlegroups.com',
    url = 'http://crossbar.io',
    platforms = ('Any'),
-   install_requires = ['crossbar>=0.9.1'],
+   install_requires = ['crossbar>=0.9.3'],
    packages = find_packages(),
    include_package_data = True,
    data_files = [('.', ['LICENSE'])],
