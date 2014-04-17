@@ -1522,7 +1522,7 @@ Session.prototype.log = function () {
       if (self._id && self._created) {
 
          var now = null;
-         if ('performance' in global) {
+         if ('performance' in global && 'now' in performance) {
             now = performance.now() - self._created;
          } else {
             now = Date.now() - self._created;
