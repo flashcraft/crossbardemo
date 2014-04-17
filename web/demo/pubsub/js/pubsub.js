@@ -69,8 +69,12 @@ function setupDemo() {
 
    pubMessageBtn.onclick = function () {
 
-      // sendTime = (new Date).getTime();
-      sendTime = performance.now();
+      if ('performance' in global && 'now' in performance) {
+         sendTime = performance.now();         
+      } else {
+         sendTime = (new Date).getTime();         
+      }
+
       sess.publish("api:" + $("#pub_topic").val(), [$("#pub_message").val()], {}, {acknowledge: true, exclude_me: false}).then(
          function(publication) {
             console.log("published", publication);
@@ -115,8 +119,11 @@ function onMessage(args, kwargs, details) {
    console.log("event received", details);
 
    if (sendTime) {
-      // recvTime = (new Date).getTime();
-      recvTime = performance.now();
+       if ('performance' in global && 'now' in performance) {
+         recvTime = performance.now();  
+       } else {
+         recvTime = (new Date).getTime();         
+       }
       var diff = recvTime - sendTime;
       diff = Math.round(diff * 10)/10;
       $("#sub_message_details_time").text(diff + " ms / " + event.length + " bytes");
