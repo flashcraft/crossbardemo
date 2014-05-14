@@ -194,6 +194,34 @@
 
       </div>
 
+
+      <!-- community widget iframe -->
+
+      <!-- general styles for the widget -->
+      <link rel="stylesheet" type="text/css" href="https://demo.crossbar.io/clandeckwidget/css/parent.css" />
+
+      <!-- local stylesheet -->
+      <!--     - ensures non-Display if nothing loads -->
+      <!--     - site-specific positioning of widget -->
+      <style>
+         #communityWidget.nonDisplay {
+            display: none;
+         }
+
+         #communityWidget {
+            top: 111px;
+            right: 0px;
+            box-shadow: 0 0 12px 2px rgba(0, 0, 0, 0.4);
+         }
+      </style>
+
+      <!-- IFrame itself -->
+      <iframe id="communityWidget" class="nonDisplay" src="https://demo.crossbar.io/clandeckwidget/index.html" frameborder="0"></iframe>
+
+      <!-- the parent page connecting code -->
+      <script src="https://demo.crossbar.io/clandeckwidget/js/parent.js"></script>
+
+
    </div>
    </body>
 </html>

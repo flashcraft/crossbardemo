@@ -68,6 +68,7 @@
    background-image:     -ms-linear-gradient(top right, white, #D3D3D3);
    background-image:      -o-linear-gradient(top right, white, #D3D3D3);
    background-image:         linear-gradient(top right, white, #D3D3D3);
+   z-index: 1001;
 }
 #chat_window .content
 {
