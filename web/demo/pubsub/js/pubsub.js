@@ -69,7 +69,7 @@ function setupDemo() {
 
    pubMessageBtn.onclick = function () {
 
-      if ('performance' in global && 'now' in performance) {
+      if ('performance' in window && 'now' in performance) {
          sendTime = performance.now();         
       } else {
          sendTime = (new Date).getTime();         
@@ -119,7 +119,7 @@ function onMessage(args, kwargs, details) {
    console.log("event received", details);
 
    if (sendTime) {
-       if ('performance' in global && 'now' in performance) {
+       if ('performance' in window && 'now' in performance) {
          recvTime = performance.now();  
        } else {
          recvTime = (new Date).getTime();         
