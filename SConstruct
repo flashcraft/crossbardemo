@@ -47,15 +47,19 @@ artifacts = [pypkg_files]
 
 ## Generate checksum files
 ##
-checksums = []
-checksums.append(env.MD5("build/CHECKSUM.MD5", artifacts))
-checksums.append(env.SHA1("build/CHECKSUM.SHA1", artifacts))
-checksums.append(env.SHA256("build/CHECKSUM.SHA256", artifacts))
+if False:
+   checksums = []
+   checksums.append(env.MD5("build/CHECKSUM.MD5", artifacts))
+   checksums.append(env.SHA1("build/CHECKSUM.SHA1", artifacts))
+   checksums.append(env.SHA256("build/CHECKSUM.SHA256", artifacts))
 
-## The default target consists of all artifacts that
-## would get published
-##
-uploads = artifacts + checksums
+   ## The default target consists of all artifacts that
+   ## would get published
+   ##
+   uploads = artifacts + checksums
+else:
+   uploads = artifacts
+
 Default(uploads)
 
 ## Upload to Amazon S3
