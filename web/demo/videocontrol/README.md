@@ -2,6 +2,10 @@
 
 This is the demo code for [this article](http://sametmax.com/introduction-a-wamp-en-python/).
 
+To prepare the demo to run
+
+   python setup.py develop
+
 To start this demo
 
 	crossbar start
