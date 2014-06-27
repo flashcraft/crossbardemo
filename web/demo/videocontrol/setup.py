@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = 'cbvideocontrol',
-    version = '0.0.1',
+    version = '0.1',
     description = "Crossbar.io Demo: Real-time Web Video Controller",
     platforms = ['Any'],
     packages = ['cbvideocontrol'],
