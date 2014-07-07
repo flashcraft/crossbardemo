@@ -25,7 +25,7 @@
    </header>
    <div class="demo_links">
       <p>
-         Synchronizes votes with a Node.js backend in real-time.
+         Synchronizes votes across all demo instances in real-time, using a Node.js backend.
       </p>
       <div>
          <a id="secondInstance" href="" target="_blank">Open 2nd instance</a>
@@ -87,11 +87,14 @@
       </div>
    </div>
 
+   <div id="codeFrame">
+      <iframe src="votecode.html" width="100%" height="100%"></iframe>
+   </div>
 
    <script>AUTOBAHN_DEBUG = true;</script>
    <!-- // <script src="../../js/jquery.min.js"></script> -->
-   <script src="autobahn.min.js"></script>
-   <script src="vote.js"></script>
+   <script src="js/autobahn.min.js"></script>
+   <script src="js/vote.js"></script>
 
 </body>
 </html>

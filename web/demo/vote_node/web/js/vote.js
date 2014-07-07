@@ -22,57 +22,54 @@ var connection = new autobahn.Connection({
 //
 connection.onopen = function (session, details) {
 
-   console.log("Connected");
+   main(session);
 
+   
+};
+
+function main (session) {
    // subscribe to future vote event
-   session.subscribe("io.crossbar.demo.vote.onvote", function(args, kwargs, details) {
-
+   session.subscribe("io.crossbar.demo.vote.onvote", 
+      function(args, kwargs, details) {
          var event = args[0];
-
-         document.getElementById("votes" + event.subject).value = event.votes;
-
+         document.getElementById("votes" + event.subject).value = 
+            event.votes;
       });
 
    // get the current vote count
-   session.call("io.crossbar.demo.vote.get").then(function(res){
+   session.call("io.crossbar.demo.vote.get").then(
+      function(res){
          for(var i = 0; i < res.length; i++) {
-
-            document.getElementById("votes" + res[i].subject).value = res[i].votes;
-
+            document.getElementById("votes" + res[i].subject).value = 
+               res[i].votes;
          }
    }, session.log);
 
    // wire up vote buttons
-   var voteButtons = document.getElementById("voteContainer").getElementsByTagName("button");
-
+   var voteButtons = document.getElementById("voteContainer").
+                              getElementsByTagName("button");
    for (var i = 0; i < voteButtons.length; i++) {
       voteButtons[i].onclick = function(evt) {
-
-         session.call("io.crossbar.demo.vote.vote", [evt.target.id]).then(session.log, session.log);
-
+         session.call("io.crossbar.demo.vote.vote", 
+            [evt.target.id]).then(session.log, session.log);
       };
    }
 
    // subscribe to vote reset event
    session.subscribe("io.crossbar.demo.vote.onreset", function() {
-
-         var voteCounters = document.getElementById("voteContainer").getElementsByTagName("input");
-
+         var voteCounters = document.getElementById("voteContainer").
+                                     getElementsByTagName("input");
          for(var i = 0; i < voteCounters.length; i++) {
-
             voteCounters[i].value = 0;
-
          }
-
       });
 
    // wire up reset button
    document.getElementById("resetVotes").onclick = function() {
-
-      session.call("io.crossbar.demo.vote.reset").then(session.log, session.log);
-
+      session.call("io.crossbar.demo.vote.reset").
+         then(session.log, session.log);
    };
-};
+}
 
 
 // fired when connection was lost (or could not be established)

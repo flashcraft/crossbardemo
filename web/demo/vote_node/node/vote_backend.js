@@ -11,10 +11,9 @@ var votes = {
    Lemon: 0
 };
 
-connection.onopen = function (session) {
-
-   // define the procedures that we need
-
+function main (session) {
+   
+   // return set of present votes on request
    var getVote = function() {
       var votesArr = [];
       for (var flavor in votes) {
@@ -28,6 +27,7 @@ connection.onopen = function (session) {
       return votesArr;
    };
 
+   // handle vote submission
    var submitVote = function(args, kwargs, details) {
       var flavor = args[0];
       votes[flavor] += 1;
@@ -43,6 +43,7 @@ connection.onopen = function (session) {
       return "voted for " + flavor;
    };
 
+   // reset vote count
    var resetVotes = function() {
       for (var fl in votes) {
          if (votes.hasOwnProperty(fl)) {
@@ -51,39 +52,19 @@ connection.onopen = function (session) {
       }
       // publish the reset event
       session.publish("io.crossbar.demo.vote.onreset");
-
       return "votes reset";
    };
 
 
    // register the procedures
+   session.register('io.crossbar.demo.vote.get', getVote);
+   session.register('io.crossbar.demo.vote.vote', submitVote);
+   session.register('io.crossbar.demo.vote.reset', resetVotes);
+}
 
-   session.register('io.crossbar.demo.vote.get', getVote).then(
-      function (reg) {
-         console.log("procedure getVote registered");
-      },
-      function (err) {
-         console.log("failed to register procedure: " + err);
-      }
-   );
+connection.onopen = function (session) {
 
-   session.register('io.crossbar.demo.vote.vote', submitVote).then(
-      function (reg) {
-         console.log("procedure submitVote registered");
-      },
-      function (err) {
-         console.log("failed to register procedure: " + err);
-      }
-   );
-
-   session.register('io.crossbar.demo.vote.reset', resetVotes).then(
-      function (reg) {
-         console.log("procedure resetVotes registered");
-      },
-      function (err) {
-         console.log("failed to register procedure: " + err);
-      }
-   );
+   main(session);
 
 };
 

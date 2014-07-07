@@ -58,6 +58,11 @@ connection.onopen = function (sess, details) {
    session.subscribe("form:onupdate", onItemUpdated);
    session.subscribe("form:ondelete", onItemDeleted);
 
+   // test subscribe to meta events
+   session.subscribe("wamp.metaevent.session.on_leave", function() {
+      console.log("session.on_leave", arguments);
+   });
+
 };
 
 
