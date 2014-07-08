@@ -219,7 +219,7 @@ header {
 #demo_title
 {
    font-size: 27px;
-   font-weight: bold;
+   /*font-weight: bold;*/
    color: rgb(95, 95, 95);
    display: inline-block;
    text-align: right;
@@ -250,12 +250,21 @@ header {
     text-decoration: none;
 }
 
-.navbar-brand > span {
+.navbar-brand > span.fontFace {
    font-size: 52px;
    position: relative;
-   top: -13px;
+   top: -19px;
    text-decoration: none;
    border: none;
+}
+
+.navbar-brand > span.fontFaceDemo {
+   font-size: 35px;
+   font-family: "Play", sans-serif;
+   position: absolute;
+   top: 33px;
+   left: 199px;
+   color: #D2C501;
 }
 
 .navbar-brand > span > span:first-of-type {

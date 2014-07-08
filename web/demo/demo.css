@@ -266,12 +266,29 @@ header {
     text-decoration: none;
 }
 
-.navbar-brand > span {
+/*.navbar-brand > span {
    font-size: 52px;
    position: relative;
    top: -13px;
    text-decoration: none;
    border: none;
+}*/
+
+.navbar-brand > span.fontFace {
+   font-size: 52px;
+   position: relative;
+   top: -19px;
+   text-decoration: none;
+   border: none;
+}
+
+.navbar-brand > span.fontFaceDemo {
+   font-size: 35px;
+   font-family: "Play", sans-serif;
+   position: absolute;
+   top: 33px;
+   left: 199px;
+   color: #D2C501;
 }
 
 .navbar-brand > span > span:first-of-type {
