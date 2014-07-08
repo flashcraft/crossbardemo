@@ -26,6 +26,12 @@ var connection = new autobahn.Connection({
    realm: "realm1"
 });
 
+document.getElementById("helpButton").addEventListener("click", function() {
+   console.log("helpButton clicked");
+   document.getElementsByClassName("info_bar")[0].classList.toggle("displayed");
+   console.log(document.getElementsByClassName("info_bar")[0]);
+});
+
 
 // fired when connection is established and session attached
 //
@@ -35,15 +41,8 @@ connection.onopen = function (sess, details) {
 
    session = sess;
 
-   
-   document.getElementById("helpButton").addEventListener("click", function() {
-      // $(".info_bar").toggle();
-      // need to replace with non-jquery version, e.g.
-      // document.getElementsByClassName("info_bar")[0].classList.toggle("visible");
-   });
-
    // $('#new-window').attr('href', window.location.pathname);
-   document.getElementById('new-window').setAttribute('href', window.location.pathname);
+   document.getElementById('secondInstance').setAttribute('href', window.location.pathname);
 
    updateStatusline("Connected to " + wsuri + " in session " + session.id);
 
@@ -81,6 +80,7 @@ connection.open();
 
 
 function updateStatusline (status) {
+   console.log("updateStatusline", status);
    document.getElementById("statusline").innerHTML = status;
 }
 

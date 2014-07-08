@@ -42,6 +42,18 @@
                }
             }
          ]
+      },
+      {
+         "type": "guest",
+         "executable": "C:/Program Files (x86)/nodejs/node.exe",
+         "arguments": ["editform_backend.js"],
+         "options": {
+            "workdir": "../node",
+            "watch": {
+               "directories": ["../node"],
+               "action": "restart"
+            }
+         }
       }
    ]
 }

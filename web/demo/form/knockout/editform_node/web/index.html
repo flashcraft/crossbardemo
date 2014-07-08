@@ -3,11 +3,11 @@
    <head>
    <meta charset="utf-8" />
 
-   <link rel="shortcut icon" href="../../../../img/favicon.ico">
+   <link rel="shortcut icon" href="img/favicon.ico">
 
-   <title>Form with Oracle</title>
+   <title>Edit Form</title>
 
-   <link rel="stylesheet" href="../../../demo.css">
+   <!-- <link rel="stylesheet" href="../../../demo.css"> -->
    <link rel="stylesheet" href="css/editform.css">
 
    <!-- Include Flash WebSocket via Conditional Comment: http://msdn.microsoft.com/en-us/library/ms537512%28v=vs.85%29.aspx -->
@@ -25,8 +25,7 @@
       <header>
          <div id="header_inner">
             <div id="demo_title">
-               <span>Form</span>
-               <span>with Oracle backend</span>
+               <span>Edit Form</span>
             </div>
             <a class="navbar-brand" href="/">
                <img src="../../../../../img/crossbar_icon_inverted.png" alt="crossbar logo inverted" width="60" height="60">
@@ -34,16 +33,19 @@
                   <span>Crossbar</span><span>.io</span>
                </span>
             </a>
-         </div>
-
-         <center>A simple editable KnockoutJS-based Form with Oracle PL/SQL backend that synchronizes in real-time - <a href="http://crossbar.io/howitworks/">no application server</a> involved!</center>
-         <center>
-            <a id="new-window" href="" target="_blank">Open 2nd instance</a>
-            <a href="http://crossbar.io/howitworks/">How it works</a>
-            <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/form/knockout/editform">Source Code</a>
-         </center>
+         </div>        
 
       </header>
+
+      <div class="demo_links">
+            <p>
+               A simple editable KnockoutJS-based Form with a Node.js that synchronizes in real-time.
+            </p>
+            <div>
+               <a id="secondInstance" href="" target="_blank">Open 2nd instance</a>
+               <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/form/knockout/editform_node">Source Code</a>
+            </div>
+         </div>
 
       <div id="demo_body">
          <div id="list">
@@ -194,64 +196,21 @@
             Status: <span id="statusline">Not connected.</span>
          </div>
 
-         <div class="info_bar" style="display: none;">
+      </div>
+
+      <div class="info_bar">
 
             <p class="info_bar_heading">
-               Edit demo data in an Oracle database.
+               Edit demo data in a Node.js backend.
             </p>
             <ul>
                <li>
-                  The demo is connected to the Oracle database via Crossbar.io.
-               </li>
-               <li>
-                  All client logic is local to the browser, all business logic is in the database. Crossbar.io manages only the messaging interaction between the two.
+                  The demo is connected to the Node.js backend via Crossbar.io.
                </li>
                <li>
                   Committed changes to the data are synched in real-time between multiple clients - just open the demo in an additional browser window.
                </li>
             </ul>
-
-         </div>
-
-            <div id="error_overlay" class="error_overlay" style="display:none;">
-
-               <div id="non_specific_error" class="error_overlay_content_block">
-                  <p>
-                     The necessary connection to an Oracle database with an installed demo schema could not be established.
-                  </p>
-                  <p>
-                     Please make sure that the following requirements are met:
-                  </p>
-                  <ul>
-                     <li>
-                        an Oracle connect has been created
-                     </li>
-                     <li>
-                        there is a remote for this connect
-                     </li>
-                     <li>
-                        the Oracle database is reachable
-                     </li>
-                     <li>
-                        the repository schema and the demo schema have been installed
-                     </li>
-                  </ul>
-                  <p>
-                     Whether the Oracle database is reachable and the necessary schemas have been installed
-                     can easily be checked by using the 'Test' buttons next to the respective schema login data
-                     on the Oracle Connects tab.
-                  </p>
-                  <p>
-                     To check whether any changes you've made have solved the encountered problem(s) just reload the page.
-                  </p>
-               </div>
-
-               <div id="working_version" class="error_overlay_content_block">
-                  Insert link to hosted demo on Crossbar website once this is up.
-               </div>
-            </div>
-         </div>
-
       </div>
 
       
