@@ -2,7 +2,7 @@
 
 ## What this is
 
-![Screenshot of votes demo](/screenshot.png)
+![Screenshot of votes demo](/screenshot.png?raw=true)
 
 A simple voting application: vote for one of three flavors of ice cream. Get immediate updates when other users vote.
 
