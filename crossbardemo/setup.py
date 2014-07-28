@@ -9,8 +9,23 @@
 from setuptools import setup, find_packages
 
 
+## get version string from "crossbardemo/__init__.py"
+## See: http://stackoverflow.com/a/7071358/884770
+##
+import re
+VERSIONFILE="crossbardemo/__init__.py"
+verstrline = open(VERSIONFILE, "rt").read()
+VSRE = r"^__version__ = ['\"]([^'\"]*)['\"]"
+mo = re.search(VSRE, verstrline, re.M)
+if mo:
+   verstr = mo.group(1)
+else:
+   raise RuntimeError("Unable to find version string in %s." % (VERSIONFILE,))
+
+
+
 LONGDESC = """
-Demos for Crossbar.io - The open-source polyglot application router.
+Demos for Crossbar.io - The unified application router.
 
 Find out more at http://crossbar.io
 Source code: https://github.com/crossbario/crossbardemo
@@ -18,19 +33,11 @@ Source code: https://github.com/crossbario/crossbardemo
 Created by Tavendo GmbH. Get in contact at http://tavendo.com
 
 Demos are open-source licensed under the Apache 2.0 license.
-https://github.com/crossbario/crossbardemo/blob/master/LICENSE
-
-Version:  __VERSION__
-Revision: __REVISION__
 """
-
-## gets replaced during Scons build
-__version__ = '__VERSION__'
-
 
 setup(
    name = 'crossbardemo',
-   version = __version__,
+   version = verstr,
    description = 'Crossbar.io Demos',
    long_description = LONGDESC,
    license = 'Apache 2.0',
