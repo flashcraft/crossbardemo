@@ -20,3 +20,12 @@ clean:
 publish: clean
 	python setup.py register
 	python setup.py sdist upload
+
+find_autobahn:
+	find . -name "autobahn.min.js"
+
+update_autobahn:
+	cp ../../../autobahn/AutobahnJS/build/autobahn.* ./crossbardemo/web/js/
+	cp ../../../autobahn/AutobahnJS/build/autobahn.* ./crossbardemo/web/demo/vote_node/web/js/
+	cp ../../../autobahn/AutobahnJS/build/autobahn.* ./crossbardemo/web/demo/videocontrol/cbvideocontrol/web/
+	cp ../../../autobahn/AutobahnJS/build/autobahn.* ./crossbardemo/web/demo/form/knockout/editform_node/web/js/
