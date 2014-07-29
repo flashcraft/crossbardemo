@@ -24,15 +24,15 @@ connection.onopen = function (session, details) {
 
    main(session);
 
-   
+
 };
 
 function main (session) {
    // subscribe to future vote event
-   session.subscribe("io.crossbar.demo.vote.onvote", 
-      function(args, kwargs, details) {
+   session.subscribe("io.crossbar.demo.vote.onvote",
+      function(args) {
          var event = args[0];
-         document.getElementById("votes" + event.subject).value = 
+         document.getElementById("votes" + event.subject).value =
             event.votes;
       });
 
@@ -40,7 +40,7 @@ function main (session) {
    session.call("io.crossbar.demo.vote.get").then(
       function(res){
          for(var i = 0; i < res.length; i++) {
-            document.getElementById("votes" + res[i].subject).value = 
+            document.getElementById("votes" + res[i].subject).value =
                res[i].votes;
          }
    }, session.log);
@@ -50,7 +50,7 @@ function main (session) {
                               getElementsByTagName("button");
    for (var i = 0; i < voteButtons.length; i++) {
       voteButtons[i].onclick = function(evt) {
-         session.call("io.crossbar.demo.vote.vote", 
+         session.call("io.crossbar.demo.vote.vote",
             [evt.target.id]).then(session.log, session.log);
       };
    }

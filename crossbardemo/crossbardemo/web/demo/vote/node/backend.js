@@ -12,7 +12,7 @@ var votes = {
 };
 
 function main (session) {
-   
+
    // return set of present votes on request
    var getVote = function() {
       var votesArr = [];
@@ -28,7 +28,7 @@ function main (session) {
    };
 
    // handle vote submission
-   var submitVote = function(args, kwargs, details) {
+   var submitVote = function(args) {
       var flavor = args[0];
       votes[flavor] += 1;
 
