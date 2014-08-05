@@ -1,0 +1,39 @@
+<button>Hello, world!</button>
+<script>
+   var host = document.querySelector('button');
+   var root = host.createShadowRoot();
+   root.textContent = 'こんにちは、影の世界!';
+</script>
+
+
+-------
+
+<script>
+   var shadow = document.querySelector('#nameTag').createShadowRoot();
+   var template = document.querySelector('#nameTagTemplate');
+   shadow.appendChild(template.content.cloneNode());
+</script>
+
+------------
+
+<div id="nameTag">
+  <div class="first">Bob</div>
+  <div>B. Love</div>
+  <div class="email">bob@</div>
+</div>
+
+<div style="background: purple; padding: 1em;">
+  <div style="color: red;">
+    <content select=".first"></content>
+  </div>
+  <div style="color: yellow;">
+    <content select="div"></content>
+  </div>
+  <div style="color: blue;">
+    <content select=".email"></content>
+  </div>
+</div>
+
+
+------------
+
