@@ -1,10 +1,7 @@
 <head>
-
 </head>
 
 <body>
-
-
 
    <template id="crossbar-visitors">
       <style>
@@ -17,41 +14,38 @@
          }
 
          .crossbar-visitors-widget {
-            width: 300px;
-            height: 72px;
+            width: 180px;
+            height: 32px;
             background-color: #e5e5e5;
             border: 1px solid #aaa;
             margin: 1em;
             box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.3);
          }
-
-         .crossbar-visitors-widget h1 {
-            font-size: 22px;
-            margin: 0.3em 0 0.3em 1em;
+         .crossbar-visitors-widget.hidden {
+            display: none;
          }
-         .crossbar-visitors-widget p {
+
+         .crossbar-visitors-widget span:first-of-type {
+            padding: 7px 1em 0 1em;
             display: inline-block;
-            font-size: 18px;
-            margin: 0.3em 0 0 1.2em;
-            width: 5em;
          }
 
-         .crossbar-visitors-widget p > span:first-of-type {
-            padding-right: 1em;
+         .crossbar-visitors-widget span:last-of-type {
+            font-weight: bold;
          }
 
+         /* works in Chrome, but not in browsers which need Polymer */
+         /* is overwritten by any stlyes declared in the host page */
+         :host {
+            position: fixed;
+            right: 5px;
+            top: 5px;
+         }
 
       </style>
 
-      <div class="crossbar-visitors-widget">
-         <h1>
-         </h1>
-         <p>
-            <span id="siteLabel">site</span><span id="siteCount">23</span>
-         </p>
-         <p>
-            <span id="pageLabel">page</span><span id="pageCount">4</span>
-         </p>
+      <div id="crossbar-visitors-widget" class="crossbar-visitors-widget hidden">
+         <span id="label">site</span><span id="count">23</span>
       </div>
 
    </template>
@@ -62,10 +56,9 @@
 
    <script>
 
-      var elementContent = null;
-      var test = null;
+   (function() {
 
-      console.log("this", this);
+      var processSubscriptionEvents = false;
 
       // Get the template
       var cb_widget_import = document.querySelector("#crossbar-widget-import").import;
@@ -80,14 +73,11 @@
          root.appendChild(document.importNode(tmpl.content, true));
 
          var self = this; // the host custom element + contents
+         var counter = self.shadowRoot.getElementById("count");
 
-         // process the config values for the text
+         // process the config values
          var config = JSON.parse(self.getAttribute("data-config"));
-         self.shadowRoot.getElementsByTagName("h1")[0].innerHTML = config.heading;
-         self.shadowRoot.getElementById("siteLabel").innerHTML = config.site;
-         self.shadowRoot.getElementById("pageLabel").innerHTML = config.page;
-
-         // connect to router
+         self.shadowRoot.getElementById("label").innerHTML = config.label;
          var wsuri = config.routerUrl;
 
          // the WAMP connection to the Router
@@ -101,20 +91,27 @@
          //
          connection.onopen = function (session, details) {
 
-            console.log("connected", session, details);
+            // get the current visitors count
+            session.call("io.crossbar.demo.visitorswidget.get-current-visitor-count").then(
+                  function(res) {
+                     // set the received count
+                     counter.innerHTML = res;
 
-            session.subscribe("io.crossbar.demo.visitorswidget.onclick", function() {
-               // console.log("onclick", arguments);
-               var counter = self.shadowRoot.getElementById("siteCount");
-               // console.log("counter", counter);
-               var newCount = parseInt(counter.innerHTML) + 1;
-               counter.innerHTML = newCount;
+                     // enable updates via subscription
+                     processSubscriptionEvents = true;
 
-            })
+                     // show the widget now that we have something to display
+                     self.shadowRoot.getElementById("crossbar-visitors-widget").classList.remove("hidden");
 
-            self.shadowRoot.getElementsByTagName("h1")[0].addEventListener("click", function() {
-               console.log("onlicked");
-               session.publish("io.crossbar.demo.visitorswidget.onclick", [], {}, { exclude_me: false });
+                  },
+                  session.log
+               );
+
+            // subscribe to count updates
+            session.subscribe("io.crossbar.demo.visitorswidget.on-visitor-count-update", function(args) {
+               if (processSubscriptionEvents) {
+                  counter.innerHTML = args[0];
+               }
             })
 
          };
@@ -128,9 +125,9 @@
          };
 
 
-// now actually open the connection
-//
-connection.open();
+         // now actually open the connection
+         //
+         connection.open();
 
       };
 
@@ -140,9 +137,10 @@ connection.open();
       };
 
       // Register our new element
-      var VisitorElement = document.registerElement('crossbar-visitors', {
+      document.registerElement('crossbar-visitors', {
         prototype: VisitorsProto
       });
+   })();
 
    </script>
 </body>

@@ -14,11 +14,24 @@
       Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident quidem delectus sunt reiciendis in esse itaque nostrum, labore, tenetur quod neque repudiandae deleniti, quasi tempore nisi voluptatem sint aut voluptatum. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi perferendis earum amet sequi, asperiores repellat animi modi sit voluptatum error hic facilis dolor, quae qui nostrum, est consequuntur, tempora corporis.
    </p>
 
-   <script src="components/platform/platform.js"></script>
+   <!-- Visitors widget embedding code starts here -->
 
-   <crossbar-visitors data-config='{ "routerUrl": "ws://192.168.1.147:8080/ws", "heading": "Current Visitors", "site": "Site", "page": "Page" }'></crossbar-visitors>
-   A Crossbar.io node running the crossbardemo package.
+   <crossbar-visitors data-config='{ "routerUrl": "ws://192.168.1.147:8080/ws", "label": "Current Visitors" }'></crossbar-visitors>
+
+   <script src="js/components/platform/platform.js"></script>
    <link id="crossbar-widget-import" rel="import" href="widget.html">
+   <!-- need to apply this in the host page, since using ':host' declaration -->
+   <!-- does not work using Polymer. -->
+   <!-- this takes precedence over anything declared in our component via ':host' -->
+   <style>
+      crossbar-visitors {
+         position: fixed;
+         right: 5px;
+         top: 5px;
+      }
+   </style>
+
+   <!-- end of Visitors widget embedding code -->
 
    <p>
       Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio velit ullam deleniti ipsa natus, voluptatum, aliquid dignissimos vitae, soluta at omnis optio laudantium facilis. Ad ipsa officia voluptatem repudiandae quo!
