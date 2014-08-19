@@ -69,10 +69,11 @@
 
       // Setup our Shadow DOM and clone the template
       VisitorsProto.createdCallback = function() {
-         var root = this.createShadowRoot();
+         var self = this; // the host custom element + contents
+
+         var root = self.createShadowRoot();
          root.appendChild(document.importNode(tmpl.content, true));
 
-         var self = this; // the host custom element + contents
          var counter = self.shadowRoot.getElementById("count");
 
          // process the config values
@@ -84,12 +85,14 @@
          //
          var connection = new autobahn.Connection({
             url: wsuri,
-            realm: "realm1"
+            realm: "visitorswidget"
          });
 
          // fired when connection is established and session attached
          //
          connection.onopen = function (session, details) {
+
+            console.log("onopen");
 
             // get the current visitors count
             session.call("io.crossbar.demo.visitorswidget.get-current-visitor-count").then(
@@ -120,7 +123,7 @@
          //
          connection.onclose = function (reason, details) {
 
-            console.log("Connection lost: " + reason);
+            console.log("Connection lost: " + reason, details);
 
          };
 

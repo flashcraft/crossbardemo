@@ -12,7 +12,7 @@ var connectionCount = 0;
 //
 var connection = new autobahn.Connection({
    url: "ws://192.168.1.147:8080/ws",
-   realm: "realm1"
+   realm: "visitorswidget"
 });
 
 // fired when connection is established and session attached
