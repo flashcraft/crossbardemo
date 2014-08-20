@@ -1,6 +1,3 @@
-console.log("started");
-
-
 var autobahn = require('autobahn');
 var data = require('./data.js');
 
@@ -23,12 +20,12 @@ var readItems = function (args, kwargs, details) {
 };
 
 var createItem = function (args, kwargs, details) {
-   console.log("create called", arguments);
+   // console.log("create called", arguments);
 
    var newItem = kwargs;
    var caller =  details.caller ? [details.caller] : [];
 
-   console.log("caller: ", caller);
+   // console.log("caller: ", caller);
 
    // create an id for this
    var id = makeid(10);
@@ -74,7 +71,7 @@ var deleteItem = function (args, kwargs, details) {
 };
 
 var updateItem = function (args, kwargs, details) {
-   console.log("updateItem calle", args, kwargs, details);
+   // console.log("updateItem called", args, kwargs, details);
 
    var update = kwargs;
    var id = update.id;
@@ -117,7 +114,7 @@ var filterItems = function (args, kwargs, details) {
    var res = [];
    var prefixLength = prefix.length;
 
-   console.log("filter", size, prefix, prefixLength);
+   // console.log("filter", size, prefix, prefixLength);
 
    data.items.some(function (el, i, arr) {
       console.log("some", i, el.name.slice(0, prefixLength), el.name.slice(0, prefixLength) === prefix);

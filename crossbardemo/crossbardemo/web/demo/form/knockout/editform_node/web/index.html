@@ -192,7 +192,7 @@
              </div>
              <button data-bind="click: saveDetailsEdits, style: { visibility: saveButtonVisible() ? 'visible' : 'hidden' }">Save</button>
              <button data-bind="click: cancelDetailsEdits, style: { visibility: cancelButtonVisible() ? 'visible' : 'hidden' }">Cancel</button>
-             <div data-bind="visible: switchWarning" class="switchWarning">
+             <div data-bind="css: { visible: switchWarning }" class="switchWarning">
                 Unsaved data would be lost on switching. Please 'Save' or 'Cancel' before switching to another item.
              </div>
           </div>

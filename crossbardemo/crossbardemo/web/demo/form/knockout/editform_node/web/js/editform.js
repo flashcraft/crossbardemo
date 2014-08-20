@@ -86,6 +86,8 @@ function updateStatusline (status) {
 
 
 function fillList (res) {
+   // clear list
+   vm.listData([]);
 
    // result list may be empty
    if(res === null || res.length === null) {
@@ -280,6 +282,11 @@ function ViewModel () {
       // can be called before the initial loading of items, or on empyt lists,
       // i.e. when there are no values to compare to
       // should handle this - FIXME
+      if (!self.detailsCurrent) {
+         return;
+      }
+      console.log("checkForValueChange");
+
 
       //self.exevent = event;
       //session.log("checking", viewmodel, event.target.value, event.target.id);
