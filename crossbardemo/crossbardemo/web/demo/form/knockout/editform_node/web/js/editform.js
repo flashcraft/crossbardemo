@@ -56,6 +56,7 @@ connection.onopen = function (sess, details) {
    session.subscribe("form:oncreate", onItemCreated);
    session.subscribe("form:onupdate", onItemUpdated);
    session.subscribe("form:ondelete", onItemDeleted);
+   session.subscribe("form:onreset", onDataReset);
 
    // test subscribe to meta events
    session.subscribe("wamp.metaevent.session.on_leave", function() {
@@ -86,6 +87,8 @@ function updateStatusline (status) {
 
 
 function fillList (res) {
+   // clear list
+   vm.listData([]);
 
    // result list may be empty
    if(res === null || res.length === null) {
@@ -185,6 +188,22 @@ function getIndexFromId (id) {
    return index;
 }
 
+function onDataReset (args, kwargs, details) {
+   console.log("onDataReset");
+   resetData(args);
+};
+
+function resetData (data) {
+   console.log("resetData", data);
+
+   vm.displayResetNotice(true);
+   setTimeout(function() {
+      vm.displayResetNotice(false);
+   }, 1200);
+
+   fillList(data);
+};
+
 
 function ViewModel () {
 
@@ -262,6 +281,7 @@ function ViewModel () {
 
    self.focusOnOrderNumber = ko.observable(true);
 
+   self.displayResetNotice = ko.observable(false);
 
    self.inputs = { "orderNumber": "string", "name": "string", "price": "num", "weight": "num", "size": "num", "inStock": "num" };
 
@@ -280,6 +300,11 @@ function ViewModel () {
       // can be called before the initial loading of items, or on empyt lists,
       // i.e. when there are no values to compare to
       // should handle this - FIXME
+      if (!self.detailsCurrent) {
+         return;
+      }
+      console.log("checkForValueChange");
+
 
       //self.exevent = event;
       //session.log("checking", viewmodel, event.target.value, event.target.id);
@@ -599,6 +624,15 @@ function ViewModel () {
       }
       // reset the counter to 0
       fieldValueChanged.counter(0);
+   };
+
+   this.requestDataReset = function() {
+      session.call("form:reset", [], {}, { disclose_me: true }).then(
+         function(res) {
+            console.log("resetData return");
+            resetData(res);
+         }, session.log
+      );
    };
 }
 

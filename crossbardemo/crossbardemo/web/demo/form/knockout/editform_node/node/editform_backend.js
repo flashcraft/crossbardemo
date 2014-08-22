@@ -1,8 +1,24 @@
-console.log("started");
-
-
 var autobahn = require('autobahn');
-var data = require('./data.js');
+// var data = require('./data.js');
+var bdata = require('./data.js');
+
+var data = {
+   items: []
+}
+
+// copy the imported data for local use
+function deepcopyData() {
+   bdata.items.forEach(function(item) {
+      var itCopy = {};
+      for(prop in item) {
+         if (item.hasOwnProperty(prop)) {
+            itCopy[prop] = item[prop];
+         }
+      }
+      data.items.push(itCopy);
+   })
+}
+deepcopyData();
 
 var connection = new autobahn.Connection({
    url: 'ws://127.0.0.1:8080/ws',
@@ -23,12 +39,12 @@ var readItems = function (args, kwargs, details) {
 };
 
 var createItem = function (args, kwargs, details) {
-   console.log("create called", arguments);
+   // console.log("create called", arguments);
 
    var newItem = kwargs;
    var caller =  details.caller ? [details.caller] : [];
 
-   console.log("caller: ", caller);
+   // console.log("caller: ", caller);
 
    // create an id for this
    var id = makeid(10);
@@ -51,7 +67,7 @@ var deleteItem = function (args, kwargs, details) {
    // get index & check whether the item to delete exists in the backend
    var index = null;
    data.items.some(function (el, i, arr) {
-      console.log(i, el);
+      // console.log(i, el);
       if (el.id === id) {
          index = i;
          return true;
@@ -74,7 +90,7 @@ var deleteItem = function (args, kwargs, details) {
 };
 
 var updateItem = function (args, kwargs, details) {
-   console.log("updateItem calle", args, kwargs, details);
+   // console.log("updateItem called", args, kwargs, details);
 
    var update = kwargs;
    var id = update.id;
@@ -86,7 +102,7 @@ var updateItem = function (args, kwargs, details) {
    // update the backend data
    var index = null;
    data.items.some(function (el, i, arr) {
-      console.log(i, el);
+      // console.log(i, el);
       if (el.id === id) {
          index = i;
          return true;
@@ -117,7 +133,7 @@ var filterItems = function (args, kwargs, details) {
    var res = [];
    var prefixLength = prefix.length;
 
-   console.log("filter", size, prefix, prefixLength);
+   // console.log("filter", size, prefix, prefixLength);
 
    data.items.some(function (el, i, arr) {
       console.log("some", i, el.name.slice(0, prefixLength), el.name.slice(0, prefixLength) === prefix);
@@ -133,13 +149,30 @@ var filterItems = function (args, kwargs, details) {
 
    return res;
 
-}; 
+};
+
+
+var resetData = function (args, kwargs, details) {
+
+   var caller = details.caller ? [details.caller] : [];
+   
+   // console.log("reset request received", caller);
+
+   data.items = [];
+   deepcopyData();
+
+   var set = readItems([], { start: 0, limit: 25 });
+
+   session.publish('io.crossbar.crossbar.demo.product.onreset', set, {}, { exclude: caller });
+
+   return set;
+};
 
 connection.onopen = function (sess) {
 
    session = sess;
 
-   console.log("connected", data.items[0].id, data.items[1].id);
+   console.log("connected");
    // console.log("connected");
 
    // REGISTER procedures
@@ -188,6 +221,18 @@ connection.onopen = function (sess) {
          console.log("failed to register procedure filter: " + err);
       }
    );
+
+
+   session.register('io.crossbar.crossbar.demo.product.reset', resetData).then(
+      function (reg) {
+         console.log("procedure reset registered");
+      },
+      function (err) {
+         console.log("failed to register procedure reset: " + err);
+      }
+   );
+
+
 
 
    // // PUBLISH and CALL every second .. forever
