@@ -14,7 +14,7 @@
             <div id="demo_title">
                <span>Gauges</span>
             </div>
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="http://crossbar.io">
                <img src="img/crossbar_icon_inverted.png" alt="crossbar logo inverted" width="60" height="60">
                <span class="fontFace">
                   <span>Crossbar</span><span>.io</span>
@@ -24,17 +24,20 @@
          </div>
 
       </header>
+
+      <div class="demos-overview-link">
+         <a href="#" class="tavendo-link">Demos Overview Page</a>
+      </div>
+
       <div class="demo_links">
          <p>
-            Gauge state synched across all browser tabs subscribed to the same channel.<br>
-            Built with <a href="http://justgage.com/">JustGage</a>.
+            Changes to gauge state are synched across all browser tabs subscribed to the same channel.<br>
+         </p>
+         <p>
+            <strong>Open a second instance</strong> in a new browser tab, and place these side by side to <strong>see changes synched instantly</strong>
          </p>
          <div>
-            <a id="secondInstance" href="" target="_blank">Open 2nd instance</a>
-            <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/gauges">Source Code</a>
-            <a href="http://crossbar.io">
-               Crossbar.io Homepage
-            </a>
+            <a id="secondInstance" href="" target="_blank" class="tavendo-link">Open second instance</a>
          </div>
       </div>
 
@@ -63,16 +66,56 @@
          </div>
 
 
+         <div class="demo-explanation">
+            <div class="demo-explanation-inner">
+               <h2>
+                  Demo Background
+               </h2>
+               <p>
+                  Gauge value changes are communicated between browser tabs via Crossbar.io - the Unified Application Router. 
+               </p>
+               <p>
+                  All tabs connect to Crossbar.io via WebSocket (persistent, low-latency, full-duplex connections). They subscribe to receive gauge value changes, and publish gauge value changes. Crossbar.io dispatches a gauge value change event to all subscribers. 
+               </p>
+               <p>
+                  Crossbar.io provides the entire connection infrastructure, as well as serving the demo itself. It uses WAMP for its connections, an open protocol which offers both the Publish & Subscribe pattern (used by this demo) and Remote Procedure Calls to cover all application messaging needs in a single protocol.
+               </p>
+               <p>
+                  Learn more: 
+               </p>
+               <ul>
+                  <li>
+                     <a href="" class="tavendo-link">How Crossbar.io makes real-time Web apps easy.</a>
+                  </li>
+                  <li>
+                     <a href="" class="tavendo-link">How to get started using Crossbar.io.</a>
+                  </li>
+                  <li>
+                     <a href="" class="tavendo-link">An introduction to the technical background of Crossbar.io.</a>                  
+                  </li>
 
-          <div class="status_line noContainer">
-            Status: <span class="statusline"></span>
+               </ul>
+            </div>
          </div>
 
 
+         <div class="bottom-details">
+            <div class="status_line noContainer">
+               Status: <span class="statusline"></span>
+            </div>
+
+            <div class="source-code-link">
+               <a href="https://github.com/crossbario/crossbardemo/tree/master/web/demo/gauges" class="tavendo-link">Source Code</a>
+            </div>
+
+
+            <div class="built-with">
+               Built with <a href="http://justgage.com/">JustGage</a>.
+            </div>           
+
+         </div>
+
       </div>
-
-
-
 
       <!-- jQuery -->
       <script type="text/javascript" src="../../js/jquery.min.js"></script>

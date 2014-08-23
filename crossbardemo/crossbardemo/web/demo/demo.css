@@ -313,8 +313,11 @@ header {
    text-decoration: none;
    color: #f60;
    color: #d0b800;
+   text-decoration: underline;
 }
-
+.demo_links > div > a:hover {
+   color: #938200;
+}
 
 #demo_body,
 .demo_links
@@ -649,4 +652,100 @@ flatButton:hover
 .spacer_20
 {
    height: 20px;
+}
+
+
+.demos-overview-link  {
+   position: relative;
+   top: 16px;
+   left: 17px;
+   width: 20%;
+}
+
+.demos-overview-link > a {
+   font-size: 17px;
+   color: #d0b800;
+}
+
+.demos-overview-link > a:visited {
+   
+}
+
+.demos-overview-link > a:hover {
+   color: #938200;
+}
+
+
+
+.bottom-details {
+   clear: both;
+}
+
+.bottom-details > div {
+   display: inline-block;
+   width: 31%;
+}
+
+.source-code-link {
+   text-align: center;
+}
+
+.built-with {
+   text-align: right;
+}
+
+
+/* links to tavendo properties */
+.tavendo-link,
+.tavendo-link:visited
+{
+   color: #d0b800;
+   text-decoration: underline;
+}
+.tavendo-link:hover {
+   color: #938200;
+}
+
+/* external links */
+a,
+a:visited {
+   color: #555;
+   text-decoration: underline;
+}
+a:hover {
+   color: #000;
+}
+
+
+.demo-explanation {
+   clear: both;
+   
+   padding: 4em 0 0;
+   
+}
+
+.demo-explanation .demo-explanation-inner {
+   padding: 1em 2em;
+   width: 80%;
+   margin: 0 auto;
+   background-color: #f2f2f2;
+   border-radius: 2px;
+}
+
+.demo-explanation h2 {
+   font-size: 20px;
+   text-align: center;
+   color: #555;
+}
+
+.demo-explanation p {
+
+}
+
+.demo-explanation ul {
+
+}
+
+.demo-explanation li {
+
 }
