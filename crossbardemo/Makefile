@@ -9,6 +9,9 @@ all:
 install:
 	python setup.py install
 
+img:
+	scons
+
 clean:
 	rm -rf ./crossbardemo.egg-info
 	rm -rf ./build
