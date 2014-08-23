@@ -17,7 +17,8 @@
 ###############################################################################
 
 SVG_FILES = [
-   "crossbar_demos_text.svg"
+   "crossbar_demos_text_paths.svg",
+   "crossbar_icon_inverted.svg"
 ]
 
 IMG_SOURCE_DIR = "../design"
