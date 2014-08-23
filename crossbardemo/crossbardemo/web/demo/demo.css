@@ -655,23 +655,23 @@ flatButton:hover
 }
 
 
-.demos-overview-link  {
+.crossbar-homepage-link  {
    position: relative;
    top: 16px;
    left: 17px;
    width: 20%;
 }
 
-.demos-overview-link > a {
+.crossbar-homepage-link > a {
    font-size: 17px;
    color: #d0b800;
 }
 
-.demos-overview-link > a:visited {
+.crossbar-homepage-link > a:visited {
    
 }
 
-.demos-overview-link > a:hover {
+.crossbar-homepage-link > a:hover {
    color: #938200;
 }
 
