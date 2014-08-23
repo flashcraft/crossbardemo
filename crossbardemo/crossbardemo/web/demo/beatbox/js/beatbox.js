@@ -22,6 +22,8 @@ var direct_trigger = null;
 var samples = [];
 var buttons = [];
 
+var isReconnect = false;
+
 /**
  * For unclear reasons, Chrome will persistently fail to rewind the samples when
  * the media files are served from Flask/SocketServer.
@@ -47,6 +49,11 @@ function setupDemo() {
    console.log("setupDemo", sess.id, sess.isOpen);
 
    sess.prefix("api", demoPrefix + ".beatbox");
+
+   if (isReconnect) {
+      return;
+   }
+   isReconnect = true;
 
    newWindowLink = document.getElementById('secondInstance');
 

@@ -20,9 +20,10 @@
 
 "use strict";
 
-var wsuri,
-    sess,
-    windowUrl;
+var wsuri;
+var sess;
+var windowUrl;
+var isReconnect = false;
 
 if (document.location.protocol === "file:") {
    wsuri =  "ws://127.0.0.1:8080/ws";

@@ -19,7 +19,8 @@ var initialChannel = null,
     sess = null,
     retryCount = 0,
     retryDelay = 2,
-    oldHash = window.location.href;
+    oldHash = window.location.href,
+    isReconnect = false;
 
 var wsuri;
 
@@ -105,12 +106,13 @@ function connect() {
 
       updateStatusline("Connected to " + wsuri);
 
-      console.log("initialChannel", initialChannel);
+      console.log("initialChannel", initialChannel, isReconnect);
 
       // if window url contained channel id, trigger the necessary actions
-      if (initialChannel) {
+      if (initialChannel && !isReconnect) {
          switchChannel(null, initialChannel);
          changeChannelIndicators(initialChannel);
+         isReconnect = true;
       }
 
    };

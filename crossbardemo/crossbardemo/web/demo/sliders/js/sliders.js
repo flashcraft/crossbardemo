@@ -12,12 +12,18 @@
 
 var newWindowLink = null,
     currentMasterSubscription = null,
-    currentEqSubscription = null;
+    currentEqSubscription = null,
+    isReconnect = false;
 
 
 function setupDemo() {
 
    sess.prefix("api", demoPrefix + ".sliders");
+
+   if (isReconnect) {
+      return;
+   }
+   isReconnect = true;
 
    newWindowLink = document.getElementById('secondInstance');
 

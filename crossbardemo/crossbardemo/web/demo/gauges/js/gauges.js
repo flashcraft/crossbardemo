@@ -15,11 +15,17 @@
 var newWindowLink = null,
     currentSubscriptions = [],
     gauges = [],
-    sliders = null;
+    sliders = null,
+    isReconnect = false;
 
 function setupDemo() {
 
    sess.prefix("api", demoPrefix + ".gauges");
+
+   if (isReconnect) {
+      return;
+   }
+   isReconnect = true;
 
    newWindowLink = document.getElementById('secondInstance');
 
