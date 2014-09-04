@@ -6,7 +6,7 @@ The complete demo bundle is available as a [Python package](https://pypi.python.
 
 For installation of **Crossbar**.io itself, please see the [Getting Started](https://github.com/crossbario/crossbar/wiki#getting-started).
 
-> The source-code for the demos can be found in the repository [here](https://github.com/crossbario/crossbardemo/web) and is [open-source licensed](https://github.com/crossbario/crossbardemo/blob/master/LICENSE) under the Apache 2.0 license. This allows you to *reuse the code even in commercial projects* for use as starting points in your development.
+> The source-code for the demos can be found in the repository [here](https://github.com/crossbario/crossbardemo/tree/master/crossbardemo/crossbardemo/web) and is [open-source licensed](https://github.com/crossbario/crossbardemo/blob/master/crossbardemo/LICENSE) under the Apache 2.0 license. This allows you to *reuse the code even in commercial projects* for use as starting points in your development.
 > 
 
 ## Try it
