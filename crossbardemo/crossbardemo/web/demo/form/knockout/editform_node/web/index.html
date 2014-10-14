@@ -91,7 +91,7 @@
                      <!--<td class="listPrice" data-bind="text: price"></td>-->
                      <td class="listPrice">
                         <div class="relativeContainer"> <!--needed since FF doesn't do absolute positioning from TDs-->
-                           <button class="deleteButton" data-bind="click: $parent.deleteListItem, visible: itemState() ==='isBeingDisplayed'">X</button>
+                           <button class="deleteButton" data-bind="click: $parent.triggerDelete, visible: itemState() ==='isBeingDisplayed'">X</button>
                            <span data-bind="text: price"></span>
                         </div>
                      </td>

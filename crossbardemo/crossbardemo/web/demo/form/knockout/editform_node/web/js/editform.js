@@ -13,9 +13,8 @@ if (document.location.origin == "file://") {
 var session = null;
 
 // KnockoutJS viewmodel
-var vm = null;
 // Instantiate and bind the viewmodel
-vm = new ViewModel();
+var vm = new ViewModel();
 ko.applyBindings(vm);
 
 
@@ -26,12 +25,12 @@ var connection = new autobahn.Connection({
    realm: "realm1"
 });
 
+
 document.getElementById("helpButton").addEventListener("click", function() {
    console.log("helpButton clicked");
    document.getElementsByClassName("info_bar")[0].classList.toggle("displayed");
    console.log(document.getElementsByClassName("info_bar")[0]);
 });
-
 
 // fired when connection is established and session attached
 //
@@ -50,13 +49,13 @@ connection.onopen = function (sess, details) {
    session.prefix("form", "io.crossbar.crossbar.demo.product");
 
    // request full data set initially and fill grid
-   session.call("form:read", [], {start: 0, limit: 25}).then(fillList, session.log);
+   session.call("form:read", [], {start: 0, limit: 25}).then(vm.fillList, session.log);
 
    // subscribe to data change events
-   session.subscribe("form:oncreate", onItemCreated);
-   session.subscribe("form:onupdate", onItemUpdated);
-   session.subscribe("form:ondelete", onItemDeleted);
-   session.subscribe("form:onreset", onDataReset);
+   session.subscribe("form:oncreate", vm.onItemCreated);
+   session.subscribe("form:onupdate", vm.onItemUpdated);
+   session.subscribe("form:ondelete", vm.onItemDeleted);
+   session.subscribe("form:onreset", vm.onDataReset);
 
    // test subscribe to meta events
    session.subscribe("wamp.metaevent.session.on_leave", function() {
@@ -77,107 +76,12 @@ connection.onclose = function (reason, details) {
 //
 connection.open();
 
-
-
-
+// should use KO and be part of the VM
 function updateStatusline (status) {
    console.log("updateStatusline", status);
    document.getElementById("statusline").innerHTML = status;
 }
 
-
-function fillList (res) {
-   // clear list
-   vm.listData([]);
-
-   // result list may be empty
-   if(res === null || res.length === null) {
-      // needs some proper error handling
-      return;
-   }
-
-   // fill grid with records
-   for (var i = 0; i < res.length; i++) {
-      vm.listData.push(new listItem(res[i]));
-   }
-
-   // set focus to first list element
-   vm.displayDetails(vm.listData()[0]);
-
-   // WAMP session specific logging ..
-   session.log("Filled grid with " + res.length + " entries.");
-}
-
-
-function onItemCreated (args, kwargs, details) {
-   console.log("onItemCreated", arguments);
-   var item = kwargs;
-   vm.listData.push(new listItem(item));
-
-   // highlight this for a short while
-   var index = getIndexFromId(item.id);
-   vm.listData()[index].itemState("hasBeenCreated");
-   window.setTimeout(function() { vm.listData()[index].itemState(''); }, 1000);
-}
-
-
-function onItemUpdated (args, kwargs, details) {
-   console.log("onItemUpdated", kwargs);
-   var update = kwargs;
-   var index = getIndexFromId(update.id);
-
-   // update locally stored values that habe been updated remotely
-   for (var i in update) {
-      if(update.hasOwnProperty(i)) {
-         vm.listData()[index][i](update[i]);
-      }
-   }
-
-   // update the details view if this shows the updated item
-   if (vm.detailsCurrent.id() === update.id) {
-
-      vm.displayDetails(vm.listData()[index]);
-
-      // temporary highlighting of the changed details
-      for (var i in update) {
-         if (update.hasOwnProperty(i) && i != "id" ){
-            vm.detailsEditable.hasBeenEdited[i](true);
-            (function(it) {
-                  window.setTimeout(function() {
-                        vm.detailsEditable.hasBeenEdited[it](false);
-                  }, 1400);
-            })(i);
-         }
-      }
-   }
-
-   // temporary highlighting of the list item
-   var previousItemState = vm.listData()[index].itemState();
-   vm.listData()[index].itemState("hasBeenEdited");
-   window.setTimeout(function() { vm.listData()[index].itemState(previousItemState); }, 1400);
-}
-
-
-function onItemDeleted (args, kwargs, details) {
-   console.log("onItemDeleted", arguments);
-   var id = args[0];
-
-   // highlight item, then delete
-   var index = getIndexFromId(id);
-   console.log("index", index);
-   vm.listData()[index].itemState("isBeingDeleted");
-
-   window.setTimeout(function() {
-      var fadeTime = 200;
-      // fade out item
-      vm.listData()[index].itemState("nonDisplay");
-      // set timeout to delete item after end of fade
-      window.setTimeout(function() {
-         var locallyDeleted = kwargs.localDelete ? true : false;
-         vm.deleteListItemLocal(index, locallyDeleted);
-      }, fadeTime);
-   }, 1400);
-}
 
 function getIndexFromId (id) {
    var index;
@@ -188,23 +92,6 @@ function getIndexFromId (id) {
    }
    return index;
 }
-
-function onDataReset (args, kwargs, details) {
-   console.log("onDataReset");
-   resetData(args);
-};
-
-function resetData (data) {
-   console.log("resetData", data);
-
-   vm.displayResetNotice(true);
-   setTimeout(function() {
-      vm.displayResetNotice(false);
-   }, 1200);
-
-   fillList(data);
-};
-
 
 function ViewModel () {
 
@@ -233,9 +120,13 @@ function ViewModel () {
 
    var self = this;
 
+
+   /*****************************************************
+   *  definition of our observables and other variables *
+   *****************************************************/
+
    this.listData = ko.observableArray([]).indexed('index');
 
-   // details editable observables
    self.detailsEditable = {
       "index": ko.observable(),
       "orderNumber": ko.observable(),
@@ -285,7 +176,10 @@ function ViewModel () {
 
    self.inputs = { "orderNumber": "string", "name": "string", "price": "num", "weight": "num", "size": "num", "inStock": "num" };
 
-   this.mangleInputs = function(viewmodel, event) {
+   
+
+
+   self.mangleInputs = function(viewmodel, event) {
       // filter out non-numeric inputs on numeric input fields
       if (self.inputs[event.target.id] === "num") {
          // session.log("evt", event.keyCode);
@@ -296,7 +190,7 @@ function ViewModel () {
       return true; // knockout.js otherwise prevents the default action
    };
 
-   this.checkForValueChange = function(viewmodel, event) {
+   self.checkForValueChange = function(viewmodel, event) {
       // can be called before the initial loading of items, or on empyt lists,
       // i.e. when there are no values to compare to
       // should handle this - FIXME
@@ -359,7 +253,7 @@ function ViewModel () {
 
    };
 
-   this.switchDetailsDisplayed = function(listItem, event) {
+   self.switchDetailsDisplayed = function(listItem, event) {
       console.log("switchDetailsDisplayed", listItem, event);
 
       // check whether switching currently blocked
@@ -387,7 +281,7 @@ function ViewModel () {
       }
    };
 
-   this.displayDetails = function(listItem, event) {
+   self.displayDetails = function(listItem, event) {
 
       self.clearDetailsChanged();
       self.switchWarning(false);
@@ -425,7 +319,7 @@ function ViewModel () {
 
    };
 
-   this.normalizeSet = function(set) {
+   self.normalizeSet = function(set) {
       for (var i in set) {
          // backend expects numerical values for certain fields
          // either parse to numerical, or remove field from save set
@@ -439,7 +333,7 @@ function ViewModel () {
       return set;
    };
 
-   this.saveDetailsEdits = function() {
+   self.saveDetailsEdits = function() {
 
       // block from switching before the call has returned
       self.switchingBlocked = true;
@@ -513,7 +407,7 @@ function ViewModel () {
       }
    };
 
-   this.cancelDetailsEdits = function() {
+   self.cancelDetailsEdits = function() {
       // check whether this is a new item
       if (self.detailsCurrent.itemState() === 'isNew') {
          // delete item from list
@@ -528,7 +422,7 @@ function ViewModel () {
       }
    };
 
-   this.addListItem = function() {
+   self.addListItem = function() {
       // block the 'add item' button
       self.addButtonVisible(false);
 
@@ -558,22 +452,44 @@ function ViewModel () {
       self.nameMissing(true);
    };
 
-   this.deleteListItem = function( listItem, event ) {
+   // delete triggered locally via delete button on list item
+   self.triggerDelete = function( listItem, event ) {
       session.call("form:delete", [listItem.id()], {}, { disclose_me: true }).then(
          function(res) {
-            console.log("deleted", res);
-            // delete the item
-            onItemDeleted([res], { localDelete: true });
+            // console.log("item " + listItem.id() + " deleted on backend", res);
+            var locallyTriggered = true;
+            self.deleteListItem(listItem, locallyTriggered);
          },
-         session.log
+         session.log // we should really have some error handling here - FIXME!
          );
    };
 
-   this.deleteListItemLocal = function( index, locallyDeleted ) {
+   self.deleteListItem = function (item, locallyTriggered) {
+
+      item.itemState("isBeingDeleted");
+
+      var timeout = locallyTriggered === true ? 500 : 1500;
+
+      window.setTimeout(function() {
+         // fade out item - CHECKME!
+         item.itemState("nonDisplay");
+         // set timeout to delete item after end of fade
+         window.setTimeout(function() {
+            var index = getIndexFromId(item.id());
+            self.listData.remove(item);
+            self.changeFocusAfterDelete(index, locallyTriggered);
+         }, 200);
+      }, 1400);
+
+   };
+
+   self.changeFocusAfterDelete = function (index, locallyTriggered) {
+      // delete can only be triggered locally on an item which has focus,   
+      // remotely triggered deletes may be on either focussed or non-focussed items,
 
       var changeFocus = true;
 
-      if ( !locallyDeleted  ) {
+      if ( !locallyTriggered  ) {
          // check whether any other element is in focus or if we need to focus a new element
          var focussedElementExists = false;
          for (var i = 0; i < self.listData().length; i++ ) {
@@ -583,8 +499,6 @@ function ViewModel () {
          }
          changeFocus = focussedElementExists ? false : true;
       }
-
-      self.listData.splice(index, 1); // splice without listData(), since otherwise no ko refresh triggered
 
       if (changeFocus) {
          // check if list elements left after delete, if yes set focus to one of them
@@ -613,7 +527,7 @@ function ViewModel () {
       }
    };
 
-   this.clearDetailsChanged = function() {
+   self.clearDetailsChanged = function() {
       //session.log("clearing details");
       var fieldValueChanged = self.detailsEditable.fieldValueChanged;
       // reset all changed values to false
@@ -626,14 +540,112 @@ function ViewModel () {
       fieldValueChanged.counter(0);
    };
 
-   this.requestDataReset = function() {
+   self.requestDataReset = function() {
       session.call("form:reset", [], {}, { disclose_me: true }).then(
          function(res) {
             console.log("resetData return");
-            resetData(res);
+            self.resetData(res);
          }, session.log
       );
    };
+
+   self.fillList = function (res) {
+      // clear list
+      self.listData([]);
+
+      // result list may be empty
+      if(res === null || res.length === null) {
+         // needs some proper error handling
+         return;
+      }
+
+      // fill grid with records
+      for (var i = 0; i < res.length; i++) {
+         self.listData.push(new listItem(res[i]));
+      }
+
+      // set focus to first list element
+      self.displayDetails(vm.listData()[0]);
+
+      // WAMP session specific logging ..
+      session.log("Filled grid with " + res.length + " entries.");
+   }
+
+   self.onItemCreated = function (args, kwargs, details) {
+      console.log("onItemCreated", arguments);
+      var item = kwargs;
+      self.listData.push(new listItem(item));
+
+      // highlight this for a short while
+      var index = getIndexFromId(item.id);
+      self.listData()[index].itemState("hasBeenCreated");
+      window.setTimeout(function() { self.listData()[index].itemState(''); }, 1000);
+   }
+
+   self.onItemUpdated = function (args, kwargs, details) {
+      console.log("onItemUpdated", kwargs);
+      var update = kwargs;
+      var index = getIndexFromId(update.id);
+
+      // update locally stored values that habe been updated remotely
+      for (var i in update) {
+         if(update.hasOwnProperty(i)) {
+            self.listData()[index][i](update[i]);
+         }
+      }
+
+      // update the details view if this shows the updated item
+      if (self.detailsCurrent.id() === update.id) {
+
+         self.displayDetails(self.listData()[index]);
+
+         // temporary highlighting of the changed details
+         for (var i in update) {
+            if (update.hasOwnProperty(i) && i != "id" ){
+               self.detailsEditable.hasBeenEdited[i](true);
+               (function(it) {
+                     window.setTimeout(function() {
+                           self.detailsEditable.hasBeenEdited[it](false);
+                     }, 1400);
+               })(i);
+            }
+         }
+      }
+
+      // temporary highlighting of the list item
+      var previousItemState = self.listData()[index].itemState();
+      self.listData()[index].itemState("hasBeenEdited");
+      window.setTimeout(function() { self.listData()[index].itemState(previousItemState); }, 1400);
+   }
+
+   self.onItemDeleted = function (args) {
+   
+      var id = args[0];
+      console.log("onItemDeleted", id);   
+
+      // get the item we need to delete
+      var item = self.listData()[getIndexFromId(id)];
+      var locallyTriggered = false;
+
+      self.deleteListItem(item, locallyTriggered);
+   }
+   
+   self.onDataReset = function (args, kwargs, details) {
+      console.log("onDataReset");
+      self.resetData(args);
+   };
+
+   self.resetData = function (data) {
+      console.log("resetData", data);
+
+      self.displayResetNotice(true);
+      setTimeout(function() {
+         self.displayResetNotice(false);
+      }, 1200);
+
+      self.fillList(data);
+   };
+
 }
 
 
