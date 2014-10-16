@@ -232,34 +232,6 @@ connection.onopen = function (sess) {
       }
    );
 
-
-
-
-   // // PUBLISH and CALL every second .. forever
-   // //
-   // var counter = 0;
-   // setInterval(function () {
-
-   //    // PUBLISH an event
-   //    //
-   //    session.publish('com.example.oncounter', [counter]);
-   //    console.log("published to 'oncounter' with counter " + counter);
-
-   //    // CALL a remote procedure
-   //    //
-   //    session.call('com.example.mul2', [counter, 3]).then(
-   //       function (res) {
-   //          console.log("mul2() called with result: " + res);
-   //       },
-   //       function (err) {
-   //          if (err.error !== 'wamp.error.no_such_procedure') {
-   //             console.log('call of mul2() failed: ' + err);
-   //          }
-   //       }
-   //    );
-
-   //    counter += 1;
-   // }, 1000);
 };
 
 connection.open();

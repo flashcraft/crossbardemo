@@ -1,97 +1,8 @@
-// the URL of the WAMP Router (Crossbar.io)
-//
-var wsuri;
-if (document.location.origin == "file://") {
-   wsuri = "ws://127.0.0.1:8080/ws";
-
-} else {
-   wsuri = (document.location.protocol === "http:" ? "ws:" : "wss:") + "//" +
-            document.location.host + "/ws";
-}
-
-// WAMP session object
-var session = null;
-
 // KnockoutJS viewmodel
 // Instantiate and bind the viewmodel
 var vm = new ViewModel();
 ko.applyBindings(vm);
 
-
-// the WAMP connection to the Router
-//
-var connection = new autobahn.Connection({
-   url: wsuri,
-   realm: "realm1"
-});
-
-
-document.getElementById("helpButton").addEventListener("click", function() {
-   console.log("helpButton clicked");
-   document.getElementsByClassName("info_bar")[0].classList.toggle("displayed");
-   console.log(document.getElementsByClassName("info_bar")[0]);
-});
-
-// fired when connection is established and session attached
-//
-connection.onopen = function (sess, details) {
-
-   console.log("Connected");
-
-   session = sess;
-
-   // $('#new-window').attr('href', window.location.pathname);
-   document.getElementById('secondInstance').setAttribute('href', window.location.pathname);
-
-   updateStatusline("Connected to " + wsuri + " in session " + session.id);
-
-   // set an URI prefix
-   session.prefix("form", "io.crossbar.crossbar.demo.product");
-
-   // request full data set initially and fill grid
-   session.call("form:read", [], {start: 0, limit: 25}).then(vm.fillList, session.log);
-
-   // subscribe to data change events
-   session.subscribe("form:oncreate", vm.onItemCreated);
-   session.subscribe("form:onupdate", vm.onItemUpdated);
-   session.subscribe("form:ondelete", vm.onItemDeleted);
-   session.subscribe("form:onreset", vm.onDataReset);
-
-   // test subscribe to meta events
-   session.subscribe("wamp.metaevent.session.on_leave", function() {
-      console.log("session.on_leave", arguments);
-   });
-
-};
-
-
-// fired when connection was lost (or could not be established)
-//
-connection.onclose = function (reason, details) {
-   console.log("Connection lost: " + reason, details);
-}
-
-
-// now actually open the connection
-//
-connection.open();
-
-// should use KO and be part of the VM
-function updateStatusline (status) {
-   console.log("updateStatusline", status);
-   document.getElementById("statusline").innerHTML = status;
-}
-
-
-function getIndexFromId (id) {
-   var index;
-   for (var i = 0; i < vm.listData().length; i++) {
-      if (vm.listData()[i].id() === id) {
-         index = vm.listData()[i].index();
-      }
-   }
-   return index;
-}
 
 function ViewModel () {
 
@@ -120,10 +31,80 @@ function ViewModel () {
 
    var self = this;
 
+   /***************************************
+   *  Establish connection to WAMP Router *
+   ***************************************/
 
-   /*****************************************************
-   *  definition of our observables and other variables *
-   *****************************************************/
+   // determine URI of WAMP router
+   self.wsuri = null;
+   // - locally run router when loaded from file for development purposes
+   if (document.location.origin == "file://") {
+      self.wsuri = "ws://127.0.0.1:8080/ws";
+   // - else based on the IP addess the HTML is served from
+   } else {
+      self.wsuri = (document.location.protocol === "http:" ? "ws:" : "wss:") + "//" +
+               document.location.host + "/ws";
+   }
+
+   // WAMP session object
+   self.session = null;
+
+   // the WAMP connection to the Router
+   //
+   self.connection = new autobahn.Connection({
+      url: self.wsuri,
+      realm: "realm1"
+   });
+
+   // fired when connection is established and session attached
+   //
+   self.connection.onopen = function (sess, details) {
+
+      console.log("Connected");
+
+      self.session = sess;
+
+      // $('#new-window').attr('href', window.location.pathname);
+      document.getElementById('secondInstance').setAttribute('href', window.location.pathname);
+
+      self.connectionStatus("Connected to " + self.wsuri + " in session " + self.session.id);
+
+      // set an URI prefix
+      self.session.prefix("form", "io.crossbar.crossbar.demo.product");
+
+      // request full data set initially and fill grid
+      self.session.call("form:read", [], {start: 0, limit: 25}).then(self.fillList, self.session.log);
+
+      // subscribe to data change events
+      self.session.subscribe("form:oncreate", self.onItemCreated);
+      self.session.subscribe("form:onupdate", self.onItemUpdated);
+      self.session.subscribe("form:ondelete", self.onItemDeleted);
+      self.session.subscribe("form:onreset", self.onDataReset);
+
+      // test subscribe to meta events
+      self.session.subscribe("wamp.metaevent.session.on_leave", function() {
+         console.log("session.on_leave", arguments);
+      });
+
+   };
+
+
+   // fired when connection was lost (or could not be established)
+   //
+   self.connection.onclose = function (reason, details) {
+      console.log("Connection lost: " + reason, details);
+      self.connectionStatus("Connection lost!");
+   }
+
+
+   // now actually open the connection
+   //
+   self.connection.open();
+
+
+   /**********************************************
+   *  Define our observables and other variables *
+   **********************************************/
 
    this.listData = ko.observableArray([]).indexed('index');
 
@@ -176,13 +157,26 @@ function ViewModel () {
 
    self.inputs = { "orderNumber": "string", "name": "string", "price": "num", "weight": "num", "size": "num", "inStock": "num" };
 
-   
+   self.ListItem = function (data) {
+      return {
+         orderNumber: ko.observable(data["orderNumber"]),
+         name: ko.observable(data["name"]),
+         price: ko.observable(data["price"]),
+         weight: ko.observable(data["weight"]),
+         size: ko.observable(data["size"]),
+         inStock: ko.observable(data["inStock"]),
+         id: ko.observable(data["id"]),
+         itemState: ko.observable()
+      };
+   }
+
+   self.connectionStatus = ko.observable("Not connected!");
 
 
    self.mangleInputs = function(viewmodel, event) {
       // filter out non-numeric inputs on numeric input fields
       if (self.inputs[event.target.id] === "num") {
-         // session.log("evt", event.keyCode);
+         // self.session.log("evt", event.keyCode);
          if (event.keyCode > 57 && event.keyCode !== 190) {
             return false;
          }
@@ -201,10 +195,10 @@ function ViewModel () {
 
 
       //self.exevent = event;
-      //session.log("checking", viewmodel, event.target.value, event.target.id);
+      //self.session.log("checking", viewmodel, event.target.value, event.target.id);
       var valueId = event.target.id;
       var currentValue = event.target.value;
-      // session.log("vId", valueId, "cv", currentValue);
+      // self.session.log("vId", valueId, "cv", currentValue);
       // convert to number on number fields before comparison
       if (self.inputs[valueId] === "num") {
          currentValue = parseFloat(currentValue, 10);
@@ -237,7 +231,7 @@ function ViewModel () {
 
       // switch buttons based on whether there have been changes and all required data present
       if (self.orderNumberMissing() === false && self.nameMissing() === false && self.detailsEditable.fieldValueChanged.counter() > 0) {
-         //session.log("ok");
+         //self.session.log("ok");
          self.saveButtonVisible(true);
          self.cancelButtonVisible(true);
       }
@@ -349,7 +343,7 @@ function ViewModel () {
          self.normalizeSet(saveSet);
          console.log("saveSet ", saveSet);
 
-         session.call("form:create", [], saveSet, { disclose_me: true }).then(
+         self.session.call("form:create", [], saveSet, { disclose_me: true }).then(
             function(res) {
 
                console.log("created", res);
@@ -373,7 +367,7 @@ function ViewModel () {
                // re-enable the 'add item' button
                self.addButtonVisible(true);
             },
-            session.log
+            self.session.log
             );
       }
       else {
@@ -388,7 +382,7 @@ function ViewModel () {
 
          self.normalizeSet(updateSet);
 
-         session.call("form:update", [], updateSet, { disclose_me: true }).then(
+         self.session.call("form:update", [], updateSet, { disclose_me: true }).then(
             function(res) {
                console.log("updated", res);
                delete res['_eventId'];
@@ -402,7 +396,7 @@ function ViewModel () {
                // display details to clear field states + set button states
                self.displayDetails(self.listData()[self.detailsCurrent.index()]);
             },
-            session.log
+            self.session.log
             );
       }
    };
@@ -436,7 +430,7 @@ function ViewModel () {
          "itemState": "isNew", // FIXME
          "price": ""
       };
-      self.listData.push(new listItem(newItem));
+      self.listData.push(new self.ListItem(newItem));
       //set itemState (hack, no idea why the regular set as part of newItem not working - FIXME
       var listLength = self.listData().length;
       self.listData()[listLength - 1].itemState("isNew");
@@ -454,13 +448,13 @@ function ViewModel () {
 
    // delete triggered locally via delete button on list item
    self.triggerDelete = function( listItem, event ) {
-      session.call("form:delete", [listItem.id()], {}, { disclose_me: true }).then(
+      self.session.call("form:delete", [listItem.id()], {}, { disclose_me: true }).then(
          function(res) {
             // console.log("item " + listItem.id() + " deleted on backend", res);
             var locallyTriggered = true;
             self.deleteListItem(listItem, locallyTriggered);
          },
-         session.log // we should really have some error handling here - FIXME!
+         self.session.log // we should really have some error handling here - FIXME!
          );
    };
 
@@ -475,7 +469,7 @@ function ViewModel () {
          item.itemState("nonDisplay");
          // set timeout to delete item after end of fade
          window.setTimeout(function() {
-            var index = getIndexFromId(item.id());
+            var index = self.getIndexFromId(item.id());
             self.listData.remove(item);
             self.changeFocusAfterDelete(index, locallyTriggered);
          }, 200);
@@ -528,7 +522,7 @@ function ViewModel () {
    };
 
    self.clearDetailsChanged = function() {
-      //session.log("clearing details");
+      //self.session.log("clearing details");
       var fieldValueChanged = self.detailsEditable.fieldValueChanged;
       // reset all changed values to false
       for (var i in fieldValueChanged) {
@@ -541,11 +535,11 @@ function ViewModel () {
    };
 
    self.requestDataReset = function() {
-      session.call("form:reset", [], {}, { disclose_me: true }).then(
+      self.session.call("form:reset", [], {}, { disclose_me: true }).then(
          function(res) {
             console.log("resetData return");
             self.resetData(res);
-         }, session.log
+         }, self.session.log
       );
    };
 
@@ -561,23 +555,23 @@ function ViewModel () {
 
       // fill grid with records
       for (var i = 0; i < res.length; i++) {
-         self.listData.push(new listItem(res[i]));
+         self.listData.push(new self.ListItem(res[i]));
       }
 
       // set focus to first list element
       self.displayDetails(vm.listData()[0]);
 
       // WAMP session specific logging ..
-      session.log("Filled grid with " + res.length + " entries.");
+      self.session.log("Filled grid with " + res.length + " entries.");
    }
 
    self.onItemCreated = function (args, kwargs, details) {
       console.log("onItemCreated", arguments);
       var item = kwargs;
-      self.listData.push(new listItem(item));
+      self.listData.push(new self.ListItem(item));
 
       // highlight this for a short while
-      var index = getIndexFromId(item.id);
+      var index = self.getIndexFromId(item.id);
       self.listData()[index].itemState("hasBeenCreated");
       window.setTimeout(function() { self.listData()[index].itemState(''); }, 1000);
    }
@@ -585,7 +579,7 @@ function ViewModel () {
    self.onItemUpdated = function (args, kwargs, details) {
       console.log("onItemUpdated", kwargs);
       var update = kwargs;
-      var index = getIndexFromId(update.id);
+      var index = self.getIndexFromId(update.id);
 
       // update locally stored values that habe been updated remotely
       for (var i in update) {
@@ -624,7 +618,7 @@ function ViewModel () {
       console.log("onItemDeleted", id);   
 
       // get the item we need to delete
-      var item = self.listData()[getIndexFromId(id)];
+      var item = self.listData()[self.getIndexFromId(id)];
       var locallyTriggered = false;
 
       self.deleteListItem(item, locallyTriggered);
@@ -646,18 +640,23 @@ function ViewModel () {
       self.fillList(data);
    };
 
+   self.getIndexFromId = function (id) {
+      var index;
+      for (var i = 0; i < vm.listData().length; i++) {
+         if (vm.listData()[i].id() === id) {
+            index = vm.listData()[i].index();
+         }
+      }
+      return index;
+   }
+
+   self.helpShown = ko.observable(false);
+   self.toggleHelp = function (viewmodel, event) {
+      console.log("toggleHelp", event);
+      self.helpShown(!self.helpShown());
+   }
+
 }
 
 
-function listItem (data) {
-   return {
-      orderNumber: ko.observable(data["orderNumber"]),
-      name: ko.observable(data["name"]),
-      price: ko.observable(data["price"]),
-      weight: ko.observable(data["weight"]),
-      size: ko.observable(data["size"]),
-      inStock: ko.observable(data["inStock"]),
-      id: ko.observable(data["id"]),
-      itemState: ko.observable()
-   };
-}
+
