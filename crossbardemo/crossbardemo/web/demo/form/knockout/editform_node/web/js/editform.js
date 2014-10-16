@@ -136,14 +136,80 @@ function ViewModel () {
       }
    };
 
+   // should really be:
+   self.detailsEditable2 = {
+      index: {
+         displayedValue: ko.observable(),
+         storedValue: null,
+         isDirty: ko.observable(false),
+         hasBeenUpdated: ko.observable(false)
+      },
+      orderNumber: {
+         displayedValue: ko.observable(),
+         storedValue: null,
+         isDirty: ko.observable(false),
+         hasBeenUpdated: ko.observable(false)
+      },
+      name: {
+         displayedValue: ko.observable(),
+         storedValue: null,
+         isDirty: ko.observable(false),
+         hasBeenUpdated: ko.observable(false)
+      },
+      weight: {
+         displayedValue: ko.observable(),
+         storedValue: null,
+         isDirty: ko.observable(false),
+         hasBeenUpdated: ko.observable(false)
+      },
+      size: {
+         displayedValue: ko.observable(),
+         storedValue: null,
+         dirty: ko.observable(false),
+         hasBeenUpdated: ko.observable(false)
+      },
+      inStock: {
+         displayedValue: ko.observable(),
+         storedValue: null,
+         isDirty: ko.observable(false),
+         hasBeenUpdated: ko.observable(false)
+      },
+      price: {
+         displayedValue: ko.observable(),
+         storedValue: null,
+         isDirty: ko.observable(false),
+         hasBeenUpdated: ko.observable(false)
+      },
+      itemState: ko.observable()
+   };
+   self.detailsEdited = ko.observable(false);
+
    self.addButtonVisible = ko.observable(true);
    self.deleteButtonVisible = ko.observable(true);
-   self.saveButtonVisible = ko.observable(false);
-   self.cancelButtonVisible = ko.observable(false);
-   self.switchWarning = ko.observable(false);
-   self.orderNumberMissing = ko.observable(true);
-   self.nameMissing = ko.observable(true);
 
+   // required data missing   
+   self.orderNumberMissing = ko.computed(function() {
+      return self.detailsEditable.orderNumber() === "";
+   }, this);
+   self.nameMissing = ko.computed(function() {
+      return self.detailsEditable.name() === "";
+   }, this);
+
+   self.switchWarning = ko.observable(false);
+   
+   self.saveButtonVisible = ko.computed(function () {
+      return self.orderNumberMissing() === false && self.nameMissing() === false && self.detailsEditable.fieldValueChanged.counter() > 0;
+   }, this);
+   self.cancelButtonVisible = ko.computed(function () {
+      var visible = self.detailsEditable.fieldValueChanged.counter() > 0;
+      // we additionally handle the cancelling of a displayed switch warning here
+      // since this no longer applies if there is no changed data
+      if (!visible) {
+         self.switchWarning(false);
+      }
+      return visible;
+   }, this);
+   
    self.detailsCurrent = null;
    self.detailsPrevious = null;
 
@@ -159,13 +225,13 @@ function ViewModel () {
 
    self.ListItem = function (data) {
       return {
-         orderNumber: ko.observable(data["orderNumber"]),
-         name: ko.observable(data["name"]),
-         price: ko.observable(data["price"]),
-         weight: ko.observable(data["weight"]),
-         size: ko.observable(data["size"]),
-         inStock: ko.observable(data["inStock"]),
-         id: ko.observable(data["id"]),
+         orderNumber: ko.observable(data.orderNumber),
+         name: ko.observable(data.name),
+         price: ko.observable(data.price),
+         weight: ko.observable(data.weight),
+         size: ko.observable(data.size),
+         inStock: ko.observable(data.inStock),
+         id: ko.observable(data.id),
          itemState: ko.observable()
       };
    }
@@ -173,8 +239,208 @@ function ViewModel () {
    self.connectionStatus = ko.observable("Not connected!");
 
 
+   /**************************************
+   *  Methods for handling WAMP events   *
+   **************************************/
+
+   self.onItemCreated = function (args, kwargs, details) {
+      console.log("onItemCreated", arguments);
+      var item = kwargs;
+      self.listData.push(new self.ListItem(item));
+
+      // highlight this for a short while
+      var index = self.getIndexFromId(item.id);
+      self.listData()[index].itemState("hasBeenCreated");
+      window.setTimeout(function() { self.listData()[index].itemState(''); }, 1000);
+   }
+
+   self.onItemUpdated = function (args, kwargs, details) {
+      console.log("onItemUpdated", kwargs);
+      var update = kwargs;
+      var index = self.getIndexFromId(update.id);
+
+      // update locally stored values that habe been updated remotely
+      for (var i in update) {
+         if(update.hasOwnProperty(i)) {
+            self.listData()[index][i](update[i]);
+         }
+      }
+
+      // update the details view if this shows the updated item
+      if (self.detailsCurrent.id() === update.id) {
+
+         self.displayDetails(self.listData()[index]);
+
+         // temporary highlighting of the changed details
+         for (var i in update) {
+            if (update.hasOwnProperty(i) && i != "id" ){
+               self.detailsEditable.hasBeenEdited[i](true);
+               (function(it) {
+                     window.setTimeout(function() {
+                           self.detailsEditable.hasBeenEdited[it](false);
+                     }, 1400);
+               })(i);
+            }
+         }
+      }
+
+      // temporary highlighting of the list item
+      var previousItemState = self.listData()[index].itemState();
+      self.listData()[index].itemState("hasBeenEdited");
+      window.setTimeout(function() { self.listData()[index].itemState(previousItemState); }, 1400);
+   }
+
+   self.onItemDeleted = function (args) {
+   
+      var id = args[0];
+      console.log("onItemDeleted", id);   
+
+      // get the item we need to delete
+      var item = self.listData()[self.getIndexFromId(id)];
+      var locallyTriggered = false;
+
+      self.deleteListItem(item, locallyTriggered);
+   }
+   
+   self.onDataReset = function (args, kwargs, details) {
+      console.log("onDataReset");
+      self.resetData(args);
+   };
+
+   /************************************
+   *  Methods for handling user input  *
+   ************************************/
+
+   // delete triggered locally via delete button on list item
+   self.triggerDelete = function( listItem, event ) {
+      self.session.call("form:delete", [listItem.id()], {}, { disclose_me: true }).then(
+         function(res) {
+            // console.log("item " + listItem.id() + " deleted on backend", res);
+            var locallyTriggered = true;
+            self.deleteListItem(listItem, locallyTriggered);
+         },
+         self.session.log // we should really have some error handling here - FIXME!
+         );
+   };
+
+   /*********************************
+   *  Helper methods & miscellany   *
+   *********************************/
+
+   self.fillList = function (res) {
+      // clear list since this is also called after reconnect
+      self.listData([]);
+
+      // result list may be empty
+      if(res === null || res.length === null) {
+         // needs some proper error handling
+         return;
+      }
+
+      // fill grid with records
+      res.forEach(function (el) {
+         self.listData.push(new self.ListItem(el));
+      })
+
+      // set focus & display details for first list element
+      self.displayDetails(vm.listData()[0]);
+
+      // WAMP session specific logging ..
+      self.session.log("Filled grid with " + res.length + " entries.");
+   }
+
+   self.displayDetails = function(listItem, event) {
+
+      self.clearDetailsChanged();
+      self.switchWarning(false);
+
+      // copy the observables to the details editable observables
+      for (var i = 0; i < self.detailsIds.length; i++) {
+         self.detailsEditable[self.detailsIds[i]](listItem[self.detailsIds[i]]());
+      }
+
+      // reset the field states - IMPLEMENT ME
+
+      // store reference to list item for revert to stored values on cancel
+      self.detailsCurrent = listItem;
+
+      // switch highlighting to displayed
+      if (self.detailsCurrent.itemState() !== 'isNew') {
+         self.detailsCurrent.itemState('isBeingDisplayed');
+      }
+
+      // if previously highlighted item !== current item, and not shown as being deleted, remove highlighting
+      if (self.detailsPrevious && self.detailsPrevious.index() !== self.detailsCurrent.index() && self.detailsPrevious.itemState() !== "isBeingDeleted") {
+         self.detailsPrevious.itemState('');
+      }
+      self.detailsPrevious = self.detailsCurrent;
+
+      self.focusOnOrderNumber(true); // browser scrolls if focussed element not in view!
+
+   };
+
+   self.displayDetails2 = function(listItem, event) {
+
+      self.clearDetailsChanged2();
+      self.switchWarning(false);
+
+      // fill detailsEditable
+      self.detailsIds.forEach(function(key) {
+         var property = self.detailsEditable[key];
+
+         // displayedValue         
+         property.displayedValue(listItem[self.detailsIds[key]]());
+         // storedValue - the actual observable for now
+         property.storedValue = listItem[self.detailsIds[key]];
+         // reset dirty state
+         property.isDirty(false);
+         // reset updated state
+         property.hasBeenUpdated(false);
+      })
+      
+      // switch highlighting to displayed
+      if (self.detailsCurrent.itemState() !== 'isNew') {
+         self.detailsCurrent.itemState('isBeingDisplayed');
+      }
+
+      // if previously highlighted item !== current item, and not shown as being deleted, remove highlighting
+      if (self.detailsPrevious && self.detailsPrevious.index() !== self.detailsCurrent.index() && self.detailsPrevious.itemState() !== "isBeingDeleted") {
+         self.detailsPrevious.itemState('');
+      }
+      self.detailsPrevious = self.detailsCurrent;
+
+      self.focusOnOrderNumber(true); // browser scrolls if focussed element not in view!
+
+   };
+
+   self.clearDetailsChanged2 = function() {
+
+      // reset all changed values to false
+      for (var i in self.detailsEditable) {
+         if (self.detailsEditable.hasOwnProperty(i)) {
+            self.detailsEditable[i].dirty(false);
+         }
+      }
+      // reset the counter to 0
+      self.detailsEdited(false);
+   };
+
+   self.clearDetailsChanged = function() {
+      //self.session.log("clearing details");
+      var fieldValueChanged = self.detailsEditable.fieldValueChanged;
+      // reset all changed values to false
+      for (var i in fieldValueChanged) {
+         if (fieldValueChanged.hasOwnProperty(i)) {
+            fieldValueChanged[i](false);
+         }
+      }
+      // reset the counter to 0
+      fieldValueChanged.counter(0);
+   };
+
+   // format input - currently:
+   //    filter out non-numeric inputs on numeric input fields
    self.mangleInputs = function(viewmodel, event) {
-      // filter out non-numeric inputs on numeric input fields
       if (self.inputs[event.target.id] === "num") {
          // self.session.log("evt", event.keyCode);
          if (event.keyCode > 57 && event.keyCode !== 190) {
@@ -184,15 +450,15 @@ function ViewModel () {
       return true; // knockout.js otherwise prevents the default action
    };
 
+
    self.checkForValueChange = function(viewmodel, event) {
-      // can be called before the initial loading of items, or on empyt lists,
+      // currently may be called before the initial loading of items, or on empyt lists,
       // i.e. when there are no values to compare to
       // should handle this - FIXME
       if (!self.detailsCurrent) {
          return;
       }
       console.log("checkForValueChange");
-
 
       //self.exevent = event;
       //self.session.log("checking", viewmodel, event.target.value, event.target.id);
@@ -213,36 +479,6 @@ function ViewModel () {
       else if (currentValue === storedValue && self.detailsEditable.fieldValueChanged[valueId]() === true) {
          self.detailsEditable.fieldValueChanged[valueId](false);
          self.detailsEditable.fieldValueChanged.counter(self.detailsEditable.fieldValueChanged.counter() - 1);
-      }
-
-      // check whether the required data is present
-      if (valueId === "name" && currentValue === "") {
-         self.nameMissing(true);
-      }
-      else if (valueId === "name" && currentValue !== "") {
-         self.nameMissing(false);
-      }
-      if (valueId === "orderNumber" && currentValue === "") {
-         self.orderNumberMissing(true);
-      }
-      else if (valueId === "orderNumber" && currentValue !== "") {
-         self.orderNumberMissing(false);
-      }
-
-      // switch buttons based on whether there have been changes and all required data present
-      if (self.orderNumberMissing() === false && self.nameMissing() === false && self.detailsEditable.fieldValueChanged.counter() > 0) {
-         //self.session.log("ok");
-         self.saveButtonVisible(true);
-         self.cancelButtonVisible(true);
-      }
-      else if (self.detailsEditable.fieldValueChanged.counter() > 0) {
-         self.cancelButtonVisible(true);
-         self.saveButtonVisible(false);
-      }
-      else {
-         self.saveButtonVisible(false);
-         self.cancelButtonVisible(false);
-         self.switchWarning(false);
       }
 
    };
@@ -273,44 +509,6 @@ function ViewModel () {
             self.switchWarning(true);
          }
       }
-   };
-
-   self.displayDetails = function(listItem, event) {
-
-      self.clearDetailsChanged();
-      self.switchWarning(false);
-
-      // copy the observables to the details editable observables
-      for (var i = 0; i < self.detailsIds.length; i++) {
-         self.detailsEditable[self.detailsIds[i]](listItem[self.detailsIds[i]]());
-      }
-
-      // reset the field states - IMPLEMENT ME
-
-      // copy the entire object to the details current
-      self.detailsCurrent = listItem;
-
-      // switch highlighting to displayed
-      if (self.detailsCurrent.itemState() !== 'isNew') {
-         self.detailsCurrent.itemState('isBeingDisplayed');
-      }
-
-      // if previously highlighted item !== current item, and not shown as being deleted, remove highlighting
-      if (self.detailsPrevious && self.detailsPrevious.index() !== self.detailsCurrent.index() && self.detailsPrevious.itemState() !== "isBeingDeleted") {
-         self.detailsPrevious.itemState('');
-      }
-      self.detailsPrevious = self.detailsCurrent;
-
-      self.focusOnOrderNumber(true); // browser scrolls if focussed element not in view!
-
-      // cancel display of the details buttons
-      self.cancelButtonVisible(false);
-      self.saveButtonVisible(false);
-
-      // hide the required stars
-      self.orderNumberMissing(false);
-      self.nameMissing(false);
-
    };
 
    self.normalizeSet = function(set) {
@@ -438,25 +636,9 @@ function ViewModel () {
       // display the change
       self.displayDetails(self.listData()[listLength - 1]);
 
-      // set the button states on the details view
-      self.cancelButtonVisible(true);
-      //self.saveButtonVisible(true); // not until something has been entered
-
-      self.orderNumberMissing(true);
-      self.nameMissing(true);
    };
 
-   // delete triggered locally via delete button on list item
-   self.triggerDelete = function( listItem, event ) {
-      self.session.call("form:delete", [listItem.id()], {}, { disclose_me: true }).then(
-         function(res) {
-            // console.log("item " + listItem.id() + " deleted on backend", res);
-            var locallyTriggered = true;
-            self.deleteListItem(listItem, locallyTriggered);
-         },
-         self.session.log // we should really have some error handling here - FIXME!
-         );
-   };
+  
 
    self.deleteListItem = function (item, locallyTriggered) {
 
@@ -521,18 +703,7 @@ function ViewModel () {
       }
    };
 
-   self.clearDetailsChanged = function() {
-      //self.session.log("clearing details");
-      var fieldValueChanged = self.detailsEditable.fieldValueChanged;
-      // reset all changed values to false
-      for (var i in fieldValueChanged) {
-         if (fieldValueChanged.hasOwnProperty(i)) {
-            fieldValueChanged[i](false);
-         }
-      }
-      // reset the counter to 0
-      fieldValueChanged.counter(0);
-   };
+   
 
    self.requestDataReset = function() {
       self.session.call("form:reset", [], {}, { disclose_me: true }).then(
@@ -543,91 +714,9 @@ function ViewModel () {
       );
    };
 
-   self.fillList = function (res) {
-      // clear list
-      self.listData([]);
-
-      // result list may be empty
-      if(res === null || res.length === null) {
-         // needs some proper error handling
-         return;
-      }
-
-      // fill grid with records
-      for (var i = 0; i < res.length; i++) {
-         self.listData.push(new self.ListItem(res[i]));
-      }
-
-      // set focus to first list element
-      self.displayDetails(vm.listData()[0]);
-
-      // WAMP session specific logging ..
-      self.session.log("Filled grid with " + res.length + " entries.");
-   }
-
-   self.onItemCreated = function (args, kwargs, details) {
-      console.log("onItemCreated", arguments);
-      var item = kwargs;
-      self.listData.push(new self.ListItem(item));
-
-      // highlight this for a short while
-      var index = self.getIndexFromId(item.id);
-      self.listData()[index].itemState("hasBeenCreated");
-      window.setTimeout(function() { self.listData()[index].itemState(''); }, 1000);
-   }
-
-   self.onItemUpdated = function (args, kwargs, details) {
-      console.log("onItemUpdated", kwargs);
-      var update = kwargs;
-      var index = self.getIndexFromId(update.id);
-
-      // update locally stored values that habe been updated remotely
-      for (var i in update) {
-         if(update.hasOwnProperty(i)) {
-            self.listData()[index][i](update[i]);
-         }
-      }
-
-      // update the details view if this shows the updated item
-      if (self.detailsCurrent.id() === update.id) {
-
-         self.displayDetails(self.listData()[index]);
-
-         // temporary highlighting of the changed details
-         for (var i in update) {
-            if (update.hasOwnProperty(i) && i != "id" ){
-               self.detailsEditable.hasBeenEdited[i](true);
-               (function(it) {
-                     window.setTimeout(function() {
-                           self.detailsEditable.hasBeenEdited[it](false);
-                     }, 1400);
-               })(i);
-            }
-         }
-      }
-
-      // temporary highlighting of the list item
-      var previousItemState = self.listData()[index].itemState();
-      self.listData()[index].itemState("hasBeenEdited");
-      window.setTimeout(function() { self.listData()[index].itemState(previousItemState); }, 1400);
-   }
-
-   self.onItemDeleted = function (args) {
    
-      var id = args[0];
-      console.log("onItemDeleted", id);   
 
-      // get the item we need to delete
-      var item = self.listData()[self.getIndexFromId(id)];
-      var locallyTriggered = false;
-
-      self.deleteListItem(item, locallyTriggered);
-   }
    
-   self.onDataReset = function (args, kwargs, details) {
-      console.log("onDataReset");
-      self.resetData(args);
-   };
 
    self.resetData = function (data) {
       console.log("resetData", data);
