@@ -113,10 +113,10 @@
                    </div>
                    <div>
                       <input id="orderNumber" type="text" size="15" maxlength="15" data-bind="
-                         value: detailsEditable.orderNumber,
+                         value: detailsEditable.orderNumber.displayedValue,
                          valueUpdate: 'afterkeydown',
                          event: { keydown: mangleInputs, keyup: checkForValueChange },
-                         css: { isChanged: detailsEditable.fieldValueChanged.orderNumber, hasBeenEdited: detailsEditable.hasBeenEdited.orderNumber },
+                         css: { isChanged: detailsEditable.orderNumber.isDirty, hasBeenEdited: detailsEditable.orderNumber.hasBeenUpdated },
                          hasfocus: focusOnOrderNumber"/>
                    </div>
                    <div class="requiredField" data-bind="visible: orderNumberMissing">
@@ -129,10 +129,10 @@
                    </div>
                    <div>
                     <input id="name" type="text" size="20" maxlength="20" data-bind="
-                       value: detailsEditable.name,
+                       value: detailsEditable.name.displayedValue,
                        valueUpdate: 'afterkeydown',
                        event: { keydown: mangleInputs, keyup: checkForValueChange },
-                       css: { isChanged: detailsEditable.fieldValueChanged.name, hasBeenEdited: detailsEditable.hasBeenEdited.name}" />
+                       css: { isChanged: detailsEditable.name.isDirty, hasBeenEdited: detailsEditable.name.hasBeenUpdated}" />
                    </div>
                    <div class="requiredField" data-bind="visible: nameMissing">
                       *
@@ -144,10 +144,10 @@
                    </div>
                    <div>
                      <input id="weight" type="text" size="6" maxlength="6" data-bind="
-                        value: detailsEditable.weight,
+                        value: detailsEditable.weight.displayedValue,
                         valueUpdate: 'afterkeydown',
                         event: { keydown: mangleInputs, keyup: checkForValueChange },
-                        css: { isChanged: detailsEditable.fieldValueChanged.weight, hasBeenEdited: detailsEditable.hasBeenEdited.weight}" />
+                        css: { isChanged: detailsEditable.weight.isDirty, hasBeenEdited: detailsEditable.weight.hasBeenUpdated}" />
                    </div>
                 </div>
                 <div>
@@ -156,10 +156,10 @@
                    </div>
                    <div>
                      <input id="size" type="text" size="6" maxlength="6" data-bind="
-                        value: detailsEditable.size,
+                        value: detailsEditable.size.displayedValue,
                         valueUpdate: 'afterkeydown',
                         event: { keydown: mangleInputs, keyup: checkForValueChange },
-                        css: { isChanged: detailsEditable.fieldValueChanged.size, hasBeenEdited: detailsEditable.hasBeenEdited.size}" />
+                        css: { isChanged: detailsEditable.size.isDirty, hasBeenEdited: detailsEditable.size.hasBeenUpdated}" />
                    </div>
                 </div>
                 <div>
@@ -168,10 +168,10 @@
                    </div>
                    <div>
                      <input id="inStock" type="text" size="8" maxlength="8" data-bind="
-                        value: detailsEditable.inStock,
+                        value: detailsEditable.inStock.displayedValue,
                         valueUpdate: 'afterkeydown',
                         event: { keydown: mangleInputs, keyup: checkForValueChange },
-                        css: { isChanged: detailsEditable.fieldValueChanged.inStock, hasBeenEdited: detailsEditable.hasBeenEdited.inStock}" />
+                        css: { isChanged: detailsEditable.inStock.isDirty, hasBeenEdited: detailsEditable.inStock.hasBeenUpdated}" />
                    </div>
                 </div>
                 <div>
@@ -180,10 +180,10 @@
                    </div>
                    <div>
                      <input id="price" type="text" size="8" maxlength="8" data-bind="
-                        value: detailsEditable.price,
+                        value: detailsEditable.price.displayedValue,
                         valueUpdate: 'afterkeydown',
                         event: { keydown: mangleInputs, keyup: checkForValueChange },
-                        css: { isChanged: detailsEditable.fieldValueChanged.price, hasBeenEdited: detailsEditable.hasBeenEdited.price}"/>
+                        css: { isChanged: detailsEditable.price.isDirty, hasBeenEdited: detailsEditable.price.hasBeenUpdated}"/>
                    </div>
                 </div>
              </div>
@@ -200,7 +200,7 @@
             </p>
             <button data-bind="click: requestDataReset">
                Reset
-            </button>   
+            </button>
          </div>
 
          
