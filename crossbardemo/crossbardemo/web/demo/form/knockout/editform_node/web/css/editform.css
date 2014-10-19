@@ -602,6 +602,10 @@ input.hasBeenEdited {
 
 }
 
+.isDirty {
+   color: red;
+}
+
 #details.highlighted
 {
    border: 1px solid #f60;

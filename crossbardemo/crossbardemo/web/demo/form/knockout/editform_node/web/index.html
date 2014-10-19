@@ -103,96 +103,96 @@
 
             <button class="addButton" data-bind="click: addListItem, visible: addButtonVisible">Add Item</button>
             
-          </div>
+         </div>
 
-          <div id="details" data-bind="css: {highlighted: switchWarning}">
-             <div id="detailsTable">
-                <div>
-                   <div>
-                      Order Number
-                   </div>
-                   <div>
-                      <input id="orderNumber" type="text" size="15" maxlength="15" data-bind="
+         <div id="details" data-bind="css: {highlighted: switchWarning}">
+            <div id="detailsTable">
+               <div>
+                  <div>
+                     Order Number
+                  </div>
+                  <div>
+                     <input id="orderNumber" type="text" size="15" maxlength="15" data-bind="
                          value: detailsEditable.orderNumber.displayedValue,
                          valueUpdate: 'afterkeydown',
-                         event: { keydown: mangleInputs, keyup: checkForValueChange },
-                         css: { isChanged: detailsEditable.orderNumber.isDirty, hasBeenEdited: detailsEditable.orderNumber.hasBeenUpdated },
+                         event: { keydown: mangleInputs },
+                         css: { isChanged: detailsEditable.orderNumber.isDirty, hasBeenEdited: detailsEditable.orderNumber.hasBeenUpdated, isDirty: detailsEditable.orderNumber.isDirty2 },
                          hasfocus: focusOnOrderNumber"/>
-                   </div>
-                   <div class="requiredField" data-bind="visible: orderNumberMissing">
+                  </div>
+                  <div class="requiredField" data-bind="visible: orderNumberMissing">
                       *
-                   </div>
-                </div>
-                <div>
-                   <div>
+                  </div>
+               </div>
+               <div>
+                  <div>
                      Name
-                   </div>
-                   <div>
-                    <input id="name" type="text" size="20" maxlength="20" data-bind="
+                  </div>
+                  <div>
+                     <input id="name" type="text" size="20" maxlength="20" data-bind="
                        value: detailsEditable.name.displayedValue,
                        valueUpdate: 'afterkeydown',
-                       event: { keydown: mangleInputs, keyup: checkForValueChange },
+                       event: { keydown: mangleInputs },
                        css: { isChanged: detailsEditable.name.isDirty, hasBeenEdited: detailsEditable.name.hasBeenUpdated}" />
-                   </div>
-                   <div class="requiredField" data-bind="visible: nameMissing">
+                  </div>
+                  <div class="requiredField" data-bind="visible: nameMissing">
                       *
-                   </div>
-                </div>
-                <div>
-                   <div>
+                  </div>
+               </div>
+               <div>
+                  <div>
                      Weight
-                   </div>
-                   <div>
+                  </div>
+                  <div>
                      <input id="weight" type="text" size="6" maxlength="6" data-bind="
                         value: detailsEditable.weight.displayedValue,
                         valueUpdate: 'afterkeydown',
-                        event: { keydown: mangleInputs, keyup: checkForValueChange },
+                        event: { keydown: mangleInputs },
                         css: { isChanged: detailsEditable.weight.isDirty, hasBeenEdited: detailsEditable.weight.hasBeenUpdated}" />
-                   </div>
-                </div>
-                <div>
-                   <div>
-                   Size
-                   </div>
-                   <div>
+                  </div>
+               </div>
+               <div>
+                  <div>
+                    Size
+                  </div>
+                  <div>
                      <input id="size" type="text" size="6" maxlength="6" data-bind="
                         value: detailsEditable.size.displayedValue,
                         valueUpdate: 'afterkeydown',
-                        event: { keydown: mangleInputs, keyup: checkForValueChange },
+                        event: { keydown: mangleInputs },
                         css: { isChanged: detailsEditable.size.isDirty, hasBeenEdited: detailsEditable.size.hasBeenUpdated}" />
-                   </div>
-                </div>
-                <div>
-                   <div>
+                  </div>
+               </div>
+               <div>
+                  <div>
                      In Stock
-                   </div>
-                   <div>
+                  </div>
+                  <div>
                      <input id="inStock" type="text" size="8" maxlength="8" data-bind="
                         value: detailsEditable.inStock.displayedValue,
                         valueUpdate: 'afterkeydown',
-                        event: { keydown: mangleInputs, keyup: checkForValueChange },
+                        event: { keydown: mangleInputs },
                         css: { isChanged: detailsEditable.inStock.isDirty, hasBeenEdited: detailsEditable.inStock.hasBeenUpdated}" />
-                   </div>
-                </div>
-                <div>
-                   <div>
+                  </div>
+               </div>
+               <div>
+                  <div>
                      Price
-                   </div>
-                   <div>
+                  </div>
+                  <div>
                      <input id="price" type="text" size="8" maxlength="8" data-bind="
                         value: detailsEditable.price.displayedValue,
                         valueUpdate: 'afterkeydown',
-                        event: { keydown: mangleInputs, keyup: checkForValueChange },
+                        event: { keydown: mangleInputs },
                         css: { isChanged: detailsEditable.price.isDirty, hasBeenEdited: detailsEditable.price.hasBeenUpdated}"/>
-                   </div>
-                </div>
-             </div>
-             <button data-bind="click: saveDetailsEdits, style: { visibility: saveButtonVisible() ? 'visible' : 'hidden' }">Save</button>
-             <button data-bind="click: cancelDetailsEdits, style: { visibility: cancelButtonVisible() ? 'visible' : 'hidden' }">Cancel</button>
-             <div data-bind="css: { visible: switchWarning }" class="switchWarning">
-                Unsaved data would be lost on switching. Please 'Save' or 'Cancel' before switching to another item.
-             </div>
-          </div>
+                  </div>
+               </div>
+            </div>
+            <button data-bind="click: saveDetailsEdits, style: { visibility: saveButtonVisible() ? 'visible' : 'hidden' }">Save</button>
+            <button data-bind="click: cancelDetailsEdits, style: { visibility: cancelButtonVisible() ? 'visible' : 'hidden' }">Cancel</button>
+            <div data-bind="css: { visible: switchWarning }" class="switchWarning">
+               Unsaved data would be lost on switching. Please 'Save' or 'Cancel' before switching to another item.
+            </div>
+         </div>
 
          <div class="resetBox">
             <p>
@@ -201,7 +201,6 @@
             <button data-bind="click: requestDataReset">
                Reset
             </button>
-         </div>
 
          
 
@@ -235,7 +234,7 @@
 
       
 
-      <script src="js/knockout-3.1.0.js"></script>
+      <script src="js/knockout-3.2.0.js"></script>
       <script>AUTOBAHN_DEBUG = true;</script>
       <script src="js/autobahn.min.js"></script>
       <script src="js/editform.js"></script>
