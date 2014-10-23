@@ -109,6 +109,8 @@ function ViewModel () {
 
    self.listData = ko.observableArray([]).indexed('index');
 
+   self.addButtonVisible = ko.observable(true);
+
    self.detailsIds = ["orderNumber", "name", "price", "weight", "size", "inStock"];
 
    self.detailsEditable = {
@@ -231,12 +233,9 @@ function ViewModel () {
 
    self.connectionStatus = ko.observable("Not connected!");
 
-   self.addButtonVisible = ko.observable(true);
-
-
 
    /**************************************
-   *  Fill the model                     *
+   *  Fill the list                      *
    ***************************************/
 
    // +
@@ -430,6 +429,9 @@ function ViewModel () {
          self.displayDetails(self.listData()[self.detailsCurrent.index()]);
       }
    };
+
+
+
 
    /**************************************
    *  Update an Item                        *

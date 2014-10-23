@@ -71,8 +71,8 @@
                   </tr>
                </thead>
 
-               <tbody data-bind="foreach: listData">
-
+               <tbody data-bind="foreach: listData">                  
+                  
                   <tr data-bind="click: $parent.switchDetailsDisplayed,
                      css: {
                      isBeingDisplayed: itemState() === 'isBeingDisplayed',
@@ -234,10 +234,23 @@
 
       
 
-      <script src="js/knockout-3.2.0.js"></script>
+      <script src="deps/knockout-3.2.0.js"></script>
       <script>AUTOBAHN_DEBUG = true;</script>
-      <script src="js/autobahn.min.js"></script>
-      <script src="js/editform.js"></script>
+      <script src="deps/autobahn.min.js"></script>
+      <!-- // <script src="js/editform.js"></script> -->
+
+      <!-- view model definition -->
+      <script src="js/main.js"></script>     
+      <script src="js/fill_list.js"></script>
+      <script src="js/details_display.js"></script>
+      <script src="js/edit_item.js"></script>
+      <script src="js/delete_item.js"></script>
+      <script src="js/add_item.js"></script>
+      <script src="js/update_item.js"></script>
+      <script src="js/reset_data.js"></script>
+      <script src="js/connect.js"></script>
+      <script src="js/init.js"></script>
+
       <script src="js/testing.js"></script>
 
 </body>

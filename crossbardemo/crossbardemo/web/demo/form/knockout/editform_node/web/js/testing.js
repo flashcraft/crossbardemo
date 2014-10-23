@@ -11,48 +11,51 @@ function createTestEvents (evt, rep) {
             console.log("constructing", i);
             var saveSet = { inStock: i, name: "Test Item " + i, orderNumber: "TT-" + i, price: i*3.5, size: i +4, weight: i*1.3+40 };
             vm.normalizeSet(saveSet);
-            session.call("form:create", [], saveSet).then(
+            vm.session.call("form:create", [], saveSet).then(
                function (res) {
-                  session.log("created", res);
+                  vm.session.log("created", res);
                },
-               session.log
+               vm.session.log
             );
          }
          break;
       case "delete":
          // console.log("no deleting yet");
          var items;
-         session.call("form:filter", [rep], {name: {type: "prefix", value: "Test" }}).then(function(res) {
+         vm.session.call("form:filter", [rep], {name: {type: "prefix", value: "Test" }}).then(function(res) {
             for(var i = 0; i < rep; i++) {
                if(res[i]) {
                   // var index = getIndexFromId(res[i].id);
                   console.log("id ", res[i].id);
-                  session.call("form:delete", [res[i].id]).then(
+                  vm.session.call("form:delete", [res[i].id], {}, { disclose_me: true }).then(
                      function(res) {
-                        session.log("deleted", res);
+                        vm.session.log("deleted", res);
+                        
                         // delete the item
-                        onItemDeleted("localDelete", res[i].id);
+                        var locallyTriggered = true;
+                        var listItem = vm.listData()[vm.getIndexFromId(res)];
+                        vm.deleteListItem(listItem, locallyTriggered);
                      },
-                     session.log
+                     vm.session.log
                   );
                }
             }
-         }, session.log);
+         }, vm.session.log);
 
          break;
       case "update":
          // console.log("no update yet");
          var items;
-         session.call("form:filter", [rep], {name: {type: "prefix", value: "Test" }}).then(function(res) {
+         vm.session.call("form:filter", [rep], {name: {type: "prefix", value: "Test" }}).then(function(res) {
             for(var i = 0; i < rep; i++) {
                if(res[i]) {
                   // var index = getIndexFromId(res[i].id);
                   console.log("id ", res[i].id);
                   var updated = { id: res[i].id, orderNumber: "updated " + i*rep};
-                  session.call("form:update", [], updated).then(session.log, session.log);
+                  vm.session.call("form:update", [], updated).then(vm.session.log, vm.session.log);
                }
             }
-         }, session.log);
+         }, vm.session.log);
          break;
       default:
          break;
