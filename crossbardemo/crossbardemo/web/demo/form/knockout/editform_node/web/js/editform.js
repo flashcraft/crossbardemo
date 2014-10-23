@@ -61,11 +61,6 @@ function ViewModel () {
       self.session.subscribe("form:ondelete", self.onItemDeleted);
       self.session.subscribe("form:onreset", self.onDataReset);
 
-      // test subscribe to meta events
-      self.session.subscribe("wamp.metaevent.session.on_leave", function() {
-         console.log("session.on_leave", arguments);
-      });
-
    };
 
 
@@ -120,44 +115,36 @@ function ViewModel () {
       orderNumber: {
          displayedValue: ko.observable(),
          storedValue: ko.observable(),
-         // isDirty: ko.observable(false),
          hasBeenUpdated: ko.observable(false)
       },
       name: {
          displayedValue: ko.observable(),
          storedValue: ko.observable(),
-         // isDirty: ko.observable(false),
          hasBeenUpdated: ko.observable(false)
       },
       weight: {
          displayedValue: ko.observable(),
          storedValue: ko.observable(),
-         // isDirty: ko.observable(false),
          hasBeenUpdated: ko.observable(false)
       },
       size: {
          displayedValue: ko.observable(),
          storedValue: ko.observable(),
-         // isDirty: ko.observable(false),
          hasBeenUpdated: ko.observable(false)
       },
       inStock: {
          displayedValue: ko.observable(),
          storedValue: ko.observable(),
-         // isDirty: ko.observable(false),
          hasBeenUpdated: ko.observable(false)
       },
       price: {
          displayedValue: ko.observable(),
          storedValue: ko.observable(),
-         // isDirty: ko.observable(false),
          hasBeenUpdated: ko.observable(false)
       },
       itemState: ko.observable()
    };
 
-
-   console.log("111");
 
    // add computeds for handling 'isDirty' flag on detailsEditable
    self.detailsIds.forEach(function (id) {
@@ -172,12 +159,6 @@ function ViewModel () {
          }
       })
    });
-
-   console.log("112");
-
-   // self.detailsEditable.orderNumber.isDirty = ko.observable(true);
-
-   console.log("113");
 
    self.detailsDirty = ko.computed(function() {
       
@@ -299,9 +280,6 @@ function ViewModel () {
 
          property.storedValue(listItem[key]());
 
-         // reset dirty state
-         // property.isDirty(false);
-
          // reset updated state
          property.hasBeenUpdated(false);
       })
@@ -326,22 +304,28 @@ function ViewModel () {
 
    self.switchDetailsDisplayed = function(listItem, event) {
 
-      // new item and no data entered yet
-      if (self.detailsCurrent.itemState() === "isNew" && !self.detailsDirty() && listItem.itemState() !== "isNew") {
-         // additionally need to check that we're not clicking inside the new item
-         // processing this as a focus switch is unexpected behavior
+      // exclude clicks on an already displayed item
+      if (self.detailsCurrent === listItem) {
+         console.log("clicked on already selected item");
+         return;
+      }
 
-         // switch & delete the new item, no notification sent
+      // special case: new item and no data entered yet
+      // --> simply delete item
+      if (self.detailsCurrent.itemState() === "isNew" && !self.detailsDirty() && listItem.itemState() !== "isNew") {
+
+         // delete the new item, no notification sent
          self.listData.splice(-1, 1);
          self.displayDetails(listItem, event);
 
          self.addButtonVisible(true);
       }
-         // no data changed
+      // no data changed: switch to new item
       else if (!self.detailsDirty()) {
          self.displayDetails(listItem, event);
       }
-         // changes that would be lost on switch
+      // data changed, would we be lost on switch
+      // --> display switch warning
       else {
          self.switchWarning(true);
       }
@@ -349,9 +333,9 @@ function ViewModel () {
 
 
 
-   /*******************************************************
-   *  Update or edit details, cancel edit & store edited  *
-   *******************************************************/
+   /*********************************************
+   *  Edit details, cancel edit & store edited  *
+   *********************************************/
 
    // format input on fields in item details box
    self.mangleInputs = function(viewmodel, event) {
@@ -430,6 +414,27 @@ function ViewModel () {
       
    };
 
+   // +
+   // cancel editing of the item in details view
+   self.cancelDetailsEdits = function() {
+      // check whether this is a new item
+      if (self.detailsCurrent.itemState() === 'isNew') {
+         // delete item from list
+         self.listData.splice(self.detailsCurrent.index(), 1);
+         // set focus to top of the list and display the details for this
+         self.displayDetails(self.listData()[0]);
+         // re-enable the 'add item' button
+         self.addButtonVisible(true);
+      }
+      else {
+         self.displayDetails(self.listData()[self.detailsCurrent.index()]);
+      }
+   };
+
+   /**************************************
+   *  Update an Item                        *
+   ***************************************/
+
    // handle PubSub event for item update
    self.onItemUpdated = function (args, kwargs, details) {
 
@@ -471,24 +476,6 @@ function ViewModel () {
       item.itemState("hasBeenEdited");
       window.setTimeout(function() { item.itemState(previousItemState); }, 1400);
    }
-
-   // +
-   // cancel editing of the item in details view
-   self.cancelDetailsEdits = function() {
-      // check whether this is a new item
-      if (self.detailsCurrent.itemState() === 'isNew') {
-         // delete item from list
-         self.listData.splice(self.detailsCurrent.index(), 1);
-         // set focus to top of the list and display the details for this
-         self.displayDetails(self.listData()[0]);
-         // re-enable the 'add item' button
-         self.addButtonVisible(true);
-      }
-      else {
-         self.displayDetails(self.listData()[self.detailsCurrent.index()]);
-      }
-   };
-
 
 
 
