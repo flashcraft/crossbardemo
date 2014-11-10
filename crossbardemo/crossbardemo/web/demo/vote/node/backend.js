@@ -1,9 +1,9 @@
 var autobahn = require('autobahn');
 
 var connection = new autobahn.Connection({
-   url: 'ws://127.0.0.1:8080/ws',
-   realm: 'realm1'}
-);
+   url: process.argv[2], // 'ws://127.0.0.1:8080/ws',
+   realm: process.argv[3] // 'realm1'
+});
 
 var votes = {
    Banana: 0,
@@ -55,7 +55,6 @@ function main (session) {
       return "votes reset";
    };
 
-
    // register the procedures
    session.register('io.crossbar.demo.vote.get', getVote);
    session.register('io.crossbar.demo.vote.vote', submitVote);
@@ -63,9 +62,7 @@ function main (session) {
 }
 
 connection.onopen = function (session) {
-
    main(session);
-
 };
 
 connection.open();
