@@ -4,3 +4,4 @@ dist
 *.egg-info
 *.sublime-workspace
 crossbardemo/crossbardemo/web/img/gen
+node_modules
