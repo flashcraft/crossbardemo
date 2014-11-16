@@ -36,7 +36,6 @@
       
 
       <div class="armament">
-     <!-- s -->
          <button data-bind="visible: !isArmed(), click: arm">
             Arm
          </button>
@@ -46,10 +45,14 @@
       </div> 
 
       <div class="imageContainer">
-         <img data-bind="attr: { src: currentImage }"> 
+         <img data-bind="attr: { src: currentImage }">
+         <span data-bind="visible: imageFeedback.requested()">Image Requested!</span>
+         <span data-bind="visible: imageFeedback.taken()">Image has been taken!</span>
+         <span data-bind="visible: imageFeedback.encoding()">Image is being encoded!</span>
+         <span data-bind="visible: imageFeedback.transmitting()">Image is being transmitted!</span> 
       </div>
 
-      <button id="requestImage" data-bind="click: requestImage">
+      <button id="requestImage" data-bind="click: requestImage, css: { hidden: imageRequested }">
          Request Image
       </button>
 

@@ -241,3 +241,20 @@ button:hover
 .trigger {
   margin-top: 1em;
 }
+
+.hidden {
+  visibility: hidden;
+}
+
+.imageContainer {
+  text-align: center;
+  position: relative;
+}
+
+.imageContainer > span {
+  padding: 4px 5px 3px;
+  background-color: #fff;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}

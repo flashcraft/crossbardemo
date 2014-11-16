@@ -53,19 +53,25 @@ function main () {
       // }, 1000);
 
             
-      function takePicture () {
+      function takePicture (args, kwargs, details) {
 
          var t0 = Date.now();
 
          console.log("takePicture called");
-         session.publish("io.crossbar.iotberlin.alarmapp.cameralog", ["takePicture called"]);
+         // session.publish("io.crossbar.iotberlin.alarmapp.cameralog", ["takePicture called"]);
+         if (details.progress) {
+            details.progress(["takePicture called", 0]);
+         }
 
          var cameraResult = when.defer();
 
          camera.takePicture(function (err, image) {
 
             console.log("picture taken", Date.now() - t0);
-            session.publish("io.crossbar.iotberlin.alarmapp.cameralog", ["picture taken", Date.now() - t0]);
+            // session.publish("io.crossbar.iotberlin.alarmapp.cameralog", ["picture taken", Date.now() - t0]);
+            if (details.progress) {
+               details.progress(["taken", Date.now() - t0]);
+            }
             
             // notification LED on for two seconds
             // notificationLED.high();
@@ -80,16 +86,24 @@ function main () {
                console.log('here is an image', Date.now() - t0);
                // need to encode image before sending
                try {
-                  console.log("starting encoding", Date.now() - t0);
-                  session.publish("io.crossbar.iotberlin.alarmapp.cameralog", ["encoding started", Date.now() - t0]);
-                  // var encodedImage = new Buffer(image).toString("hex");
-                  // var encodedImage = new Buffer(image).toString("base64");
+                  console.log("encoding", Date.now() - t0);
+                  
+                  // session.publish("io.crossbar.iotberlin.alarmapp.cameralog", ["encoding started", Date.now() - t0]);
+
+                  if (details.progress) {
+                     details.progress(["encoding", Date.now() - t0]);
+                  }
+
                   var encodedImage = image.toString("hex");
 
                   console.log("encoding ended", Date.now() - t0);
-                  session.publish("io.crossbar.iotberlin.alarmapp.cameralog", ["encoding finished", Date.now() - t0]);
+                  // session.publish("io.crossbar.iotberlin.alarmapp.cameralog", ["encoding finished", Date.now() - t0]);
+
+                  if (details.progress) {
+                     details.progress(["transmitting", Date.now() - t0]);
+                  }
+
                   cameraResult.resolve(encodedImage);
-                  // cameraResult.resolve("hallo");
                } catch (e) {
                   console.log("error,", e);
                }
@@ -98,6 +112,7 @@ function main () {
          });
 
          return cameraResult.promise; 
+
       };
 
       // cameraResult.resolve("called");

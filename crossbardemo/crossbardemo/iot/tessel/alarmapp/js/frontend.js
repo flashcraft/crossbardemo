@@ -78,9 +78,9 @@ function main () {
    });
 
 
-   session.subscribe("io.crossbar.iotberlin.alarmapp.cameralog", function(args) {
-      console.log("cameralog", args[0], args[1]);
-   });
+   // session.subscribe("io.crossbar.iotberlin.alarmapp.cameralog", function(args) {
+   //    console.log("cameralog", args[0], args[1]);
+   // });
 
    // session.subscribe("io.crossbar.iotberlin.alarmapp.accelerometerlog", function(args) {
    //    console.log("accelerometerlog", args[0], args[1]);
@@ -117,17 +117,52 @@ function ViewModel () {
    self.callCopsActive = ko.observable(false);
    self.isActive = ko.observable(false);
    self.currentImage = ko.observable("");
+   self.imageRequested = ko.observable(false);
+   self.imageFeedback = {
+      requested: ko.observable(false),
+      taken: ko.observable(false),
+      encoding: ko.observable(false),
+      transmitting: ko.observable(false)
+   }
 
    self.requestImage = function () {
       var t0 = performance.now();
 
+      self.imageRequested(true);
+      self.imageFeedback.requested(true);
+
       // call the camera and display the result
-      session.call("io.crossbar.iotberlin.alarmapp.take_picture").then(function(res) {
+      session.call("io.crossbar.iotberlin.alarmapp.take_picture", [], {}, {receive_progress: true}).then(
+         function (res) {
             var b64img = hexToBase64(res);
             self.currentImage("data:image/jpg;base64," + b64img);
+            self.imageRequested(false);
+            self.imageFeedback.transmitting(false);
          }, 
-         function(err) {
+         function (err) {
             console.log("requestImage failed", err);
+            self.imageRequested(false);
+            self.imageFeedback.requested(false);
+            self.imageFeedback.taken(false);
+            self.imageFeedback.encoding(false);
+            self.imageFeedback.transmitting(true);
+         }, 
+         function (progress) {
+            console.log("camera", progress.args[0], progress.args[1]);
+            switch (progress.args[0]) {
+               case "taken":
+                  self.imageFeedback.requested(false);
+                  self.imageFeedback.taken(true);
+                  break;
+               case "encoding":
+                  self.imageFeedback.taken(false);
+                  self.imageFeedback.encoding(true);
+                  break;                  
+               case "transmitting":
+                  self.imageFeedback.encoding(false);
+                  self.imageFeedback.transmitting(true);
+                  break;                  
+            }
          }
       );
       console.log("requestImage call made");
