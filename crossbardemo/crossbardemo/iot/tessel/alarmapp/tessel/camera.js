@@ -14,7 +14,6 @@ camera.on('ready', function() {
    console.log("camera ready");
 
    camera.setResolution("qqvga");
-   // camera.setResolution("qvga");
 
    main();
 
@@ -31,9 +30,7 @@ function main () {
    //
    var connection = new autobahn.Connection({
       url: "ws://192.168.1.134:8080/ws",
-
       realm: "ms_iot_hack_01"
-      // realm: "realm1"
    });
 
    // fired when connection is established and session attached

@@ -34,6 +34,10 @@ crossbar start
 
 Crossbar also serves the HTML5 frontend under `http://localhost:8080`.
 
+
+For the two Tessel scripts, you need to replace the IP in `url: "ws://192.168.1.134:8080/ws"` with the IP under which the Tessels can reach the computer running Crossbar.io.
+
+
 Connect the **Tessel with the accelerometer** and  do
 
 ```
