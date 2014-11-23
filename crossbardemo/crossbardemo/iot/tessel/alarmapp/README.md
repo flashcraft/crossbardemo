@@ -4,6 +4,8 @@ Alarm triggered via accelerometer (Tessel 1) causes a photo to be taken (Tessel 
 
 Put together during the Microsoft IoT Hackaton in Berlin; 13.11.2014.
 
+[Video](http://www.youtube.com/watch?v=WY7KzrRm8XY) of this in action (with some Crossbar.io/WAMP background) (2 minutes 50 seconds).
+
 Note: 
    * Taking the picture on the Tessel takes about 2.4s at a very low resolution.
    * Encoding this for sending over WAMP is another ~1.3s.
