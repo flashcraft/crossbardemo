@@ -45,7 +45,7 @@
       },
       {
          "type": "guest",
-         "executable": "C:/Program Files (x86)/nodejs/node.exe",
+         "executable": "node",
          "arguments": ["backend.js"],
          "options": {
             "workdir": "../js",

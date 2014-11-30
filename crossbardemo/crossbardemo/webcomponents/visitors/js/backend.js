@@ -11,7 +11,7 @@ var connectionCount = 0;
 // the WAMP connection to the Router
 //
 var connection = new autobahn.Connection({
-   url: "ws://192.168.1.147:8080/ws",
+   url: "ws://192.168.1.134:8080/ws",
    realm: "visitorswidget"
 });
 
