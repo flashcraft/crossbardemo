@@ -3,7 +3,7 @@
    <body>
       <h1>Hello WAMP/Browser - Component 01</h1>
       <p>Open JavaScript console to watch output.</p>
-      <script>AUTOBAHN_DEBUG = true;</script>
+      <!--<script>AUTOBAHN_DEBUG = true;</script>-->
       <script src="http://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
 
       <script>
@@ -13,11 +13,6 @@
             url: "wss://demo.crossbar.io/ws",
             realm: "realm1"
          });
-
-
-         // timers
-         //
-         var t1, t2;
 
 
          // fired when connection is established and session attached
@@ -74,7 +69,7 @@
                //
                session.call('com.example.mul2', [counter, 3]).then(
                   function (res) {
-                     console.log("mul2() called with result: " + res);
+                     console.log("mul2() result: " + res);
                   },
                   function (err) {
                      if (err.error !== 'wamp.error.no_such_procedure') {
@@ -92,14 +87,6 @@
          //
          connection.onclose = function (reason, details) {
             console.log("Connection lost: " + reason);
-            if (t1) {
-               clearInterval(t1);
-               t1 = null;
-            }
-            if (t2) {
-               clearInterval(t2);
-               t2 = null;
-            }
          }
 
 
