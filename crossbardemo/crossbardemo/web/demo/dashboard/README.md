@@ -8,7 +8,7 @@ All the HTML5 assets for the frontend reside in this folder. You can start the d
 
 ## Backend
 
-The backend for this demo consists of a `sales` table equipped with PL/SQL triggers that compute aggregate data and publish WebMQ events.
+The backend for this demo consists of a `sales` table equipped with PL/SQL triggers that compute aggregate data and publish WAMP events.
 
 There is a fake sales event generator that issues SQL `INSERT` statements against the `sales` table. 
 

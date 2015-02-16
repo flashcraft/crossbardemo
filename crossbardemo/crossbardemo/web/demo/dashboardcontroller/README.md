@@ -8,4 +8,4 @@ All the HTML5 assets for the frontend reside in this folder. You can start the d
 
 ## Backend
 
-There is no backend for this demo. All messaging is mediated by Tavendo WebMQ, and clients use Publish & Subscribe to send and receive notifications.
+There is no backend for this demo. All messaging is mediated by Crossbar.io, and clients use Publish & Subscribe to send and receive notifications.
