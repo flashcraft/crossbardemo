@@ -13,6 +13,7 @@ img:
 	scons
 
 clean:
+	rm -f .sconsign.dblite
 	rm -rf ./crossbardemo.egg-info
 	rm -rf ./build
 	rm -rf ./dist
