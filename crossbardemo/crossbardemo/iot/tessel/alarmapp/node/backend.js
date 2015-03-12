@@ -38,13 +38,17 @@ connection.onopen = function (session, details) {
          if (alarm_active) {
             // session.call("io.crossbar.iotberlin.alarmapp.set_blinking", [500]);
 
-            session.call("io.crossbar.iotberlin.alarmapp.take_picture").then(
+            session.call("io.crossbar.iotberlin.alarmapp.take_picture", [], {}, {receive_progress: true}).then(
                function (res) {
                   console.log("got picture");
                   session.publish("io.crossbar.iotberlin.alarmapp.on_picture_taken", [res]);
                },
                function (e) {
                   console.log(e);
+               },
+               function (progress) {
+                  console.log("camera", progress.args[0], progress.args[1]);
+                  session.publish("io.crossbar.iotberlin.alarmapp.on_picture_progress", [progress.args[0]]);
                }
             );
 

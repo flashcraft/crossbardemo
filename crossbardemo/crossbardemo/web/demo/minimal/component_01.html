@@ -10,7 +10,8 @@
          // the WAMP connection to the Router
          //
          var connection = new autobahn.Connection({
-            url: "wss://demo.crossbar.io/ws",
+            // url: "wss://demo.crossbar.io/ws",
+            url: "ws://localhost:8080/ws",
             realm: "realm1"
          });
 
@@ -19,13 +20,16 @@
          //
          connection.onopen = function (session, details) {
 
-            console.log("Connected");
+            var sessionID = session.id;
+            console.log("Connected as session " + sessionID);
+
 
             // SUBSCRIBE to a topic and receive events
             //
             function onhello (args) {
-               var msg = args[0];
-               console.log("event for 'onhello' received: " + msg);
+               var message = args[0];
+               var senderSessionID = args[1];
+               console.log("event for 'onhello' received: " + message + " (from sender " + senderSessionID + ")!");
             }
             session.subscribe('com.example.onhello', onhello).then(
                function (sub) {
@@ -42,10 +46,11 @@
             function add2 (args) {
                var x = args[0];
                var y = args[1];
-               console.log("add2() called with " + x + " and " + y);
+               // console.log("add2() called with " + x + " and " + y);
                return x + y;
             }
-            session.register('com.example.add2', add2).then(
+            // register using "last" so that multiple components can register the procedure, with the last one to register called
+            session.register('com.example.add2', add2, { invoke: "last"}).then(
                function (reg) {
                   console.log("procedure add2() registered");
                },
@@ -55,21 +60,24 @@
             );
 
 
-            // PUBLISH and CALL every second .. forever
+            // PUBLISH to a topic and 
+            // CALL a remote procedure every second
             //
             var counter = 0;
+            
+
             setInterval(function () {
 
                // PUBLISH an event
                //
-               session.publish('com.example.oncounter', [counter]);
-               console.log("published to 'oncounter' with counter " + counter);
+               session.publish('com.example.oncounter', [counter, sessionID]);
+               // console.log("published to 'oncounter' with counter " + counter);
 
                // CALL a remote procedure
                //
                session.call('com.example.mul2', [counter, 3]).then(
                   function (res) {
-                     console.log("mul2() result: " + res);
+                     console.log("mul2() result: " + res[0] + " from callee " + res[1]);
                   },
                   function (err) {
                      if (err.error !== 'wamp.error.no_such_procedure') {

@@ -10,7 +10,8 @@
          // the WAMP connection to the Router
          //
          var connection = new autobahn.Connection({
-            url: "wss://demo.crossbar.io/ws",
+            // url: "wss://demo.crossbar.io/ws",
+            url: "ws://localhost:8080/ws",
             realm: "realm1"
          });
 
@@ -19,13 +20,16 @@
          //
          connection.onopen = function (session, details) {
 
-            console.log("Connected");
+            var sessionID = session.id;
+            console.log("Connected as session " + sessionID);
+
 
             // SUBSCRIBE to a topic and receive events
             //
             function on_counter (args) {
                var counter = args[0];
-               console.log("event for 'oncounter' received with counter " + counter);
+               var senderSessionID = args[1];
+               console.log("event for 'oncounter' received with counter " + counter + " from sender " + senderSessionID + "!");
             }
             session.subscribe('com.example.oncounter', on_counter).then(
                function (sub) {
@@ -37,23 +41,16 @@
             );
 
 
-            // PUBLISH an event every second
-            //
-            setInterval(function () {
-               session.publish('com.example.onhello', ['Hello from JavaScript (browser)']);
-               console.log("published to topic 'com.example.onhello'");
-            }, 1000);
-
-
             // REGISTER a procedure for remote calling
             //
             function mul2 (args) {
                var x = args[0];
                var y = args[1];
-               console.log("mul2() called with " + x + " and " + y);
-               return x * y;
+               // console.log("mul2() called with " + x + " and " + y);
+               return [x * y, sessionID];
             }
-            session.register('com.example.mul2', mul2).then(
+               // register using "last" so that multiple components can register the procedure, with the last one to register called
+            session.register('com.example.mul2', mul2, { invoke: "last" }).then(
                function (reg) {
                   console.log('procedure registered');
                },
@@ -63,12 +60,20 @@
             );
 
 
+            // PUBLISH to a topic and 
             // CALL a remote procedure every second
             //
             var x = 0;
 
             setInterval(function () {
 
+               // PUBLISH an event
+               //
+               session.publish('com.example.onhello', ['Hello from JavaScript!', sessionID]);
+               // console.log("published to topic 'com.example.onhello'", sessionID);
+
+               // CALL a remote procedure
+               //
                session.call('com.example.add2', [x, 18]).then(
                   function (res) {
                      console.log("add2() result:", res);

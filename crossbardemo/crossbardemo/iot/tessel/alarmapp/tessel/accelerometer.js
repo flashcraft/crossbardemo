@@ -1,5 +1,5 @@
 var tessel = require('tessel');
-var accel = require('accel-mma84').use(tessel.port['B']);
+var accel = require('accel-mma84').use(tessel.port['A']);
 var autobahn = require('wamp-tessel');
 
 var leds = [tessel.led[0], tessel.led[1]];
@@ -30,6 +30,12 @@ function main () {
    var blinking_timer = null;
 
    connection.onopen = function (session, details) {
+
+      // send publishes to keep wifi alive (testing)
+      setInterval(function() {
+         session.publish("io.crossbar.iotberlin.alarmapp.keepalive");
+         console.log("keepalive sent");
+      }, 1000);
 
       console.log("connected!");
 

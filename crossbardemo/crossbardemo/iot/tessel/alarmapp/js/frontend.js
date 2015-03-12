@@ -68,15 +68,20 @@ function main () {
    })
 
    session.subscribe("io.crossbar.iotberlin.alarmapp.on_picture_taken", function(res) {
-      console.log("got picture", res);
+      // console.log("got picture", res);
       var b64img = hexToBase64(res[0]);
       vm.currentImage("data:image/jpg;base64," + b64img);
+      vm.imageRequested(false);
+      vm.imageFeedback.transmitting(false);
    })
 
    session.subscribe("io.crossbar.iotberlin.alarmapp.keepalive", function(args) {
       console.log("io.crossbar.iotberlin.alarmapp.keepalive");
    });
 
+   session.subscribe("io.crossbar.iotberlin.alarmapp.on_picture_progress", function(args) {
+      vm.progress(args[0]);
+   });
 
    // session.subscribe("io.crossbar.iotberlin.alarmapp.cameralog", function(args) {
    //    console.log("cameralog", args[0], args[1]);
@@ -85,6 +90,10 @@ function main () {
    // session.subscribe("io.crossbar.iotberlin.alarmapp.accelerometerlog", function(args) {
    //    console.log("accelerometerlog", args[0], args[1]);
    // });
+
+   session.subscribe("io.crossbar.iotberlin.alarmapp.ble_discovered", function(args) {
+      console.log("ble device discovered", args[0]);
+   })
 
 }
 
@@ -116,7 +125,7 @@ function ViewModel () {
    self.cancelAlarmActive = ko.observable(false);
    self.callCopsActive = ko.observable(false);
    self.isActive = ko.observable(false);
-   self.currentImage = ko.observable("");
+   self.currentImage = ko.observable("img/big-eared-burglar_small.png");
    self.imageRequested = ko.observable(false);
    self.imageFeedback = {
       requested: ko.observable(false),
@@ -149,42 +158,43 @@ function ViewModel () {
          }, 
          function (progress) {
             console.log("camera", progress.args[0], progress.args[1]);
-            switch (progress.args[0]) {
-               case "taken":
-                  self.imageFeedback.requested(false);
-                  self.imageFeedback.taken(true);
-                  break;
-               case "encoding":
-                  self.imageFeedback.taken(false);
-                  self.imageFeedback.encoding(true);
-                  break;                  
-               case "transmitting":
-                  self.imageFeedback.encoding(false);
-                  self.imageFeedback.transmitting(true);
-                  break;                  
-            }
+            self.progress(progress.args[0]);
          }
       );
-      console.log("requestImage call made");
+      // console.log("requestImage call made");
    };
 
    self.arm = function () {
-      // self.isArmed(true);
       session.call("io.crossbar.iotberlin.alarmapp.set_alarm_armed", [true]).then(session.log, session.log);
    };
    self.disarm = function() {
-      // self.isArmed(false);
       session.call("io.crossbar.iotberlin.alarmapp.set_alarm_armed", [false]).then(session.log, session.log);
+      session.call("io.crossbar.iotberlin.alarmapp.set_alarm_active", [false])
    }
 
    self.cancelAlarm = function () {
-      // self.isActive(false);
       session.call("io.crossbar.iotberlin.alarmapp.set_alarm_active", [false])
    };
    self.triggerAlarm = function () {
-      // self.isActive(true);
       session.call("io.crossbar.iotberlin.alarmapp.set_alarm_active", [true])  
    };
 
+   self.progress = function (progress) {
+      console.log("camera", progress);
+      switch (progress) {
+         case "taken":
+            self.imageFeedback.requested(false);
+            self.imageFeedback.taken(true);
+            break;
+         case "encoding":
+            self.imageFeedback.taken(false);
+            self.imageFeedback.encoding(true);
+            break;                  
+         case "transmitting":
+            self.imageFeedback.encoding(false);
+            self.imageFeedback.transmitting(true);
+            break;  
+      }
+   }
 }
 

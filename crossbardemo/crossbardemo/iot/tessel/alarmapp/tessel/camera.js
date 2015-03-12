@@ -1,6 +1,8 @@
 var autobahn = require('wamp-tessel');
 var tessel = require('tessel');
 var camera = require('camera-vc0706').use(tessel.port['A']);
+// var blelib = require('ble-ble113a');
+
 var when = autobahn.when; 
 var session = null;
 
@@ -44,10 +46,24 @@ function main () {
       session.publish("io.crossbar.iotberlin.alarmapp.cameralog", ["camera_ready"]);
 
       // send publishes to keep wifi alive (testing)
-      // setInterval(function() {
-      //    session.publish("io.crossbar.iotberlin.alarmapp.keepalive");
-      //    console.log("keepalive sent");
-      // }, 1000);
+      setInterval(function() {
+         session.publish("io.crossbar.iotberlin.alarmapp.keepalive");
+         console.log("keepalive sent");
+      }, 1000);
+
+      // BLE module testing
+
+      // var ble = blelib.use(tessel.port['B']);
+
+      // ble.on('ready', function(err) {
+      //   console.log('Scanning...');
+      //   ble.startScanning();
+      // });
+
+      // ble.on('discover', function(peripheral) {
+      //   console.log("Discovered peripheral!", peripheral.toString());
+      //   session.publish("io.crossbar.iotberlin.alarmapp.ble_discovered", [peripheral.toString()]);
+      // });
 
             
       function takePicture (args, kwargs, details) {
@@ -112,14 +128,6 @@ function main () {
 
       };
 
-      // cameraResult.resolve("called");
-
-      // var takePicture = function() {
-      //    console.log("takePicture called");
-
-      //    return true;
-      // }
-
       session.register("io.crossbar.iotberlin.alarmapp.take_picture", takePicture).then(
          function (registration) {
             console.log("Procedure 'io.crossbar.iotberlin.alarmapp.take_picture' registered:", registration.id);
@@ -143,3 +151,5 @@ function main () {
    connection.open();
 
 }
+
+

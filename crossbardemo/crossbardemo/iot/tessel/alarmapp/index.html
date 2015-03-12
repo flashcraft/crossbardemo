@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
    <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
    <link rel="shortcut icon" href="img/favicon.ico">
    <title>Tessel Alarm</title>
    <link rel="stylesheet" href="css/styles.css">
@@ -24,28 +25,39 @@
 
    <div id="demo_body">
 
-      <div class="alarmArmedIndicator" data-bind="style: { backgroundColor: isArmed() ? 'red' : 'green' }">
+      <div class="armamentAndAlarm">
          
+         <div class="alarmContainer">
+            <div class="alarm"  data-bind="visible: isActive">
+               Alarm!!!
+            </div>   
+         </div> 
+         
+         <div class="alarmArmedIndicator" data-bind="style: { backgroundColor: isArmed() ? 'red' : 'green' }">
+            <div class="armament">
+               <button data-bind="visible: !isArmed(), click: arm">
+                  Arm
+               </button>
+               <button data-bind="visible: isArmed(), click: disarm">
+                  Disarm
+               </button>
+            </div>
+         </div>
+
+         
+
       </div>
 
-      <div class="alarmContainer">
-         <div class="alarm"  data-bind="visible: isActive">
-            Alarm!!!
-         </div>   
-      </div>
+       
+            
+
+      
       
 
-      <div class="armament">
-         <button data-bind="visible: !isArmed(), click: arm">
-            Arm
-         </button>
-         <button data-bind="visible: isArmed(), click: disarm">
-            Disarm
-         </button>
-      </div> 
+      
 
       <div class="imageContainer">
-         <img data-bind="attr: { src: currentImage }">
+         <img data-bind="attr: { src: currentImage }" width="160" height="120">
          <span data-bind="visible: imageFeedback.requested()">Image Requested!</span>
          <span data-bind="visible: imageFeedback.taken()">Image has been taken!</span>
          <span data-bind="visible: imageFeedback.encoding()">Image is being encoded!</span>
