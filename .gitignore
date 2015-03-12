@@ -6,3 +6,4 @@ dist
 crossbardemo/crossbardemo/web/img/gen
 node_modules
 *.dblite
+*.pid
