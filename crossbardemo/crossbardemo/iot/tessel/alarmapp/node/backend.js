@@ -1,4 +1,9 @@
-var autobahn = require('autobahn');
+try {
+   var autobahn = require('autobahn');
+} catch (e) {
+   // when running in browser, AutobahnJS will
+   // be included without a module system
+}
 
 var connection = new autobahn.Connection({
    url: "ws://23.101.67.214:80/ws", // replace with the url of your crossbar instance
@@ -49,6 +54,8 @@ connection.onopen = function (session, details) {
          if (alarm_active) {
             // session.call("io.crossbar.iotberlin.alarmapp.set_blinking", [500]);
 
+            // needs checking if the procedure is actually available, since
+            // the Tessel with the camera is extra-moody
             session.call("io.crossbar.iotberlin.alarmapp.take_picture", [], {}, {receive_progress: true}).then(
                function (res) {
                   console.log("got picture");

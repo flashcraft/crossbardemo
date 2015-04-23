@@ -31,14 +31,14 @@ function main () {
 
    // the WAMP connection to the Router
    //
-   // var connection = new autobahn.Connection({
-   //    url: "ws://23.101.67.214:80/ws", // replace with the url of your crossbar instance
-   //    realm: "ms_iot_hack_01"
-   // });
    var connection = new autobahn.Connection({
-      url: "ws://192.168.1.110:8080/ws", // replace with the url of your crossbar instance
+      url: "ws://23.101.67.214:80/ws", // replace with the url of your crossbar instance
       realm: "ms_iot_hack_01"
    });
+   // var connection = new autobahn.Connection({
+   //    url: "ws://192.168.1.110:8080/ws", // replace with the url of your crossbar instance
+   //    realm: "ms_iot_hack_01"
+   // });
 
    // fired when connection is established and session attached
    //
@@ -122,6 +122,8 @@ function main () {
          return cameraResult.promise; 
 
       };
+
+      console.log("will register take_picture now");
 
       session.register("io.crossbar.iotberlin.alarmapp.take_picture", takePicture).then(
          function (registration) {
