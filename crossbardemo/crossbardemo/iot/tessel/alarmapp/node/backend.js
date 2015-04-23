@@ -2,7 +2,7 @@ var autobahn = require('autobahn');
 
 var connection = new autobahn.Connection({
    url: "ws://23.101.67.214:80/ws", // replace with the url of your crossbar instance
-   realm: "crossbar-alarm"
+   realm: "ms_iot_hack_01"
 });
 
 /*var connection = new autobahn.Connection({

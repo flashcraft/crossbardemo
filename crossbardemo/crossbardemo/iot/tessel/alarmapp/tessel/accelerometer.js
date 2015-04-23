@@ -23,12 +23,12 @@ function main () {
 
    var connection = new autobahn.Connection({
       url: "ws://23.101.67.214:80/ws", // replace with the url of your crossbar instance
-      realm: "crossbar-alarm"
-   });
-/*   var connection = new autobahn.Connection({
-      url: "ws://192.168.1.110:8080/ws", // replace with the url of your crossbar instance
       realm: "ms_iot_hack_01"
-   });*/
+   });
+   // var connection = new autobahn.Connection({
+   //    url: "ws://192.168.1.110:8080/ws", // replace with the url of your crossbar instance
+   //    realm: "ms_iot_hack_01"
+   // });
 
    var blinking_freq = 0;
    var blinking_timer = null;
@@ -45,21 +45,21 @@ function main () {
 
       console.log("connected!");
 
-      function toggle_lights (args) {
-         var led = args[0];
-         console.log("toggling light " + led);
-         leds[led].toggle();
-      }
+      // function toggle_lights (args) {
+      //    var led = args[0];
+      //    console.log("toggling light " + led);
+      //    leds[led].toggle();
+      // }
 
-      session.register("io.crossbar.iotberlin.alarmapp.toggle_lights", toggle_lights).then(
-         function () {
-            console.log("toggle_lights registered");
-            session.publish("io.crossbar.iotberlin.alarmapp.accelerometerlog", ["toggle_lights registered"]);
-         },
-         function (e) {
-            console.log(e);
-         }
-      );
+      // session.register("io.crossbar.iotberlin.alarmapp.toggle_lights", toggle_lights).then(
+      //    function () {
+      //       console.log("toggle_lights registered");
+      //       session.publish("io.crossbar.iotberlin.alarmapp.accelerometerlog", ["toggle_lights registered"]);
+      //    },
+      //    function (e) {
+      //       console.log(e);
+      //    }
+      // );
 
       accel.on('data', function (xyz) {
          var data = {
@@ -72,34 +72,34 @@ function main () {
          session.publish("io.crossbar.iotberlin.alarmapp.accelerometerlog", ["on_accelerometer", data]);
       });
 
-      function set_blinking (args) {
-         var freq = args[0];
-         if (blinking_freq != freq) {
-            blinking_freq = freq;
-            if (blinking_timer) {
-               clearInterval(blinking_timer);
-               blinking_timer = null;
-               console.log("blinking disabled");
-            }
-            if (blinking_freq) {
-               console.log("enabled blinking", blinking_freq);
-               blinking_timer = setInterval(function () {
-                  leds[0].toggle();
-                  leds[1].toggle();
-               }, blinking_freq);
-            }
-         }
-      }
+      // function set_blinking (args) {
+      //    var freq = args[0];
+      //    if (blinking_freq != freq) {
+      //       blinking_freq = freq;
+      //       if (blinking_timer) {
+      //          clearInterval(blinking_timer);
+      //          blinking_timer = null;
+      //          console.log("blinking disabled");
+      //       }
+      //       if (blinking_freq) {
+      //          console.log("enabled blinking", blinking_freq);
+      //          blinking_timer = setInterval(function () {
+      //             leds[0].toggle();
+      //             leds[1].toggle();
+      //          }, blinking_freq);
+      //       }
+      //    }
+      // }
 
-      session.register("io.crossbar.iotberlin.alarmapp.set_blinking", set_blinking).then(
-         function () {
-            console.log("set_blinking registered");
-            session.publish("io.crossbar.iotberlin.alarmapp.accelerometerlog", ["set_blinking registered"]);
-         },
-         function (e) {
-            console.log(e);
-         }
-      );
+      // session.register("io.crossbar.iotberlin.alarmapp.set_blinking", set_blinking).then(
+      //    function () {
+      //       console.log("set_blinking registered");
+      //       session.publish("io.crossbar.iotberlin.alarmapp.accelerometerlog", ["set_blinking registered"]);
+      //    },
+      //    function (e) {
+      //       console.log(e);
+      //    }
+      // );
    };
 
    connection.onclose = function (reason, details) {
