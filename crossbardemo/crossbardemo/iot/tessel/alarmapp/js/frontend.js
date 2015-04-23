@@ -3,9 +3,13 @@ var vm = null;
 // the WAMP connection to the Router
 //
 var connection = new autobahn.Connection({
-   url: "ws://192.168.1.134:8080/ws",
-   realm: "ms_iot_hack_01"
+   url: "ws://23.101.67.214:80/ws", // replace with the url of your crossbar instance
+   realm: "crossbar-alarm"
 });
+// var connection = new autobahn.Connection({
+//    url: "ws://192.168.1.110:8080/ws", // replace with the url of your crossbar instance
+//    realm: "ms_iot_hack_01"
+// });
 
 var session = null; 
 

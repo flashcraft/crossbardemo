@@ -1,7 +1,6 @@
 var autobahn = require('wamp-tessel');
 var tessel = require('tessel');
 var camera = require('camera-vc0706').use(tessel.port['A']);
-// var blelib = require('ble-ble113a');
 
 var when = autobahn.when; 
 var session = null;
@@ -15,23 +14,29 @@ camera.on('ready', function() {
    
    console.log("camera ready");
 
-   camera.setResolution("qqvga");
+   // camera.setResolution("qqvga");
 
    main();
 
 });
 
 camera.on('error', function(err) {
-   console.error(err);
+   console.error("camera error", err);
    // add a publication of camera error - IMPLEMENT ME!!!
 });
 
 function main () {
 
+   console.log("main called");
+
    // the WAMP connection to the Router
    //
+   // var connection = new autobahn.Connection({
+   //    url: "ws://23.101.67.214:80/ws", // replace with the url of your crossbar instance
+   //    realm: "crossbar-alarm"
+   // });
    var connection = new autobahn.Connection({
-      url: "ws://192.168.1.134:8080/ws",
+      url: "ws://192.168.1.110:8080/ws", // replace with the url of your crossbar instance
       realm: "ms_iot_hack_01"
    });
 
@@ -39,10 +44,14 @@ function main () {
    //
    connection.onopen = function (sess, details) {
 
+      
+
       console.log("connected");
 
       session = sess;
 
+
+      session.publish("io.corssbar.iotberlin.alarmapp.component_ready", ["camera"]);
       session.publish("io.crossbar.iotberlin.alarmapp.cameralog", ["camera_ready"]);
 
       // send publishes to keep wifi alive (testing)
@@ -50,20 +59,6 @@ function main () {
          session.publish("io.crossbar.iotberlin.alarmapp.keepalive");
          console.log("keepalive sent");
       }, 1000);
-
-      // BLE module testing
-
-      // var ble = blelib.use(tessel.port['B']);
-
-      // ble.on('ready', function(err) {
-      //   console.log('Scanning...');
-      //   ble.startScanning();
-      // });
-
-      // ble.on('discover', function(peripheral) {
-      //   console.log("Discovered peripheral!", peripheral.toString());
-      //   session.publish("io.crossbar.iotberlin.alarmapp.ble_discovered", [peripheral.toString()]);
-      // });
 
             
       function takePicture (args, kwargs, details) {
@@ -149,6 +144,8 @@ function main () {
    // now actually open the connection
    //
    connection.open();
+
+   console.log("post open called");
 
 }
 

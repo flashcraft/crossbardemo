@@ -1,13 +1,24 @@
 var autobahn = require('autobahn');
 
 var connection = new autobahn.Connection({
-   url: "ws://192.168.1.134:8080/ws", // replace with the url of your crossbar instance
-   realm: "ms_iot_hack_01"
+   url: "ws://23.101.67.214:80/ws", // replace with the url of your crossbar instance
+   realm: "crossbar-alarm"
 });
+
+/*var connection = new autobahn.Connection({
+   url: "ws://192.168.1.110:8080/ws", // replace with the url of your crossbar instance
+   realm: "ms_iot_hack_01"
+});*/
 
 connection.onopen = function (session, details) {
 
    console.log("connected!");
+
+
+   session.subscribe("io.corssbar.iotberlin.alarmapp.component_ready", function (args) {
+      console.log("component_ready", args[0]);
+   })
+   
 
    // alarm active state and procedures
    //
