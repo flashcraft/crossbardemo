@@ -52,7 +52,7 @@ connection.onopen = function (session, details) {
          session.publish("io.crossbar.iotberlin.alarmapp.on_alarm_active", [alarm_active])
 
          if (alarm_active) {
-            // session.call("io.crossbar.iotberlin.alarmapp.set_blinking", [500]);
+            session.call("io.crossbar.iotberlin.alarmapp.set_blinking", [500]);
 
             // needs checking if the procedure is actually available, since
             // the Tessel with the camera is extra-moody

@@ -44,8 +44,6 @@ function main () {
    //
    connection.onopen = function (sess, details) {
 
-      
-
       console.log("connected");
 
       session = sess;
@@ -140,8 +138,8 @@ function main () {
    // fired when connection was lost (or could not be established)
    //
    connection.onclose = function (reason, details) {
-      console.log("Connection lost: " + reason);
-   }
+      console.log("Connection lost: " + reason, details);
+   };
 
    // now actually open the connection
    //
